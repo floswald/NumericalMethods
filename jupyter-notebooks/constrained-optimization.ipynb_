@@ -1,0 +1,825 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "# Computational Economics: Optimization\n",
+    "\n",
+    "Florian Oswald\n",
+    "Sciences Po, 2017\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## The Optimization Process\n",
+    "\n",
+    "```\n",
+    "1. Problem Specification\n",
+    "2. Initial Design\n",
+    "3. Optimization Proceedure:\n",
+    "    a) Evaluate Performance\n",
+    "    b) Good?\n",
+    "        i. yes: final design\n",
+    "        ii. no: \n",
+    "            * Change design\n",
+    "            * go back to a)\n",
+    "```            \n",
+    "\n",
+    "We want to automate step 3.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Optimisation Basics\n",
+    "\n",
+    "* Recall our generic definition of an optimization problem:\n",
+    "\n",
+    "$$ \n",
+    "\\min_{x\\in\\mathbb{R}^n} f(x)  \\text{ s.t. } x \\in \\mathcal{X}\n",
+    "$$\n",
+    "\n",
+    "* $x$ is our *choice variable* or a *design point*.\n",
+    "* $\\mathcal{X}$ is the feasible set.\n",
+    "* $f$ is the *objective function*\n",
+    "* A vector $x^*$ is a *solution* or a *minimizer* to this problem if $x^*$ is *feasible* and $x^*$ minimizes $f$.\n",
+    "* Maximization is just minimizing $(-1)f$:\n",
+    "$$ \n",
+    "\\min_{x\\in\\mathbb{R}^n} f(x)  \\text{ s.t. } x \\in \\mathcal{X} \\equiv \\max_{x\\in\\mathbb{R}^n} -f(x)  \\text{ s.t. } x \\in \\mathcal{X} \n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Constraints\n",
+    "\n",
+    "* Consider the following problem\n",
+    "\n",
+    "$$ \n",
+    "\\min_{x \\in \\mathbb{R}^2} \\sqrt{x_2} \\text{ subject to }\\begin{array}{c} \\\\\n",
+    " x_2 \\geq 0 \\\\\n",
+    " x_2 \\geq (a_1 x_1 + b_1)^3 \\\\\n",
+    "x_2 \\geq (a_2 x_1 + b_2)^3 \n",
+    "\\end{array}\n",
+    "$$\n",
+    "\n",
+    "* This configuration of constraints leads to the following feasible region for parameters $a_1=2,b_1=0,a_2=-1,b_2=1$.\n",
+    "![](../assets/figs/NLopt-example-constraints.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## Example: 1 equality constraint\n",
+    "\n",
+    "* consider \n",
+    "\t$$ \\min x_1 + x_2  \\quad s.t. \\quad x_1^2 + x_2^2 - 2 = 0 $$\n",
+    "* constraint is a circle with radius $\\sqrt{2}$ centered at 0. The solution must lie *on* that circle.\n",
+    "* Solution: $(-1,-1)$. Consider any other point on circle, like $(\\sqrt{2},0)$.\n",
+    "\n",
+    "![Figure 12.3 in [@nocedal-wright]<cite data-cite=nocedalwright></cite>](../assets/figs-restricted/constrained-example.png) "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## Example: 1 inequality constraint\n",
+    "\n",
+    "* Let's modify this example to\n",
+    "\t$$ \\min x_1 + x_2  \\text{   such that   } 2- x_1^2 - x_2^2 \\geq 0 $$\n",
+    "* constraint is the region inside a circle with radius $\\sqrt{2}$ centered at 0. The solution must lie *on or inside* that circle.\n",
+    "* Solution: $(-1,-1)$. Consider any other point on circle, like $(\\sqrt{2},0)$.\n",
+    "* Two cases: \n",
+    "\t1. $x$ lies strictly inside the circle, and $c_1(x) > 0$\n",
+    "\t1. $x$ lies strictly on the circle, and $c_1(x) = 0$\n",
+    "* Complementarity condition.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Some Methods \n",
+    "\n",
+    "* Penalty Function and Augmented Lagrangian Methods\n",
+    "* Sequential Quadratic Method\n",
+    "* Interior Point Method\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Constrained Optimisation with [`NLopt.jl`](https://github.com/JuliaOpt/NLopt.jl)\n",
+    "\n",
+    "* We need to specify one function for each objective and constraint.\n",
+    "* Both of those functions need to compute the function value (i.e. objective or constraint) *and* it's respective gradient. \n",
+    "* Notice that we can disregard $x_2\\geq0$ here.\n",
+    "* `NLopt` expects contraints **always** to be formulated in the format \n",
+    "\t$$ g(x) \\leq 0 $$\n",
+    "     where $g$ is your constraint function\n",
+    "* The constraint function is formulated for each constraint at $x$. it returns a number (the value of the constraint at $x$), and it fills out the gradient vector, which is the partial derivative of the current constraint wrt $x$.\n",
+    "* There is also the option to have vector valued constraints, see the documentation.\n",
+    "* We set this up as follows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "attributes": {
+     "classes": [
+      "julia"
+     ],
+     "id": ""
+    },
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(0.5443310477213124,[0.333333,0.296296],:XTOL_REACHED)"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "function myfunc(x::Vector, grad::Vector)\n",
+    "    if length(grad) > 0\n",
+    "        grad[1] = 0\n",
+    "        grad[2] = 0.5/sqrt(x[2])\n",
+    "    end\n",
+    "    return sqrt(x[2])\n",
+    "end\n",
+    "\n",
+    "function constraint(x::Vector, grad::Vector, a, b)\n",
+    "    if length(grad) > 0\n",
+    "    \t# modifies grad in place\n",
+    "        grad[1] = 3a * (a*x[1] + b)^2\n",
+    "        grad[2] = -1\n",
+    "    end\n",
+    "    return (a*x[1] + b)^3 - x[2]\n",
+    "end\n",
+    "using NLopt\n",
+    "# define an Opt object: which algorithm, how many dims of choice\n",
+    "opt = Opt(:LD_MMA, 2)\n",
+    "# set bounds and tolerance\n",
+    "lower_bounds!(opt, [-Inf, 0.])\n",
+    "xtol_rel!(opt,1e-4)\n",
+    "\n",
+    "# define objective function\n",
+    "min_objective!(opt, myfunc)\n",
+    "# define constraints\n",
+    "# notice the anonymous function\n",
+    "inequality_constraint!(opt, (x,g) -> constraint(x,g,2,0), 1e-8)\n",
+    "inequality_constraint!(opt, (x,g) -> constraint(x,g,-1,1), 1e-8)\n",
+    "\n",
+    "# call optimize\n",
+    "(minf,minx,ret) = optimize(opt, [1.234, 5.678])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## NLopt: Rosenbrock\n",
+    "\n",
+    "* Let's tackle the rosenbrock example again.\n",
+    "* To make it more interesting, let's add an inequality constraint.\n",
+    "\t$$ \\min_{x\\in \\mathbb{R}^2} (1-x_1)^2  + 100(x_2-x_1^2)^2  \\text{  subject to  } 0.8 - x_1^2 -x_2^2 \\geq 0 $$\n",
+    "* in `NLopt` format, the constraint is $x_1 + x_2 - 0.8 \\leq 0$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "attributes": {
+     "classes": [
+      "julia"
+     ],
+     "id": ""
+    },
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(0.07588358473630112,[0.724702,0.524221],:FTOL_REACHED)"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "function rosenbrock(x::Vector,grad::Vector)\n",
+    "    if length(grad) > 0\n",
+    "\t    grad[1] = -2.0 * (1.0 - x[1]) - 400.0 * (x[2] - x[1]^2) * x[1]\n",
+    "\t    grad[2] = 200.0 * (x[2] - x[1]^2)\n",
+    "    end\n",
+    "    return (1.0 - x[1])^2 + 100.0 * (x[2] - x[1]^2)^2\n",
+    "end\n",
+    "function r_constraint(x::Vector, grad::Vector)\n",
+    "    if length(grad) > 0\n",
+    "\tgrad[1] = 2*x[1]\n",
+    "\tgrad[2] = 2*x[2]\n",
+    "\tend\n",
+    "\treturn x[1]^2 + x[2]^2 - 0.8\n",
+    "end\n",
+    "opt = Opt(:LD_MMA, 2)\n",
+    "lower_bounds!(opt, [-5, -5.0])\n",
+    "min_objective!(opt,(x,g) -> rosenbrock(x,g))\n",
+    "inequality_constraint!(opt, (x,g) -> r_constraint(x,g))\n",
+    "ftol_rel!(opt,1e-9)\n",
+    "(minf,minx,ret) = optimize(opt, [-1.0,0.0])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## JuMP.jl\n",
+    "\n",
+    "* Introduce [`JuMP.jl`](https://github.com/JuliaOpt/JuMP.jl)\n",
+    "* JuMP is a mathematical programming interface for Julia. It is like AMPL, but for free and with a decent programming language.\n",
+    "* The main highlights are:\n",
+    "\t* It uses automatic differentiation to compute derivatives from your expression.\n",
+    "\t* It supplies this information, as well as the sparsity structure of the Hessian to your preferred solver.\n",
+    "\t* It decouples your problem completely from the type of solver you are using. This is great, since you don't have to worry about different solvers having different interfaces.\n",
+    "\t* In order to achieve this, `JuMP` uses [`MathProgBase.jl`](https://github.com/JuliaOpt/MathProgBase.jl), which converts your problem formulation into a standard representation of an optimization problem.\n",
+    "* Let's look at the readme\n",
+    "* The technical citation is Lubin et al <cite data-cite=JuMP></cite>\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## JuMP: Quick start guide\n",
+    "\n",
+    "* this is form the [quick start guide](http://www.juliaopt.org/JuMP.jl/0.16/quickstart.html)\n",
+    "* please check the docs, they are excellent.\n",
+    "\n",
+    "### Step 1: create a model\n",
+    "\n",
+    "* A model collects variables, objective function and constraints.\n",
+    "* it defines a solver to be used."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "```julia\n",
+    "using Clp\n",
+    "m = Model(solver=ClpSolver())  # provide a solver\n",
+    "\n",
+    "# Define variables\n",
+    "@variable(m, x )              # No bounds\n",
+    "@variable(m, x >= lb )        # Lower bound only (note: 'lb <= x' is not valid)\n",
+    "@variable(m, x <= ub )        # Upper bound only\n",
+    "@variable(m, lb <= x <= ub )  # Lower and upper bounds\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "```julia\n",
+    "\n",
+    "# we can create arrays of a variable\n",
+    "N = 2\n",
+    "@variable(m, x[1:M,1:N] >= 0 )\n",
+    "\n",
+    "# or put them in a block\n",
+    "@variables m begin\n",
+    "    x\n",
+    "    y >= 0\n",
+    "    Z[1:10], Bin\n",
+    "    X[1:3,1:3], SDP\n",
+    "    q[i=1:2], (lowerbound = i, start = 2i, upperbound = 3i)\n",
+    "    t[j=1:3], (Int, start = j)\n",
+    "end\n",
+    "\n",
+    "# Equivalent to:\n",
+    "@variable(m, x)\n",
+    "@variable(m, y >= 0)\n",
+    "@variable(m, Z[1:10], Bin)\n",
+    "@variable(m, X[1:3,1:3], SDP)\n",
+    "@variable(m, q[i=1:2], lowerbound = i, start = 2i, upperbound = 3i)\n",
+    "@variable(m, t[j=1:3], Int, start = j)\n",
+    "\n",
+    "# bounds can depend on indices\n",
+    "@variable(m, x[i=1:10] >= i )\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## Objective and Constraints\n",
+    "\n",
+    "* We can easily add objective and constraint functions:\n",
+    "\n",
+    "```julia\n",
+    "@constraint(m, x[i] - s[i] <= 0)  # Other options: == and >=\n",
+    "@constraint(m, sum(x[i] for i=1:numLocation) == 1)\n",
+    "@objective(m, Max, 5x + 22y + (x+y)/2) # or Min\n",
+    "```\n",
+    "\n",
+    "* This is fully integrated with Julia. you can use the `generator` syntax for sums:\n",
+    "\n",
+    "```julia\n",
+    "@objective(sum(x[i] + y[i]/pi for i = I1, j = I2 if i+j < some_val))\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Max 5 x + 3 y\n",
+      "Subject to\n",
+      " x + 5 y ≤ 3\n",
+      " 0 ≤ x ≤ 2\n",
+      " 0 ≤ y ≤ 30\n",
+      "Objective value: 10.6\n",
+      "x = 2.0\n",
+      "y = 0.2\n"
+     ]
+    }
+   ],
+   "source": [
+    "## Simple example\n",
+    "using JuMP\n",
+    "using Clp\n",
+    "\n",
+    "m = Model(solver = ClpSolver())\n",
+    "@variable(m, 0 <= x <= 2 )\n",
+    "@variable(m, 0 <= y <= 30 )\n",
+    "\n",
+    "@objective(m, Max, 5x + 3*y )\n",
+    "@constraint(m, 1x + 5y <= 3.0 )\n",
+    "\n",
+    "print(m)\n",
+    "\n",
+    "status = solve(m)\n",
+    "\n",
+    "println(\"Objective value: \", getobjectivevalue(m))\n",
+    "println(\"x = \", getvalue(x))\n",
+    "println(\"y = \", getvalue(y))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "attributes": {
+     "classes": [
+      "julia"
+     ],
+     "id": ""
+    },
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "******************************************************************************\n",
+      "This program contains Ipopt, a library for large-scale nonlinear optimization.\n",
+      " Ipopt is released as open source code under the Eclipse Public License (EPL).\n",
+      "         For more information visit http://projects.coin-or.org/Ipopt\n",
+      "******************************************************************************\n",
+      "\n",
+      "This is Ipopt version 3.12.4, running with linear solver mumps.\n",
+      "NOTE: Other linear solvers might be more efficient (see Ipopt documentation).\n",
+      "\n",
+      "Number of nonzeros in equality constraint Jacobian...:        0\n",
+      "Number of nonzeros in inequality constraint Jacobian.:        0\n",
+      "Number of nonzeros in Lagrangian Hessian.............:        3\n",
+      "\n",
+      "Total number of variables............................:        2\n",
+      "                     variables with only lower bounds:        0\n",
+      "                variables with lower and upper bounds:        0\n",
+      "                     variables with only upper bounds:        0\n",
+      "Total number of equality constraints.................:        0\n",
+      "Total number of inequality constraints...............:        0\n",
+      "        inequality constraints with only lower bounds:        0\n",
+      "   inequality constraints with lower and upper bounds:        0\n",
+      "        inequality constraints with only upper bounds:        0\n",
+      "\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "   0  1.0000000e+00 0.00e+00 2.00e+00  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0\n",
+      "   1  9.5312500e-01 0.00e+00 1.25e+01  -1.0 1.00e+00    -  1.00e+00 2.50e-01f  3\n",
+      "   2  4.8320569e-01 0.00e+00 1.01e+00  -1.0 9.03e-02    -  1.00e+00 1.00e+00f  1\n",
+      "   3  4.5708829e-01 0.00e+00 9.53e+00  -1.0 4.29e-01    -  1.00e+00 5.00e-01f  2\n",
+      "   4  1.8894205e-01 0.00e+00 4.15e-01  -1.0 9.51e-02    -  1.00e+00 1.00e+00f  1\n",
+      "   5  1.3918726e-01 0.00e+00 6.51e+00  -1.7 3.49e-01    -  1.00e+00 5.00e-01f  2\n",
+      "   6  5.4940990e-02 0.00e+00 4.51e-01  -1.7 9.29e-02    -  1.00e+00 1.00e+00f  1\n",
+      "   7  2.9144630e-02 0.00e+00 2.27e+00  -1.7 2.49e-01    -  1.00e+00 5.00e-01f  2\n",
+      "   8  9.8586451e-03 0.00e+00 1.15e+00  -1.7 1.10e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   9  2.3237475e-03 0.00e+00 1.00e+00  -1.7 1.00e-01    -  1.00e+00 1.00e+00f  1\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "  10  2.3797236e-04 0.00e+00 2.19e-01  -1.7 5.09e-02    -  1.00e+00 1.00e+00f  1\n",
+      "  11  4.9267371e-06 0.00e+00 5.95e-02  -1.7 2.53e-02    -  1.00e+00 1.00e+00f  1\n",
+      "  12  2.8189505e-09 0.00e+00 8.31e-04  -2.5 3.20e-03    -  1.00e+00 1.00e+00f  1\n",
+      "  13  1.0095040e-15 0.00e+00 8.68e-07  -5.7 9.78e-05    -  1.00e+00 1.00e+00f  1\n",
+      "  14  1.3288608e-28 0.00e+00 2.02e-13  -8.6 4.65e-08    -  1.00e+00 1.00e+00f  1\n",
+      "\n",
+      "Number of Iterations....: 14\n",
+      "\n",
+      "                                   (scaled)                 (unscaled)\n",
+      "Objective...............:   1.3288608467480825e-28    1.3288608467480825e-28\n",
+      "Dual infeasibility......:   2.0183854587685121e-13    2.0183854587685121e-13\n",
+      "Constraint violation....:   0.0000000000000000e+00    0.0000000000000000e+00\n",
+      "Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+00\n",
+      "Overall NLP error.......:   2.0183854587685121e-13    2.0183854587685121e-13\n",
+      "\n",
+      "\n",
+      "Number of objective function evaluations             = 36\n",
+      "Number of objective gradient evaluations             = 15\n",
+      "Number of equality constraint evaluations            = 0\n",
+      "Number of inequality constraint evaluations          = 0\n",
+      "Number of equality constraint Jacobian evaluations   = 0\n",
+      "Number of inequality constraint Jacobian evaluations = 0\n",
+      "Number of Lagrangian Hessian evaluations             = 14\n",
+      "Total CPU secs in IPOPT (w/o function evaluations)   =      0.118\n",
+      "Total CPU secs in NLP function evaluations           =      0.029\n",
+      "\n",
+      "EXIT: Optimal Solution Found.\n",
+      "x = 0.9999999999999899 y = 0.9999999999999792\n"
+     ]
+    }
+   ],
+   "source": [
+    "# JuMP: Rosenbrock Example\n",
+    "# Instead of hand-coding first and second derivatives, you only have to give `JuMP` expressions for objective and constraints.\n",
+    "# Here is an example.\n",
+    "\n",
+    "\n",
+    "using JuMP\n",
+    "using Ipopt\n",
+    "\n",
+    "let\n",
+    "\n",
+    "    m = Model(solver=IpoptSolver())\n",
+    "\n",
+    "    @variable(m, x)\n",
+    "    @variable(m, y)\n",
+    "\n",
+    "    @NLobjective(m, Min, (1-x)^2 + 100(y-x^2)^2)\n",
+    "\n",
+    "    solve(m)\n",
+    "\n",
+    "    println(\"x = \", getvalue(x), \" y = \", getvalue(y))\n",
+    "\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "attributes": {
+     "classes": [
+      "julia"
+     ],
+     "id": ""
+    },
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "This is Ipopt version 3.12.4, running with linear solver mumps.\n",
+      "NOTE: Other linear solvers might be more efficient (see Ipopt documentation).\n",
+      "\n",
+      "Number of nonzeros in equality constraint Jacobian...:        0\n",
+      "Number of nonzeros in inequality constraint Jacobian.:        2\n",
+      "Number of nonzeros in Lagrangian Hessian.............:        5\n",
+      "\n",
+      "Total number of variables............................:        2\n",
+      "                     variables with only lower bounds:        0\n",
+      "                variables with lower and upper bounds:        0\n",
+      "                     variables with only upper bounds:        0\n",
+      "Total number of equality constraints.................:        0\n",
+      "Total number of inequality constraints...............:        1\n",
+      "        inequality constraints with only lower bounds:        0\n",
+      "   inequality constraints with lower and upper bounds:        0\n",
+      "        inequality constraints with only upper bounds:        1\n",
+      "\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "   0  1.0000000e+00 0.00e+00 2.00e+00  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0\n",
+      "   1  9.5312500e-01 0.00e+00 1.25e+01  -1.0 5.00e-01    -  1.00e+00 5.00e-01f  2\n",
+      "   2  4.9204994e-01 0.00e+00 9.72e-01  -1.0 8.71e-02    -  1.00e+00 1.00e+00f  1\n",
+      "   3  2.0451702e+00 0.00e+00 3.69e+01  -1.7 3.80e-01    -  1.00e+00 1.00e+00H  1\n",
+      "   4  1.0409466e-01 0.00e+00 3.10e-01  -1.7 1.46e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   5  8.5804626e-02 0.00e+00 2.71e-01  -1.7 9.98e-02    -  1.00e+00 1.00e+00h  1\n",
+      "   6  9.4244879e-02 0.00e+00 6.24e-02  -1.7 3.74e-02    -  1.00e+00 1.00e+00h  1\n",
+      "   7  8.0582034e-02 0.00e+00 1.51e-01  -2.5 6.41e-02    -  1.00e+00 1.00e+00h  1\n",
+      "   8  7.8681242e-02 0.00e+00 2.12e-03  -2.5 1.12e-02    -  1.00e+00 1.00e+00h  1\n",
+      "   9  7.6095770e-02 0.00e+00 6.16e-03  -3.8 1.37e-02    -  1.00e+00 1.00e+00h  1\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "  10  7.6033892e-02 0.00e+00 2.23e-06  -3.8 3.99e-04    -  1.00e+00 1.00e+00h  1\n",
+      "  11  7.5885642e-02 0.00e+00 2.07e-05  -5.7 7.99e-04    -  1.00e+00 1.00e+00h  1\n",
+      "  12  7.5885428e-02 0.00e+00 2.74e-11  -5.7 1.38e-06    -  1.00e+00 1.00e+00h  1\n",
+      "  13  7.5883585e-02 0.00e+00 3.19e-09  -8.6 9.93e-06    -  1.00e+00 1.00e+00f  1\n",
+      "\n",
+      "Number of Iterations....: 13\n",
+      "\n",
+      "                                   (scaled)                 (unscaled)\n",
+      "Objective...............:   7.5883585442440671e-02    7.5883585442440671e-02\n",
+      "Dual infeasibility......:   3.1949178858070582e-09    3.1949178858070582e-09\n",
+      "Constraint violation....:   0.0000000000000000e+00    0.0000000000000000e+00\n",
+      "Complementarity.........:   2.5454985882932001e-09    2.5454985882932001e-09\n",
+      "Overall NLP error.......:   3.1949178858070582e-09    3.1949178858070582e-09\n",
+      "\n",
+      "\n",
+      "Number of objective function evaluations             = 20\n",
+      "Number of objective gradient evaluations             = 14\n",
+      "Number of equality constraint evaluations            = 0\n",
+      "Number of inequality constraint evaluations          = 20\n",
+      "Number of equality constraint Jacobian evaluations   = 0\n",
+      "Number of inequality constraint Jacobian evaluations = 14\n",
+      "Number of Lagrangian Hessian evaluations             = 13\n",
+      "Total CPU secs in IPOPT (w/o function evaluations)   =      0.004\n",
+      "Total CPU secs in NLP function evaluations           =      0.002\n",
+      "\n",
+      "EXIT: Optimal Solution Found.\n",
+      "x = 0.7247018392092258 y = 0.5242206029480763\n"
+     ]
+    }
+   ],
+   "source": [
+    "# not bad, right?\n",
+    "# adding the constraint from before:\n",
+    "\n",
+    "let\n",
+    "    \n",
+    "    m = Model(solver=IpoptSolver())\n",
+    "\n",
+    "    @variable(m, x)\n",
+    "    @variable(m, y)\n",
+    "\n",
+    "    @NLobjective(m, Min, (1-x)^2 + 100(y-x^2)^2)\n",
+    "    @NLconstraint(m,x^2 + y^2 <= 0.8)\n",
+    "\n",
+    "    solve(m)\n",
+    "\n",
+    "    println(\"x = \", getvalue(x), \" y = \", getvalue(y))\n",
+    "\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "## JuMP: Maximium Likelihood\n",
+    "\n",
+    "* Let's redo the maximum likelihood example in JuMP.\n",
+    "* Let $\\mu,\\sigma^2$ be the unknown mean and variance of a random sample generated from the normal distribution.\n",
+    "* Find the maximum likelihood estimator for those parameters!\n",
+    "* density:\n",
+    "\n",
+    "$$ f(x_i|\\mu,\\sigma^2) = \\frac{1}{\\sigma \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x_i - \\mu)^2}{2\\sigma^2}\\right) \n",
+    "$$\n",
+    "\n",
+    "* Likelihood Function\n",
+    "\n",
+    "$$ \\begin{aligned} \n",
+    "L(\\mu,\\sigma^2) = \\Pi_{i=1}^N f(x_i|\\mu,\\sigma^2) =& \\frac{1}{(\\sigma \\sqrt{2\\pi})^n} \\exp\\left(-\\frac{1}{2\\sigma^2} \\sum_{i=1}^N (x_i-\\mu)^2 \\right) \\\\\n",
+    "\t =& \\left(\\sigma^2 2\\pi\\right)^{-\\frac{n}{2}} \\exp\\left(-\\frac{1}{2\\sigma^2} \\sum_{i=1}^N (x_i-\\mu)^2 \\right) \n",
+    "\\end{aligned} \n",
+    "$$\n",
+    "\n",
+    "* Constraints: $\\mu\\in \\mathbb{R},\\sigma>0$\n",
+    "* log-likelihood: \n",
+    "\n",
+    "$$ \\log L = l = -\\frac{n}{2} \\log \\left( 2\\pi \\sigma^2 \\right) - \\frac{1}{2\\sigma^2} \\sum_{i=1}^N (x_i-\\mu)^2 $$\n",
+    "\n",
+    "* Let's do this in `JuMP`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "attributes": {
+     "classes": [
+      "julia"
+     ],
+     "id": ""
+    },
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "This is Ipopt version 3.12.4, running with linear solver mumps.\n",
+      "NOTE: Other linear solvers might be more efficient (see Ipopt documentation).\n",
+      "\n",
+      "Number of nonzeros in equality constraint Jacobian...:        0\n",
+      "Number of nonzeros in inequality constraint Jacobian.:        0\n",
+      "Number of nonzeros in Lagrangian Hessian.............:        3\n",
+      "\n",
+      "Total number of variables............................:        2\n",
+      "                     variables with only lower bounds:        1\n",
+      "                variables with lower and upper bounds:        0\n",
+      "                     variables with only upper bounds:        0\n",
+      "Total number of equality constraints.................:        0\n",
+      "Total number of inequality constraints...............:        0\n",
+      "        inequality constraints with only lower bounds:        0\n",
+      "   inequality constraints with lower and upper bounds:        0\n",
+      "        inequality constraints with only upper bounds:        0\n",
+      "\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "   0  1.7211927e+05 0.00e+00 1.01e+02  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0\n",
+      "   1  1.2147584e+05 0.00e+00 9.58e+01  -1.0 9.27e+00    -  1.00e+00 5.00e-01f  2\n",
+      "   2  7.4758242e+04 0.00e+00 3.97e+01  -1.0 2.37e-01    -  8.94e-01 1.00e+00f  1\n",
+      "   3  4.9624139e+04 0.00e+00 1.64e+01  -1.0 3.08e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   4  3.6644573e+04 0.00e+00 6.64e+00  -1.0 3.88e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   5  3.0384758e+04 0.00e+00 2.60e+00  -1.0 4.69e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   6  2.7756981e+04 0.00e+00 9.40e-01  -1.0 5.20e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   7  2.6938155e+04 0.00e+00 2.73e-01  -1.7 4.72e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   8  2.6791555e+04 0.00e+00 5.45e-02  -1.7 3.06e-01    -  1.00e+00 1.00e+00f  1\n",
+      "   9  2.6784961e+04 0.00e+00 2.83e-03  -2.5 8.44e-02    -  1.00e+00 1.00e+00f  1\n",
+      "iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls\n",
+      "  10  2.6784947e+04 0.00e+00 6.72e-06  -3.8 4.30e-03    -  1.00e+00 1.00e+00f  1\n",
+      "  11  2.6784947e+04 0.00e+00 1.69e-09  -5.7 6.80e-05    -  1.00e+00 1.00e+00f  1\n",
+      "  12  2.6784947e+04 0.00e+00 4.02e-13  -8.6 1.02e-06    -  1.00e+00 1.00e+00f  1\n",
+      "\n",
+      "Number of Iterations....: 12\n",
+      "\n",
+      "                                   (scaled)                 (unscaled)\n",
+      "Objective...............:   8.4800120957055221e+00    2.6784947040164145e+04\n",
+      "Dual infeasibility......:   4.0182611534353866e-13    1.2692070597731996e-09\n",
+      "Constraint violation....:   0.0000000000000000e+00    0.0000000000000000e+00\n",
+      "Complementarity.........:   2.5064395506978949e-09    7.9168343001320250e-06\n",
+      "Overall NLP error.......:   2.5064395506978949e-09    7.9168343001320250e-06\n",
+      "\n",
+      "\n",
+      "Number of objective function evaluations             = 18\n",
+      "Number of objective gradient evaluations             = 13\n",
+      "Number of equality constraint evaluations            = 0\n",
+      "Number of inequality constraint evaluations          = 0\n",
+      "Number of equality constraint Jacobian evaluations   = 0\n",
+      "Number of inequality constraint Jacobian evaluations = 0\n",
+      "Number of Lagrangian Hessian evaluations             = 12\n",
+      "Total CPU secs in IPOPT (w/o function evaluations)   =      0.006\n",
+      "Total CPU secs in NLP function evaluations           =      0.023\n",
+      "\n",
+      "EXIT: Optimal Solution Found.\n",
+      "μ = 4.490925092754868, mean(data) = 4.490925092754868\n",
+      "σ^2 = 12.417569220495565, var(data) = 12.418811091779508\n"
+     ]
+    }
+   ],
+   "source": [
+    "#  Copyright 2015, Iain Dunning, Joey Huchette, Miles Lubin, and contributors\n",
+    "#  example modified \n",
+    "using JuMP\n",
+    "using Distributions\n",
+    "\n",
+    "distrib = Normal(4.5,3.5)\n",
+    "n = 10000\n",
+    "\n",
+    "data = rand(distrib,n);\n",
+    "\n",
+    "m = Model(solver=IpoptSolver())\n",
+    "\n",
+    "@variable(m, mu, start = 0.0)\n",
+    "@variable(m, sigma >= 0.0, start = 1.0)\n",
+    "\n",
+    "@NLobjective(m, Max, -(n/2)*log(2π*sigma^2)-sum((data[i] - mu) ^ 2 for i = 1:n)/(2*sigma^2))\n",
+    "\n",
+    "solve(m)\n",
+    "println(\"μ = \", getvalue(mu),\", mean(data) = \", mean(data))\n",
+    "println(\"σ^2 = \", getvalue(sigma)^2, \", var(data) = \", var(data))"
+   ]
+  }
+ ],
+ "metadata": {
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Julia 0.6.0",
+   "language": "julia",
+   "name": "julia-0.6"
+  },
+  "language_info": {
+   "file_extension": ".jl",
+   "mimetype": "application/julia",
+   "name": "julia",
+   "version": "0.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
