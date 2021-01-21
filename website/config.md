@@ -19,11 +19,11 @@ The latter allows you to plug in values that you would have defined here.
              deployed page to be in a subfolder e.g.: `YourPackage.jl/web/`.
 -->
 @def title       = "ScPo Computational Economics"
-@def prepath     = "NumericalMethods/website"
+@def prepath     = "NumericalMethods"
 @def description = """
                    Computational Economics for PhD Students at SciencesPo Paris
                    """
-@def authors     = "Florian Oswald"
+@def author     = "Florian Oswald"
 
 <!--  NAVBAR SPECS
   NOTE:
