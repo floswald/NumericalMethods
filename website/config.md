@@ -78,7 +78,7 @@ The latter allows you to plug in values that you would have defined here.
 
 @def add_github_view  = true
 @def add_github_star  = true
-@def github_repo      = "ScPoEcon/NumericalMethods"
+@def github_repo      = "floswald/NumericalMethods"
 
 <!-- SECTION LAYOUT
 NOTE:
