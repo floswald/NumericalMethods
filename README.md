@@ -1,5 +1,9 @@
+
+
+
 # Computational Economics for PhDs
 
+<p align="center"><a href="https://floswald.github.io/NumericalMethods/"> <b>Go to course website</b> :balloon:</a></p>
 
 * **Teacher:** Florian Oswald, [florian.oswald@sciencespo.fr](mailto:florian.oswald@sciencespo.fr)
 * **Class Times:** Fridays 10:15-12:15 starting 29 Jan 2021
@@ -70,6 +74,7 @@ There are some excellent references for computational methods out there. This co
 * [**Kochenderfer and Wheeler**](https://mitpress.mit.edu/books/algorithms-optimization) (2019), Algorithms for Optimization, MIT Press
 * [**A Gentle Introduction to Effective Computing in Quantitative Research**](https://mitpress.mit.edu/books/gentle-introduction-effective-computing-quantitative-research) - What Every Research Assistant Should Know, Harry J. Paarsch and Konstantin Golyaev
 
+<p align="center"><a href="https://floswald.github.io/NumericalMethods/"> <b>Go to course website</b> :balloon:</a></p>
 
 ## Course Schedule
 
