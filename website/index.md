@@ -80,15 +80,7 @@ There are some excellent references for computational methods out there. This co
 1. Talk through term project requirements
 1. Show where material is and do first set of slides.
     
-#### Homework
 
-* Sign up to github.com.
-* Sign up for [introduction to github](https://lab.github.com/githubtraining/introduction-to-github) and send me a screenshot of all completed issues.
-* [Make a pull request.](https://github.com/ScPo-CompEcon/Students)
-
-#### Optional Julia Workouts
-
-* [https://exercism.io/](https://exercism.io/) offers some simple coding exercises. I highly recommend those if you want to get some extra practice - particularly in the beginning!
 
 ___
 
