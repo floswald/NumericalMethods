@@ -34,7 +34,7 @@ In this workhorse of epidemiology we model agents as belonging to a certain clas
 * *infected*, or
 * *removed/recovered*
 
-The models you may have heard about during the COVID19 pandemic are more sophisticated versions of what we will see here, but they share some important common features. At the end of this notebook, we will want to generate the plot. It shows the number of agents belonging to each class at a certain point in time after the outbreak of the disease:
+The models you may have heard about during the COVID19 pandemic are more sophisticated versions of what we will see here, but they share some important common features. At the end of this notebook, we will want to generate the following plot. It shows the number of agents belonging to each class at a certain point in time after the outbreak of the disease:
 """
 
 # ╔═╡ f9a75ac4-08d9-11eb-3167-011eb698a32c
@@ -425,8 +425,8 @@ discrete_time_SIR_plot
 # ╟─2f980870-0848-11eb-3edb-0d4cd1ed5b3d
 # ╟─6af30142-08b4-11eb-3759-4d2505faf5a0
 # ╟─c6f9feb6-08f3-11eb-0930-83385ca5f032
-# ╠═d8d8e7d8-08b4-11eb-086e-6fdb88511c6a
-# ╠═780c483a-08f4-11eb-1205-0b8aaa4b1c2d
+# ╟─d8d8e7d8-08b4-11eb-086e-6fdb88511c6a
+# ╟─780c483a-08f4-11eb-1205-0b8aaa4b1c2d
 # ╟─d74bace6-08f4-11eb-2a6b-891e52952f57
 # ╠═dbdf2812-08f4-11eb-25e7-811522b24627
 # ╟─238f0716-0903-11eb-1595-df71600f5de7

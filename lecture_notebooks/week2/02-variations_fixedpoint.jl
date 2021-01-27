@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.12
+# v0.12.18
 
 using Markdown
 using InteractiveUtils
@@ -31,18 +31,6 @@ For this example, we will start with a simple example of determining fixed point
 The goal is to start with code in a MATLAB style, and move towards a more **Julian** style with high mathematical clarity.
 """
 
-# ╔═╡ 2f409d52-5658-11eb-3678-578ad755c243
-begin
-	import Pkg
-	Pkg.activate(mktempdir())
-end
-
-# ╔═╡ 30b36a0c-5658-11eb-1721-adea15fa776d
-# add packages needed for this notebook
-begin
-	Pkg.add(["NLsolve","StaticArrays"])
-end
-
 # ╔═╡ 8012ff7a-565a-11eb-0fa4-9f5c4bd09204
 md"
 Let's start with a basic `while` loop. 
@@ -53,6 +41,10 @@ Let's start with a basic `while` loop.
 * recompute the distance between old and new guess
 * update old -> new
 "
+
+# ╔═╡ bb261a40-5ff9-11eb-1209-4536480658d3
+md"
+in order to run this notebook, you need to activate the the project file in this week's [folder](https://github.com/floswald/NumericalMethods/blob/master/lecture_notebooks/week2/Project.toml)"
 
 # ╔═╡ 380135f8-5655-11eb-2845-71dad8c3acdd
 fpprinter(v,diff,iter) = md"Fixed point = $(round(v,digits=6)), and |f(x) - x| = $(round(diff,digits = 10)) in $iter iterations"
@@ -206,21 +198,6 @@ To enable this, Julia has two features:  named function parameters, and named tu
 
 # ╔═╡ 4647c698-5657-11eb-2d66-ad8c036a9323
 let
-	# better style
-	# function fixedpointmap(f, iv, tolerance, maxiter)
-	# 	# setup the algorithm
-	# 	x_old = iv
-	# 	normdiff = Inf
-	# 	iter = 1
-	# 	while normdiff > tolerance && iter <= maxiter
-	# 		x_new = f(x_old) # use the passed in map
-	# 		normdiff = norm(x_new - x_old)
-	# 		x_old = x_new
-	# 		iter = iter + 1
-	# 	end
-	# 	return (x_old, normdiff, iter)
-	# end
-
 	# define a map and parameters
 	f(v) = p + β * v # note that p and β are used in the function!
 	
@@ -322,9 +299,8 @@ end
 
 # ╔═╡ Cell order:
 # ╟─495e8658-5654-11eb-378f-990600aefeee
-# ╠═2f409d52-5658-11eb-3678-578ad755c243
-# ╠═30b36a0c-5658-11eb-1721-adea15fa776d
 # ╟─8012ff7a-565a-11eb-0fa4-9f5c4bd09204
+# ╟─bb261a40-5ff9-11eb-1209-4536480658d3
 # ╠═5d49e75c-5654-11eb-1808-2d45b1bb8c3d
 # ╠═380135f8-5655-11eb-2845-71dad8c3acdd
 # ╟─d0002c4c-5655-11eb-30a1-5b7e6d56d14a

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.12
+# v0.12.18
 
 using Markdown
 using InteractiveUtils
@@ -10,6 +10,8 @@ using LinearAlgebra, Statistics
 # ╔═╡ 9da58875-31ef-4559-bf1d-54c43a0c5a79
 md"""
 # Arrays, Tuples, Ranges, and Other Fundamental Types
+
+**way too long**
 """
 
 # ╔═╡ db12d2e9-48e0-4c4a-9644-eabefda2338e
@@ -1451,8 +1453,32 @@ into matrices and vectors, and directly use the equations for
 - Plot a histogram of these estimates for each variable  
 """
 
-# ╔═╡ 6ec3e1dc-c000-4f78-a59d-8511969f26c5
-A = [1 2; 2 3]
+# ╔═╡ b6d19689-f299-41c5-a2c3-b8cc3dafd50d
+begin
+	x = [1.0, missing, 2.0, missing, missing, 5.0]
+	
+	@show mean(x)
+	@show mean(skipmissing(x))
+	@show coalesce.(x, 0.0);  # replace missing with 0.0;
+end
+
+# ╔═╡ 0e2d9b8a-bb59-48cc-864f-19bec0afe339
+a = [10; 20; 30; 40]
+
+# ╔═╡ 4d7b7a51-46e8-4f32-bf97-f9220c98bfb5
+a = randn(4)
+
+# ╔═╡ 4a1c1a7c-509d-4614-8eba-107af00425b1
+A = [1 2; 3 4]
+
+# ╔═╡ 9d15b424-5b9e-440d-b35e-27344ac7ab00
+b = sort(a, rev = true)  # returns new array, original not modified
+
+# ╔═╡ b08155b2-5583-11eb-1b80-857ef0dd906a
+a = [1.1,2.0,3.0]
+
+# ╔═╡ e1b86d4a-0aa0-46a7-ad07-9b9ae2b9616e
+b = reshape(a, 2, 2)
 
 # ╔═╡ 28c6da77-d418-4f9c-9537-9bc865c28e3c
 # 
@@ -1461,17 +1487,29 @@ a = 0.0:0.1:1.0  # 0.0, 0.1, 0.2, ... 1.0
 # ╔═╡ 531fb1d2-a720-4af2-9c45-e21331fbc0e8
 a = [10 20 30 40]  # two dimensional, shape is 1 x n
 
-# ╔═╡ df98ed9e-db7d-48ba-86f3-a6fde4b763c5
-a = ones(1, 2)
+# ╔═╡ 0f7912a1-cd59-41f3-8cad-9e59932c571e
+b = ones(2, 2)
+
+# ╔═╡ dd2cdd3f-30a5-4682-8134-0eb9009faf6e
+a = [10 20 30 40]'
 
 # ╔═╡ dbd3202b-c660-4afe-909f-f8c957b65e62
 a = [10, 20, 30, 40]
 
-# ╔═╡ e1b86d4a-0aa0-46a7-ad07-9b9ae2b9616e
-b = reshape(a, 2, 2)
+# ╔═╡ c9cf0e1f-aad0-408c-8704-4fec13b88dd5
+b = [-100, 0, 100]
 
-# ╔═╡ 31408ba7-7b98-4a73-ac65-e569d5c6927b
-A = ones(2, 2)
+# ╔═╡ 6ec3e1dc-c000-4f78-a59d-8511969f26c5
+A = [1 2; 2 3]
+
+# ╔═╡ c5e9bf1e-6bef-4cb8-a145-200e93b69079
+a = zeros(4)
+
+# ╔═╡ deed19d5-d6b1-4eaf-aa4a-fb1c8bb7b032
+a = [10, 20, 30, 40]
+
+# ╔═╡ df98ed9e-db7d-48ba-86f3-a6fde4b763c5
+a = ones(1, 2)
 
 # ╔═╡ a979ff8a-70c9-4f94-a261-7420b314557c
 
@@ -1487,17 +1525,14 @@ end
 	
 
 
-# ╔═╡ eace2ae0-491b-4cb3-83eb-f360861a3ba5
-a = [10, 20, 30]
-
-# ╔═╡ 3918b4dd-c72d-42e4-82b5-1db0eb58db6a
-x = [3.0, missing, 5.0, missing, missing]
-
-# ╔═╡ ed2edc14-0e6c-4010-95c1-7b3749ad02a9
-b = [true false; false true]
-
-# ╔═╡ c9cf0e1f-aad0-408c-8704-4fec13b88dd5
-b = [-100, 0, 100]
+# ╔═╡ bfd07ec1-f29d-4a33-9294-2f13e3085669
+begin
+	x = missing
+	
+	@show x == missing
+	@show x === missing  # an exception
+	@show ismissing(x);
+end
 
 # ╔═╡ 89916127-aef3-4d79-9020-45b91de4a6d2
 begin
@@ -1510,79 +1545,46 @@ begin
 	@show mean(x);
 end
 
-# ╔═╡ aa7fe199-2523-4506-8104-7f11d0cddde0
-A = -ones(2, 2)
+# ╔═╡ ed2edc14-0e6c-4010-95c1-7b3749ad02a9
+b = [true false; false true]
+
+# ╔═╡ 3918b4dd-c72d-42e4-82b5-1db0eb58db6a
+x = [3.0, missing, 5.0, missing, missing]
 
 # ╔═╡ 0927ba67-19fc-4a7c-bdb1-18466208b3a2
 # You can create an empty array using the `Array()` constructor
 # Need to add undef
 x = Array{Float64}(undef, 2, 2)
 
-# ╔═╡ 1a7ff4b7-56cf-43c8-abd3-58ac9506d92f
-a = [10 20; 30 40]  # 2 x 2
+# ╔═╡ 8910b4e6-9d51-4aa5-b699-2d4cb76d8a53
+a = randn(2, 2)
 
-# ╔═╡ 4a1c1a7c-509d-4614-8eba-107af00425b1
-A = [1 2; 3 4]
-
-# ╔═╡ dd2cdd3f-30a5-4682-8134-0eb9009faf6e
-a = [10 20 30 40]'
-
-# ╔═╡ b6d19689-f299-41c5-a2c3-b8cc3dafd50d
-begin
-	x = [1.0, missing, 2.0, missing, missing, 5.0]
-	
-	@show mean(x)
-	@show mean(skipmissing(x))
-	@show coalesce.(x, 0.0);  # replace missing with 0.0;
-end
-
-# ╔═╡ 1d1652a8-d075-40c9-90d8-3303188f6773
-x = [1.0, nothing]
-
-# ╔═╡ 4d7b7a51-46e8-4f32-bf97-f9220c98bfb5
-a = randn(4)
+# ╔═╡ eace2ae0-491b-4cb3-83eb-f360861a3ba5
+a = [10, 20, 30]
 
 # ╔═╡ 3a4a0983-e3d1-4449-8aa2-bde987a34cd9
 b = ones(2, 2)
 
-# ╔═╡ 0f7912a1-cd59-41f3-8cad-9e59932c571e
-b = ones(2, 2)
+# ╔═╡ aa7fe199-2523-4506-8104-7f11d0cddde0
+A = -ones(2, 2)
 
-# ╔═╡ b08155b2-5583-11eb-1b80-857ef0dd906a
-b = [1.1,2.0,3.0]
+# ╔═╡ 1a7ff4b7-56cf-43c8-abd3-58ac9506d92f
+a = [10 20; 30 40]  # 2 x 2
 
-# ╔═╡ 0e2d9b8a-bb59-48cc-864f-19bec0afe339
-a = [10; 20; 30; 40]
+# ╔═╡ 31408ba7-7b98-4a73-ac65-e569d5c6927b
+A = ones(2, 2)
 
-# ╔═╡ 8910b4e6-9d51-4aa5-b699-2d4cb76d8a53
-a = randn(2, 2)
-
-# ╔═╡ c5e9bf1e-6bef-4cb8-a145-200e93b69079
-a = zeros(4)
-
-# ╔═╡ 4a6d4daa-96a5-4ee1-8a74-d64ab363b62d
-a = [1 2 3 4]  # two dimensional
+# ╔═╡ 1d1652a8-d075-40c9-90d8-3303188f6773
+x = [1.0, nothing]
 
 # ╔═╡ 403c81aa-f2e0-43ff-a327-dd4d74d2762b
 b = sort!(a, rev = true)  # returns *modified original* array
 
-# ╔═╡ deed19d5-d6b1-4eaf-aa4a-fb1c8bb7b032
-a = [10, 20, 30, 40]
-
-# ╔═╡ 9d15b424-5b9e-440d-b35e-27344ac7ab00
-b = sort(a, rev = true)  # returns new array, original not modified
-
-# ╔═╡ bfd07ec1-f29d-4a33-9294-2f13e3085669
-begin
-	x = missing
-	
-	@show x == missing
-	@show x === missing  # an exception
-	@show ismissing(x);
-end
+# ╔═╡ 4a6d4daa-96a5-4ee1-8a74-d64ab363b62d
+a = [1 2 3 4]  # two dimensional
 
 # ╔═╡ Cell order:
-# ╟─9da58875-31ef-4559-bf1d-54c43a0c5a79
+# ╠═9da58875-31ef-4559-bf1d-54c43a0c5a79
 # ╟─db12d2e9-48e0-4c4a-9644-eabefda2338e
 # ╟─941ec474-e349-43fb-8605-8aa9b8a459ec
 # ╠═44b0626e-502f-4597-95d4-5f0a697cb54b
