@@ -709,6 +709,190 @@ There are many other languages out there. We have not mentioned
 * Scala
 * Go
 
+---
+class: impact
+
+# Jaw-Droppers
+## What's so cool about base julia
+
+---
+
+# Built-in Parallelism 1: BIG DATA
+
+.col-6[
+
+## Got Some Big Data, yeah?
+
+* Suppose you have this file on your laptop. 16GB RAM.
+
+* Suppose you don't want to set up on a huge cluster to do you work.
+
+* you just want to compute 1 mean from that data. How hard can it be?
+]
+
+.col-6[
+
+.center[![:scale 95%](hugefile.png)]
+
+]
+
+---
+
+# What `R` you going to do?
+
+.col-8[
+## Well, `R` of course.
+
+* Come here, my old friend.
+
+* Let's see if we can read that.
+
+```R
+> x = readBin("hugefile.bin",numeric(),"rb")
+Error in readBin("hugefile.bin", numeric(), "rb") : 
+  vector size cannot be NA/NaN
+```
+
+]
+.col-4[
+
+
+* Oops.
+
+* I only have 16GB of memory, so fully allocating that array to read data into it will not work on *any* language that can only do in-core computation.
+
+* (There are *packages* for out-of-core compute)
+
+]
+
+---
+
+# What is Julia going to do?
+
+```julia
+julia> using SharedArrays  # part of base julia
+
+julia> @time s = SharedArray{Float64}("/Users/74097/hugefile.bin",
+                 (2*10^9,));
+  0.982039 seconds (235.33 k allocations: 12.553 MiB)
+
+julia> typeof(s)    # backed by hard disk, not RAM!
+SharedArray{Float64,1}
+
+julia> size(s)  # 20 billion numbers, alright!
+(2000000000,)
+
+```
+
+---
+
+# Can julia do computation on that thing?
+
+
+.col-6[
+```julia
+julia> using Statistics
+
+julia> @time println(mean(s))
+0.0671098109489856
+ 12.155071 seconds (701.64 k allocations: 33.882 MiB, 0.05% gc time)
+ ```
+]
+
+.col-6[
+* You have full **out-of-core** compute built-into julia.
+
+* We only had to give a *filename* to the `SharedArray` constructor.
+
+* Better than renting a data centre, no?
+
+]
+
+---
+
+# Parallel Computation Out-of-the-box
+
+.col-4[
+## Some Boostrapping
+
+* Great for parallel - fully independent tasks
+
+* problem: each process needs their own copy of the data (think base R)
+
+* See if we can do better?
+]
+
+.col-8[
+```julia
+> julia -p auto
+julia> nworkers()
+8
+
+julia> using SharedArrays
+
+julia> s = SharedArray{Float64}((10^5,)); 
+
+julia> s .= rand(10^5);
+
+```
+]
+
+---
+
+# Parallel Computation Out-of-the-box
+
+```julia
+julia> using Statistics
+
+julia> @everywhere f(x) = [mean(rand(x, length(x))) for i in 1:1000]
+
+julia> function f_1core(x)
+            var(vcat([f(x) for i in 1:8]...))
+       end
+
+julia> function f_8core(x)
+       promise = [@spawn f(x) for i in 1:8]
+            var(vcat([fetch(pr) for pr in promise]...))
+       end
+```
+
+---
+
+# Parallel Computation Out-of-the-box
+
+
+```julia
+julia> @time f_1core(s)
+ 11.573436 seconds (811.49 k allocations: 6.003 GiB, 3.56% gc time)
+
+julia> @time f_1core(s)
+ 10.708183 seconds (16.01 k allocations: 5.961 GiB, 3.10% gc time)
+
+julia> @everywhere using Statistics
+
+julia> @time f_8core(s)
+  2.933473 seconds (67.26 k allocations: 3.703 MiB)
+8.250326613582839e-7
+
+julia> @time f_8core(s)
+  2.363975 seconds (1.32 k allocations: 189.859 KiB)
+8.232650394948932e-7
+```
+
+
+---
+
+# So What?
+
+* This is _cool_ because it is part of the core language. Not an add-on package.
+
+* This means that contributed add-on packages can lean really hard on that infrastructure and build upon it.
+
+* That's one of the things I really like about this language.
+
+
+
+
 
 ---
 
