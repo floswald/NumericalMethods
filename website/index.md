@@ -38,10 +38,6 @@ True to that motto, there will be homeworks for you to try out what you learned 
 1. [What is Version Control? watch this 5 minute video.](http://git-scm.com/video/what-is-version-control) and go back to Clement's stuff if unclear.
 
 
-## Homeworks
-
-There will be homeworks. They will be listed within the [Course Outline](#course-outline).
-
 
 ## Term Project
 

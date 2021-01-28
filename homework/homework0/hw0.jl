@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.11.8
+# v0.12.18
 
 using Markdown
 using InteractiveUtils
@@ -17,36 +17,24 @@ end
 md"_homework 0, version 2_"
 
 # ╔═╡ 7308bc54-e6cd-11ea-0eab-83f7535edf25
-# edit the code below to set your name and kerberos ID (i.e. email without @mit.edu)
+# edit the code below to set your name and email
 
-student = (name = "Jazzy Doe", kerberos_id = "jazz")
+student = (name = "Jazzy Jeff", email = "jazzy.jeff@yahoo.com")
 
 # press the ▶ button in the bottom right of this cell to run your edits
 # or use Shift+Enter
 
-# you might need to wait until all other cells in this notebook have completed running. 
-# scroll down the page to see what's up
-
-# ╔═╡ cdff6730-e785-11ea-2546-4969521b33a7
-md"""
-
-Submission by: **_$(student.name)_** ($(student.kerberos_id)@mit.edu)
-"""
+# ╔═╡ 8d14a384-6167-11eb-0fc8-03ea4aeb4aea
+if (student.name == "Jazzy Jeff") || !(contains(student.email, "@") && (student.email == "jazzy.jeff@yahoo.com"))
+	Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email and name in the `student` tuple above. (Contact me if you are really Jazzy Jeff) 😄"]))
+end
 
 # ╔═╡ a2181260-e6cd-11ea-2a69-8d9d31d1ef0e
 md"""
-# Homework 0: Getting up and running
+# Homework 0.2: Getting up and running
 
-First of all, **_welcome to the course!_** We are excited to teach you about real world applications of scientific computing, using the same tools that we work with ourselves.
-
-Before we start next week, we'd like everyone to **submit this zeroth homework assignment**. It will not affect your grade, but it will help us get everything running smoothly when the course starts. If you're stuck or don't have much time, just fill in your name and ID and submit 🙂
+* This is homeowork 0 from the MIT course [computational thinking](https://htmlpreview.github.io/?https://github.com/mitmath/18S191/blob/Fall20/homework/homework0/hw0.html)
 """
-
-# ╔═╡ 094e39c8-e6ce-11ea-131b-07c4a1199edf
-
-
-# ╔═╡ 31a8fbf8-e6ce-11ea-2c66-4b4d02b41995
-
 
 # ╔═╡ 339c2d5c-e6ce-11ea-32f9-714b3628909c
 md"## Exercise 1 - _Square root by Newton's method_
@@ -308,11 +296,9 @@ has area **$(area_sierpinski(n))**
 
 # ╔═╡ Cell order:
 # ╟─fafae38e-e852-11ea-1208-732b4744e4c2
-# ╟─cdff6730-e785-11ea-2546-4969521b33a7
 # ╠═7308bc54-e6cd-11ea-0eab-83f7535edf25
+# ╠═8d14a384-6167-11eb-0fc8-03ea4aeb4aea
 # ╟─a2181260-e6cd-11ea-2a69-8d9d31d1ef0e
-# ╟─094e39c8-e6ce-11ea-131b-07c4a1199edf
-# ╟─31a8fbf8-e6ce-11ea-2c66-4b4d02b41995
 # ╟─339c2d5c-e6ce-11ea-32f9-714b3628909c
 # ╟─56866718-e6ce-11ea-0804-d108af4e5653
 # ╠═bccf0e88-e754-11ea-3ab8-0170c2d44628
@@ -320,7 +306,7 @@ has area **$(area_sierpinski(n))**
 # ╟─d62f223c-e754-11ea-2470-e72a605a9d7e
 # ╠═4896bf0c-e754-11ea-19dc-1380bb356ab6
 # ╠═7a01a508-e78a-11ea-11da-999d38785348
-# ╟─682db9f8-e7b1-11ea-3949-6b683ca8b47b
+# ╠═682db9f8-e7b1-11ea-3949-6b683ca8b47b
 # ╟─088cc652-e7a8-11ea-0ca7-f744f6f3afdd
 # ╟─c18dce7a-e7a7-11ea-0a1a-f944d46754e5
 # ╟─5e24d95c-e6ce-11ea-24be-bb19e1e14657
@@ -341,7 +327,7 @@ has area **$(area_sierpinski(n))**
 # ╟─c21096c0-e856-11ea-3dc5-a5b0cbf29335
 # ╟─52533e00-e856-11ea-08a7-25e556fb1127
 # ╟─147ed7b0-e856-11ea-0d0e-7ff0d527e352
-# ╟─c1ecad86-e7bc-11ea-1201-23ee380181a1
+# ╠═c1ecad86-e7bc-11ea-1201-23ee380181a1
 # ╟─c9bf4288-e6ce-11ea-0e13-a36b5e685998
 # ╟─a60a492a-e7bc-11ea-0f0b-75d81ce46a01
 # ╟─b3c7a050-e855-11ea-3a22-3f514da746a4

@@ -20,13 +20,13 @@ Check out the [installation](/installation/) page on this website which was copi
 
 In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.
 
-[Slide for intro:](/why-julia/) Why Julia?
+[Slide for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia?
 
 ## So, Julia is *Fast*?
 
 We will dive right in with a fun benchmarking exercise where we compare julia to other commonly used languages.
 
-[Notebook](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
+[Right clock to save Notebooks!](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
 
 ## Basics of Arrays in Julia
 

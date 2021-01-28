@@ -1,0 +1,2 @@
+default:
+	bs serve

@@ -303,14 +303,14 @@ $$s_t := \frac{S_t}{N}; \quad i_t := \frac{I_t}{N}; \quad r_t := \frac{R_t}{N}$$
 
 # ╔═╡ d1fbea7a-0904-11eb-377d-690d7a16aa7b
 md"""
-Including recovery with probability $c$ we obtain the **discrete-time SIR model**:
+Including recovery with probability $g$ we obtain the **discrete-time SIR model**:
 """
 
 # ╔═╡ dba896a4-0904-11eb-3c47-cbbf6c01e830
 md"""
 $$\begin{align}
 s_{t+1} &= s_t - b \, s_t \, i_t \\
-i_{t+1} &= i_t + b \, s_t \, i_t - c \, i_t\\
+i_{t+1} &= i_t + b \, s_t \, i_t - g \, i_t\\
 r_{t+1} &= r_t + c \, i_t
 \end{align}$$
 """
@@ -433,7 +433,7 @@ discrete_time_SIR_plot
 # ╟─8e771c8a-0903-11eb-1e34-39de4f45412b
 # ╟─e83fc5b8-0904-11eb-096b-8da3a1acba12
 # ╟─d1fbea7a-0904-11eb-377d-690d7a16aa7b
-# ╠═dba896a4-0904-11eb-3c47-cbbf6c01e830
+# ╟─dba896a4-0904-11eb-3c47-cbbf6c01e830
 # ╟─4e3c7e62-090d-11eb-3d16-e921405a6b16
 # ╠═72061c66-090d-11eb-14c0-df619958e2b6
 # ╟─c07367be-0987-11eb-0680-0bebd894e1be
