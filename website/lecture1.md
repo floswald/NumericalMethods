@@ -20,7 +20,7 @@ Check out the [installation](/installation/) page on this website which was copi
 
 In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.
 
-[Slide for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia?
+[Slide for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia? [**does not run in safari browser! 🙁]
 
 ## So, Julia is *Fast*?
 
