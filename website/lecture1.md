@@ -26,7 +26,7 @@ In this section we want to understand why julia is a good choice for computation
 
 We will dive right in with a fun benchmarking exercise where we compare julia to other commonly used languages.
 
-[Right clock to save Notebooks!](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
+[Right click to save Notebooks from here!](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
 
 ## Basics of Arrays in Julia
 
@@ -40,3 +40,8 @@ Arrays are very important in computational work. Here we have a notebook:
 We can't have a computational course in 2021 *without* talking about epidemiological models! So we'll present the workhorse model in this week's notebooks as well.
 
 [Notebook also here.](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
+
+
+## Video from first session
+
+{{youtube session1}}
