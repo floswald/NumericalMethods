@@ -793,8 +793,7 @@ julia> size(s)  # 20 billion numbers, alright!
 ```julia
 julia> using Statistics
 
-julia> @time println(mean(s))
-0.0671098109489856
+julia> @time mean(s);
  12.155071 seconds (701.64 k allocations: 33.882 MiB, 0.05% gc time)
  ```
 ]
