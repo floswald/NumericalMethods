@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.18
+# v0.12.20
 
 using Markdown
 using InteractiveUtils
@@ -21,6 +21,9 @@ begin
 	discrete_time_SIR_plot = plot()  # i'll make an empty plot for you ;-)
 end
 
+# ╔═╡ 61d8b5a8-6709-11eb-2167-bfa7253a81dc
+using PlutoUI
+
 # ╔═╡ 57005404-6170-11eb-3ffc-f57feda21784
 # edit the code below to set your name and email
 
@@ -28,6 +31,20 @@ student = (name = "Jazzy Jeff", email = "jazzy.jeff@yahoo.com")
 
 # press the ▶ button in the bottom right of this cell to run your edits
 # or use Shift+Enter
+
+# ╔═╡ 14d5c6aa-670a-11eb-3cd3-9dd24111525b
+md"Homework 1 submitted by $(student.name)"
+
+# ╔═╡ 6239ebaa-6170-11eb-2217-c1937ab254bc
+begin
+	if (student.name == "Jazzy Jeff") 
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"You are not *really* called **Jazzy Jeff**. Please fill out name!"]))
+	elseif !(contains(student.email, "@"))
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email address.  "]))
+	elseif (student.email == "jazzy.jeff@yahoo.com")
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email in the `student` tuple above.  "]))
+	end
+end
 
 # ╔═╡ 362d2fba-5bce-11eb-14da-ef225485facb
 md"
@@ -191,13 +208,21 @@ md"""
 # ╔═╡ d9ba975a-5bc2-11eb-13bc-af33da4a7ef0
 discrete_time_SIR_plot
 
-# ╔═╡ 6239ebaa-6170-11eb-2217-c1937ab254bc
-if (student.name == "Jazzy Jeff") || !(contains(student.email, "@") && (student.email == "jazzy.jeff@yahoo.com"))
-	Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email and name in the `student` tuple above. (Are you really called Jazzy Jeff?) "]))
+# ╔═╡ dc9a2a08-6709-11eb-0e6d-836db998a5c9
+begin
+	if (student.name == "Jazzy Jeff") 
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"You are not *really* called **Jazzy Jeff**. Please fill out name!"]))
+	elseif !(contains(student.email, "@"))
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email address.  "]))
+	elseif (student.email == "jazzy.jeff@yahoo.com")
+		Markdown.MD(Markdown.Admonition("danger", "Oops!", [md"Please enter a valid email in the `student` tuple above.  "]))
+	end
 end
 
 # ╔═╡ Cell order:
+# ╟─14d5c6aa-670a-11eb-3cd3-9dd24111525b
 # ╠═57005404-6170-11eb-3ffc-f57feda21784
+# ╟─6239ebaa-6170-11eb-2217-c1937ab254bc
 # ╟─362d2fba-5bce-11eb-14da-ef225485facb
 # ╟─1d791a08-6171-11eb-3857-8da3d47c397e
 # ╠═8fe81ca2-5bc1-11eb-31a5-b39641ed1225
@@ -218,8 +243,9 @@ end
 # ╟─4679a54a-6175-11eb-3f65-4d91d741140f
 # ╟─a43170b4-6175-11eb-1ceb-792e90936ade
 # ╟─280c9750-617a-11eb-1599-e7af6e944315
+# ╠═61d8b5a8-6709-11eb-2167-bfa7253a81dc
 # ╠═13e7c542-5bc3-11eb-3bd4-877eb2050c77
 # ╠═68d2e158-5bc4-11eb-2a84-35548106ce43
 # ╠═d10fe5c2-5bc4-11eb-3f5f-fb8a8220cef4
 # ╠═d9ba975a-5bc2-11eb-13bc-af33da4a7ef0
-# ╟─6239ebaa-6170-11eb-2217-c1937ab254bc
+# ╟─dc9a2a08-6709-11eb-0e6d-836db998a5c9
