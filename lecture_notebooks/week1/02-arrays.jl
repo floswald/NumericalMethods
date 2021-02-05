@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.18
 
 using Markdown
 using InteractiveUtils
@@ -183,6 +183,36 @@ hcat(rand(2,2),falses(2,3))
 
 # ╔═╡ c66ff85c-55a5-11eb-042a-836b641d0bc9
 hcat(rand(2,2),fill("hi",2,5))
+
+# ╔═╡ f81c4ae0-6789-11eb-2289-333a2f14725b
+md"
+
+# `push`ing onto an existing (or empty) array
+
+* Oftentimes it's useful to accumulate elements along the way, e.g. in a loop.
+* In general *preallocating* arrays is good practice, particularly if you repeatedly modify the elements of an array.
+* But sometimes we don't know the eventual size of an array (it may depend on the outcome of some other operation)."
+
+# ╔═╡ 4a16caaa-678a-11eb-1818-5f72eb0bb0bb
+z = Int[]   
+
+# ╔═╡ 592f0b86-678a-11eb-39f4-55ec3bd7989a
+typeof(z)
+
+# ╔═╡ 5d2906c8-678a-11eb-3e11-05f1efd3f778
+length(z)
+
+# ╔═╡ 60b6d98a-678a-11eb-34f0-91b61835ccc2
+push!(z, 3)
+
+# ╔═╡ 686337f0-678a-11eb-09bd-2badaadba117
+pop!(z)
+
+# ╔═╡ 6dd1411e-678a-11eb-047a-a1bc3fdea332
+z
+
+# ╔═╡ 7c1e52b4-678a-11eb-1a97-3d56ba213b3b
+
 
 # ╔═╡ f53088a2-55a5-11eb-3b9b-8b91844c5384
 md"
@@ -492,7 +522,7 @@ end
 
 # ╔═╡ Cell order:
 # ╟─42ecaf0c-5585-11eb-07bf-05f964ffc325
-# ╠═7cf6ef84-6700-11eb-3cb3-6531e82cbb52
+# ╟─7cf6ef84-6700-11eb-3cb3-6531e82cbb52
 # ╟─6930bc28-6700-11eb-0505-f7c546f1acea
 # ╟─8140a376-5587-11eb-1372-cbf4cb8db60d
 # ╟─2b1ab8e6-5588-11eb-03bc-0f1b03719f35
@@ -529,6 +559,14 @@ end
 # ╠═516b88a0-55a5-11eb-105e-17c75539d751
 # ╠═6242d548-55a5-11eb-22e4-531a821011c9
 # ╠═c66ff85c-55a5-11eb-042a-836b641d0bc9
+# ╠═f81c4ae0-6789-11eb-2289-333a2f14725b
+# ╠═4a16caaa-678a-11eb-1818-5f72eb0bb0bb
+# ╠═592f0b86-678a-11eb-39f4-55ec3bd7989a
+# ╠═5d2906c8-678a-11eb-3e11-05f1efd3f778
+# ╠═60b6d98a-678a-11eb-34f0-91b61835ccc2
+# ╠═686337f0-678a-11eb-09bd-2badaadba117
+# ╠═6dd1411e-678a-11eb-047a-a1bc3fdea332
+# ╠═7c1e52b4-678a-11eb-1a97-3d56ba213b3b
 # ╟─f53088a2-55a5-11eb-3b9b-8b91844c5384
 # ╠═17ef63ac-55a6-11eb-3713-77dfe04fa601
 # ╟─2cfde6f6-55a6-11eb-0a12-6b336a02c015

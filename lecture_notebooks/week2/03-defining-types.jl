@@ -4,6 +4,9 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 082b1918-678b-11eb-1a78-2316091d6272
+using PlutoUI
+
 # ╔═╡ f855b1c0-670e-11eb-2a81-4de0846c0d93
 using Dates   
 
@@ -24,6 +27,24 @@ md"
 * The [manual](https://docs.julialang.org/en/v1/manual/types/) is very good again.
 * What's really cool with julia is the easy with which we can declare new types.
 "
+
+# ╔═╡ d19385e0-678a-11eb-3156-c51cb20abe3e
+md"
+# Julia Base Type System
+
+Here is the basics of the `Number` type in julia. This is just one part of the type system. 
+
+At the very top of all types (not shown) is the `DataType` `Any`, from which all others are derived.
+"
+
+# ╔═╡ e97a60e6-678c-11eb-0b37-fd80c3f0e8aa
+Resource("https://upload.wikimedia.org/wikipedia/commons/d/d9/Julia-number-type-hierarchy.svg")
+
+# ╔═╡ aa5adfba-678e-11eb-02e4-210b8b753e21
+subtypes(Integer)
+
+# ╔═╡ bff062f0-678e-11eb-131d-e11297e36d4b
+supertypes(Integer)
 
 # ╔═╡ bed2a154-f6d1-11ea-0812-1f5c628a9785
 md"
@@ -60,7 +81,7 @@ In other words, we need a way to be able to distinguish between different *types
 
 # ╔═╡ 9a168a92-670b-11eb-34af-0121d1a252bd
 md"
-#
+# Defining a New type
 "
 
 # ╔═╡ 66abc04e-f6d8-11ea-27d8-9f8b14659755
@@ -127,9 +148,6 @@ md"
 Now suppose we want to change the width of `r`. We would naturally try the following:
 
 "
-
-# ╔═╡ 299442a2-f6d9-11ea-1ed0-5fb7ccff2b35
-md"Now suppose we want to change the width of `r`. We would naturally try the following:"
 
 # ╔═╡ 63f76d28-f6d9-11ea-071c-458528c36008
 r.width = 10
@@ -406,7 +424,6 @@ begin
 		for tx in 1:w.T
 			dur += 1 # increase duration
 			if rand() < 0.5
-				println("yes")
 				# switches to another firm
 				finish!(w.spells[end], rand(Ln), Week(dur))
 				dur = 0 # reset duration
@@ -455,6 +472,11 @@ L0
 # ╟─4723a50e-f6d1-11ea-0b1c-3d33a9b92f87
 # ╟─91ba119e-670a-11eb-0bb2-15ac7192e7e7
 # ╟─92cef0a4-670a-11eb-2df2-5b31a1602299
+# ╟─d19385e0-678a-11eb-3156-c51cb20abe3e
+# ╟─082b1918-678b-11eb-1a78-2316091d6272
+# ╟─e97a60e6-678c-11eb-0b37-fd80c3f0e8aa
+# ╠═aa5adfba-678e-11eb-02e4-210b8b753e21
+# ╠═bff062f0-678e-11eb-131d-e11297e36d4b
 # ╟─bed2a154-f6d1-11ea-0812-1f5c628a9785
 # ╠═81113974-f6d2-11ea-2ef8-fb2930402a74
 # ╟─a4296474-6714-11eb-0500-1d888fe18b51
@@ -476,7 +498,6 @@ L0
 # ╟─f9d192fe-f6d8-11ea-138d-3dcdff33c034
 # ╟─6085144c-f6db-11ea-19fe-ed46dafb4562
 # ╟─1840898e-f6d9-11ea-3035-bb4dac496834
-# ╠═299442a2-f6d9-11ea-1ed0-5fb7ccff2b35
 # ╠═63f76d28-f6d9-11ea-071c-458528c36008
 # ╟─68934a2a-f6d9-11ea-37ea-850304f6d3d6
 # ╟─a38a0164-f6d9-11ea-2e1d-a7a6e2106d0b
