@@ -4,5 +4,6 @@
 videos = Dict(
               "installation" => "OOjKEgbt8AI",
               "jupyter-notebooks" => "MFgMO8Xwx-k",
-              "session1" => "x5o0nTpDbT8"
+              "session1" => "x5o0nTpDbT8",
+              "session2" => "sHCqosMRfJ8"
 )
