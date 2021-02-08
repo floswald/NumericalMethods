@@ -13,16 +13,24 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 78a17740-5bc2-11eb-043a-2f7d348236c4
+# ╔═╡ d3241b7a-6a43-11eb-13b0-5d35d22508f1
 begin
 	using Plots
-	# here code that makes the plot!
-	# copy from the lecture notebook!
-	discrete_time_SIR_plot = plot()  # i'll make an empty plot for you ;-)
+	using PlutoUI
 end
 
-# ╔═╡ 61d8b5a8-6709-11eb-2167-bfa7253a81dc
-using PlutoUI
+# ╔═╡ cbf5f6c0-616f-11eb-2bfc-97f62c8694d2
+# setting up an empty package environment
+begin
+	import Pkg
+	Pkg.activate(mktempdir())
+end
+
+# ╔═╡ 8c9fb16e-5bc5-11eb-14ce-039b59e408ef
+begin
+	Pkg.add("Plots")
+	Pkg.add("PlutoUI")
+end
 
 # ╔═╡ 57005404-6170-11eb-3ffc-f57feda21784
 # edit the code below to set your name and email
@@ -104,20 +112,6 @@ md"finally, we set the transmission rate $\beta$ and the recovery rate $\gamma$"
 # ╔═╡ b53e57c8-5bc1-11eb-1a22-6da90e069232
 β, γ = 0.1, 0.01
 
-# ╔═╡ cbf5f6c0-616f-11eb-2bfc-97f62c8694d2
-# setting up an empty package environment
-begin
-	import Pkg
-	Pkg.activate(mktempdir())
-	Pkg.Registry.update()
-end
-
-# ╔═╡ 8c9fb16e-5bc5-11eb-14ce-039b59e408ef
-begin
-	Pkg.add("Plots")
-	Pkg.add("PlutoUI")
-end
-
 # ╔═╡ 8a59e9c6-6172-11eb-3159-ebb009cab7ff
 md"## Introducing Lockdown
 
@@ -174,6 +168,13 @@ md"
 * You should add two vertical lines that indicate the start and end date of your lockdown such that it's easier to see! google *plots.jl vertical line*!
 "
 
+# ╔═╡ 78a17740-5bc2-11eb-043a-2f7d348236c4
+begin
+	# here code that makes the plot!
+	# copy from the lecture notebook!
+	discrete_time_SIR_plot = plot()  # i'll make an empty plot for you ;-)
+end
+
 # ╔═╡ 4679a54a-6175-11eb-3f65-4d91d741140f
 md"## Implement a lockdown!
 
@@ -220,6 +221,9 @@ begin
 end
 
 # ╔═╡ Cell order:
+# ╠═cbf5f6c0-616f-11eb-2bfc-97f62c8694d2
+# ╠═8c9fb16e-5bc5-11eb-14ce-039b59e408ef
+# ╠═d3241b7a-6a43-11eb-13b0-5d35d22508f1
 # ╟─14d5c6aa-670a-11eb-3cd3-9dd24111525b
 # ╠═57005404-6170-11eb-3ffc-f57feda21784
 # ╟─6239ebaa-6170-11eb-2217-c1937ab254bc
@@ -231,8 +235,6 @@ end
 # ╠═a64367e0-5bc1-11eb-0ea1-7ba30e6b4d73
 # ╟─758456c6-6172-11eb-3ad5-cfd8416ff735
 # ╠═b53e57c8-5bc1-11eb-1a22-6da90e069232
-# ╠═cbf5f6c0-616f-11eb-2bfc-97f62c8694d2
-# ╠═8c9fb16e-5bc5-11eb-14ce-039b59e408ef
 # ╟─8a59e9c6-6172-11eb-3159-ebb009cab7ff
 # ╠═8040fd60-5bc0-11eb-2be1-01265f68ec1b
 # ╟─845c1ad4-6178-11eb-149a-4d73019356d0
@@ -243,7 +245,6 @@ end
 # ╟─4679a54a-6175-11eb-3f65-4d91d741140f
 # ╟─a43170b4-6175-11eb-1ceb-792e90936ade
 # ╟─280c9750-617a-11eb-1599-e7af6e944315
-# ╠═61d8b5a8-6709-11eb-2167-bfa7253a81dc
 # ╠═13e7c542-5bc3-11eb-3bd4-877eb2050c77
 # ╠═68d2e158-5bc4-11eb-2a84-35548106ce43
 # ╠═d10fe5c2-5bc4-11eb-3f5f-fb8a8220cef4

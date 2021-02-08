@@ -66,6 +66,9 @@ For any given person in $I$ state, the probability to recover in a certain time 
 # ╔═╡ ba7ffe78-0845-11eb-2847-851a407dd2ec
 bernoulli(p) = rand() < p 
 
+# ╔═╡ e9a55500-6794-11eb-2d94-d9d26bbec45a
+bernoulli2(p) = p > 0.7 ? rand() : 0.9  # ternary expression
+
 # ╔═╡ d088ed2e-0845-11eb-0697-310f374effbc
 N = 200
 
@@ -467,13 +470,14 @@ end)
 	end)
 
 # ╔═╡ Cell order:
-# ╠═76b23770-66fe-11eb-0d2c-732ee0b333cc
+# ╟─76b23770-66fe-11eb-0d2c-732ee0b333cc
 # ╟─d6260e60-66fa-11eb-367b-d3b1d324cdf6
 # ╟─9a0cec14-08db-11eb-3cfa-4d1c327c63f1
 # ╟─a3b2accc-0845-11eb-229a-e97bc3943016
 # ╠═5f4516fe-098c-11eb-3abe-418aac994cc3
 # ╟─f9a75ac4-08d9-11eb-3167-011eb698a32c
 # ╠═ba7ffe78-0845-11eb-2847-851a407dd2ec
+# ╠═e9a55500-6794-11eb-2d94-d9d26bbec45a
 # ╠═d088ed2e-0845-11eb-0697-310f374effbc
 # ╠═e2d764d0-0845-11eb-0031-e74d2f5acaf9
 # ╟─428fe6b6-66fb-11eb-370c-c1e0dfd1a702

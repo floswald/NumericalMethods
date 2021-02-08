@@ -290,7 +290,8 @@ mutable struct Spell
 	firm        :: Int   # ∈ 1,2,...,L+1
 	wage        :: Float64
 	change_firm :: Bool   # switch firm after this spell?
-	function Spell(t0::Date,fid::Int)  # this is the `inner constructor` method
+	name  :: Tuple
+	function Spell(t0::Date,fid::Int,firstn,lastn)  # this is the `inner constructor` method
 		this = new()
 		this.start = t0
 		this.stop = t0
@@ -298,9 +299,16 @@ mutable struct Spell
 		this.firm = fid
 		this.wage = 0.0
 		this.change_firm = false
+		this.name = (firstn, lastn)
 		return this 
 	end
 end
+
+# ╔═╡ b083edfe-67a3-11eb-0924-4f44343ffceb
+me = Spell(Dates.today(), 14, "Florian", "Oswald")
+
+# ╔═╡ c493b798-67a3-11eb-10ee-070e2a59b30a
+me.name[2] = "HItchcock"
 
 # ╔═╡ c63a5110-670d-11eb-0502-5fc01e7d59d5
 md"#
@@ -528,6 +536,8 @@ L0
 # ╟─1a5ca388-670e-11eb-0321-51c90fcbef35
 # ╠═f855b1c0-670e-11eb-2a81-4de0846c0d93
 # ╠═0b9cb9f4-670f-11eb-338a-5d6c16c99248
+# ╠═b083edfe-67a3-11eb-0924-4f44343ffceb
+# ╠═c493b798-67a3-11eb-10ee-070e2a59b30a
 # ╟─c63a5110-670d-11eb-0502-5fc01e7d59d5
 # ╠═320edd04-670f-11eb-2a98-353ca1501537
 # ╟─3d2a7a92-670f-11eb-265c-77d1d30af869

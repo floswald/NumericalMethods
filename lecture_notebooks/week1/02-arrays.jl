@@ -118,7 +118,7 @@ Here are some functions that create arrays:
 ones(2,3)
 
 # ╔═╡ 35694d0c-5589-11eb-01a7-1d710daa7c08
-zeros(2,4)
+zeros(Int,2,4)
 
 # ╔═╡ 99605a26-5589-11eb-031b-bd7709085dbf
 falses(3)
@@ -178,6 +178,9 @@ vcat(ones(3),1.1)
 # ╔═╡ 516b88a0-55a5-11eb-105e-17c75539d751
 hcat(rand(2,2),falses(2,3))
 
+# ╔═╡ 2835338a-679a-11eb-1557-a75b2d2d657a
+typeof(falses(2,2))
+
 # ╔═╡ 6242d548-55a5-11eb-22e4-531a821011c9
  promote_type(Float64, Bool)
 
@@ -203,7 +206,13 @@ typeof(z)
 length(z)
 
 # ╔═╡ 60b6d98a-678a-11eb-34f0-91b61835ccc2
-push!(z, 3)
+push!(z, "hi")
+
+# ╔═╡ b77ae9fe-679a-11eb-19de-678b04bcc042
+pushfirst!(z, 1, 1)
+
+# ╔═╡ be5f5cf0-679a-11eb-2b4f-f7d5ab85c6a0
+z
 
 # ╔═╡ 686337f0-678a-11eb-09bd-2badaadba117
 pop!(z)
@@ -212,7 +221,7 @@ pop!(z)
 z
 
 # ╔═╡ 7c1e52b4-678a-11eb-1a97-3d56ba213b3b
-
+append!(z, 14)
 
 # ╔═╡ f53088a2-55a5-11eb-3b9b-8b91844c5384
 md"
@@ -232,6 +241,11 @@ so we could have also done before:
 
 # ╔═╡ 3c4111cc-55a6-11eb-198b-458475b9b85f
 hcat(rand(2,2), ["hi" for i in 1:2, j in 1:5 ])
+
+# ╔═╡ b5182a08-679c-11eb-01c4-21be55d14ac0
+md"
+$$\sum_{i=1}^3 \sum_{j=i}^{16} i^2 + y^3$$
+"
 
 # ╔═╡ 3f2fb44a-55a5-11eb-1bc6-aba9b4f794c7
 md"
@@ -557,13 +571,16 @@ end
 # ╠═e27215b8-55a4-11eb-21c5-2738c0897729
 # ╠═09e97578-55a5-11eb-1042-0d7ea64aa830
 # ╠═516b88a0-55a5-11eb-105e-17c75539d751
+# ╠═2835338a-679a-11eb-1557-a75b2d2d657a
 # ╠═6242d548-55a5-11eb-22e4-531a821011c9
 # ╠═c66ff85c-55a5-11eb-042a-836b641d0bc9
-# ╠═f81c4ae0-6789-11eb-2289-333a2f14725b
+# ╟─f81c4ae0-6789-11eb-2289-333a2f14725b
 # ╠═4a16caaa-678a-11eb-1818-5f72eb0bb0bb
 # ╠═592f0b86-678a-11eb-39f4-55ec3bd7989a
 # ╠═5d2906c8-678a-11eb-3e11-05f1efd3f778
 # ╠═60b6d98a-678a-11eb-34f0-91b61835ccc2
+# ╠═b77ae9fe-679a-11eb-19de-678b04bcc042
+# ╠═be5f5cf0-679a-11eb-2b4f-f7d5ab85c6a0
 # ╠═686337f0-678a-11eb-09bd-2badaadba117
 # ╠═6dd1411e-678a-11eb-047a-a1bc3fdea332
 # ╠═7c1e52b4-678a-11eb-1a97-3d56ba213b3b
@@ -571,6 +588,7 @@ end
 # ╠═17ef63ac-55a6-11eb-3713-77dfe04fa601
 # ╟─2cfde6f6-55a6-11eb-0a12-6b336a02c015
 # ╠═3c4111cc-55a6-11eb-198b-458475b9b85f
+# ╟─b5182a08-679c-11eb-01c4-21be55d14ac0
 # ╟─3f2fb44a-55a5-11eb-1bc6-aba9b4f794c7
 # ╠═2d7852b8-55a8-11eb-07e6-e1dc3016acfd
 # ╠═36e1f93a-55a8-11eb-3c41-bf266aa44859
