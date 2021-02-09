@@ -1,25 +1,19 @@
 ### A Pluto.jl notebook ###
-# v0.12.12
+# v0.12.20
 
 using Markdown
 using InteractiveUtils
-
-# ╔═╡ cee9426c-55b5-11eb-2e5d-73534f65e6f6
-md"
-# Intro to abstractions
-"
-
-# ╔═╡ 154d5ee0-55b7-11eb-07f0-bdbd48c0a15e
-begin
-	import Pkg
-	Pkg.activate(mktempdir())
-end
 
 # ╔═╡ 3c828134-55b7-11eb-04bd-ad943ece176d
 begin
 	Pkg.add(["Images","QuartzImageIO"])
 	using Images
 end
+
+# ╔═╡ cee9426c-55b5-11eb-2e5d-73534f65e6f6
+md"
+# Intro to abstractions
+"
 
 # ╔═╡ 4cbc4f40-55b6-11eb-1297-abf3f0e48d44
 element = load(download("https://www.skiarlberg.at/uploads/media/1440x730/01/341-Freeriden%20St.%20Anton%20am%20Arlberg%202.jpg?v=1-0?v=202011041516"))
@@ -43,8 +37,7 @@ push!(types,eltype(a))
 
 
 # ╔═╡ Cell order:
-# ╠═cee9426c-55b5-11eb-2e5d-73534f65e6f6
-# ╠═154d5ee0-55b7-11eb-07f0-bdbd48c0a15e
+# ╟─cee9426c-55b5-11eb-2e5d-73534f65e6f6
 # ╠═3c828134-55b7-11eb-04bd-ad943ece176d
 # ╠═4cbc4f40-55b6-11eb-1297-abf3f0e48d44
 # ╠═559abad4-55b6-11eb-02de-f30062b2dede
