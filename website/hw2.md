@@ -27,4 +27,4 @@ You need to submit by Thursday evening before the next class on Friday.
 * What? your Pluto notebook (that's a simple `.jl` file for the notebook)
 * How?
     * SciencesPo Students: please use the dedicated hand-in facility on moodle
-    * Other Institutions: please send me a private message on slack with your files attached
+    * Other Institutions: please send me a private message on slack with your files attached. _For non sciencespo students, please stick to the convention of naming your .jl files like `lastname_firstname_HWx.jl` for homework `x` - thanks!_
