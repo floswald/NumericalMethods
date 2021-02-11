@@ -5,7 +5,19 @@
 
 In this lecture we will start talking `julia`! We will go through a series of notebooks in tutorial style. You can find the notebooks [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week2)
 
-{{youtube session2}}
+**Table of Contents**
+
+\toc
+
+
+
+## Arrays and SIR
+
+We finished our basic discussion of arrays in julia and had a few minutes to wrap up our discussion of the SIR model. We discussed the `push!` function and different ways to get a `slice` from an array, via implicit copy and the `[]` operator, or without copy and as a `view()`. 
+
+It's good to remember to always keep on `push!`ing by the way.
+
+{{youtube push}}
 
 
 ## VScode and Julia
@@ -18,7 +30,7 @@ I asked you to install the [julia-vscode](https://www.julia-vscode.org) extentio
 1. Package environments
 1. More advanced features (already couple of months back, but still) are explained in this [video by one of the package authors](https://youtu.be/IdhnP00Y1Ks).
 
-### Julia Packages, `Pkg.jl` and Environments
+## Julia Packages, `Pkg.jl` and Environments
 
 1. What's a **package**?
     * Basically, a `module`. 
@@ -48,7 +60,10 @@ I asked you to install the [julia-vscode](https://www.julia-vscode.org) extentio
 6. Demonstrate how to activate a package in REPL.
 7. Show some `]` package manager commands and `help`
 
+## Video from session 2
 
+
+{{youtube session2}}
 
 
 ## Notebook Formats

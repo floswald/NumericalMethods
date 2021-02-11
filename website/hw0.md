@@ -19,5 +19,3 @@ You need to submit by Thursday before the next class on Friday.
 * How?
     * SciencesPo Students: please use the dedicated hand-in facility on moodle
     * Other Institutions: please send me a private message on slack with your files attached
-
-
