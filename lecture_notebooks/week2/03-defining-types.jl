@@ -175,6 +175,9 @@ md"Applying the function to objects of other types gives an error:"
 # ╔═╡ 9371209e-f6db-11ea-3ba2-c3597d42d8ed
 width(3)   # throws an error
 
+# ╔═╡ b16a7348-6d16-11eb-1200-6967c76a9f5e
+
+
 # ╔═╡ d1166a30-670b-11eb-320d-9b13b96824fb
 md"#"
 
@@ -471,6 +474,22 @@ end
 # ╔═╡ 5d72de64-672a-11eb-2b64-e73f79c72d9c
 L0
 
+# ╔═╡ 7226446c-6d19-11eb-19be-a1c0bf338929
+y = rand(3)
+
+# ╔═╡ 7d5c2826-6d19-11eb-1d1f-dfade2b194fe
+begin
+for (iy, vy) in enumerate(y)
+	println("iy = $iy, vy = $vy")
+end
+end
+
+# ╔═╡ f1f6aa62-6d19-11eb-03a5-cf982339b606
+z = 1
+
+# ╔═╡ f920d7e0-6d19-11eb-24dc-056472aae857
+z += 1
+
 # ╔═╡ Cell order:
 # ╟─4723a50e-f6d1-11ea-0b1c-3d33a9b92f87
 # ╠═91ba119e-670a-11eb-0bb2-15ac7192e7e7
@@ -509,6 +528,7 @@ L0
 # ╠═91e21d28-f6db-11ea-1b0f-336719682f28
 # ╟─2ef7392e-f6dc-11ea-00e4-770cdf9a102e
 # ╠═9371209e-f6db-11ea-3ba2-c3597d42d8ed
+# ╠═b16a7348-6d16-11eb-1200-6967c76a9f5e
 # ╟─d1166a30-670b-11eb-320d-9b13b96824fb
 # ╟─b916acb4-f6dc-11ea-3cdf-2b8ab3c34e03
 # ╠═6fe1b332-f6dd-11ea-39d4-1954aeda6f08
@@ -538,7 +558,7 @@ L0
 # ╟─50b68470-670f-11eb-2fd2-e9ac408adad2
 # ╠═52ecd1f4-670f-11eb-1843-7380dcf1ee54
 # ╠═6359fe04-670f-11eb-1b4e-7d4193109484
-# ╠═5afaa42c-670f-11eb-1e96-afa2a6466656
+# ╟─5afaa42c-670f-11eb-1e96-afa2a6466656
 # ╠═5f97e3f8-670f-11eb-2b7b-e54286c0cbb3
 # ╠═622172a6-670f-11eb-1910-8fe1652cf65b
 # ╟─666fba34-670f-11eb-19b0-6f5046362154
@@ -552,11 +572,15 @@ L0
 # ╠═e5635fae-6725-11eb-3bcc-491220b5e24a
 # ╠═b8c625c8-6725-11eb-3853-2916ae6f4af5
 # ╟─f521adde-6726-11eb-1904-5d4a8cd90746
-# ╠═fa1c3a34-6726-11eb-333b-21b7f91d524c
+# ╟─fa1c3a34-6726-11eb-333b-21b7f91d524c
 # ╠═9e2fc76c-6727-11eb-2cab-7f81bdfb7343
 # ╠═a2df9a4e-6727-11eb-129b-9bd913058795
 # ╠═050b2ba8-6727-11eb-1a9a-738f657d78e6
 # ╠═b8ccbe4e-6728-11eb-1f1f-7367e85017c6
 # ╟─e2b3e500-6728-11eb-3b01-f769c8a4c799
 # ╠═fc2f870c-6728-11eb-06ff-ab6affcfaefe
+# ╠═f1f6aa62-6d19-11eb-03a5-cf982339b606
+# ╠═f920d7e0-6d19-11eb-24dc-056472aae857
 # ╠═5d72de64-672a-11eb-2b64-e73f79c72d9c
+# ╠═7226446c-6d19-11eb-19be-a1c0bf338929
+# ╠═7d5c2826-6d19-11eb-1d1f-dfade2b194fe

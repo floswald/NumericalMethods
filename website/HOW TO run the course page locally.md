@@ -1,4 +1,4 @@
-# 18S191 course website
+# course website
 
 The website was written in Franklin.jl - a static site generator with Julia as templating language.
  

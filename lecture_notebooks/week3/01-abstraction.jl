@@ -4,15 +4,16 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 3c828134-55b7-11eb-04bd-ad943ece176d
-begin
-	Pkg.add(["Images","QuartzImageIO"])
-	using Images
-end
+# ╔═╡ 0f8cd702-6d12-11eb-2fb4-53838bcc279f
+using Images,QuartzImageIO
 
 # ╔═╡ cee9426c-55b5-11eb-2e5d-73534f65e6f6
 md"
 # Intro to abstractions
+
+This is following in the footsteps of Prof Alan Edelman's example.
+
+**Question**: What's an _array_ again, and what can we do with it?
 "
 
 # ╔═╡ 4cbc4f40-55b6-11eb-1297-abf3f0e48d44
@@ -38,7 +39,7 @@ push!(types,eltype(a))
 
 # ╔═╡ Cell order:
 # ╟─cee9426c-55b5-11eb-2e5d-73534f65e6f6
-# ╠═3c828134-55b7-11eb-04bd-ad943ece176d
+# ╠═0f8cd702-6d12-11eb-2fb4-53838bcc279f
 # ╠═4cbc4f40-55b6-11eb-1297-abf3f0e48d44
 # ╠═559abad4-55b6-11eb-02de-f30062b2dede
 # ╠═bdafcfba-55b6-11eb-099a-a149ffb1d97e
