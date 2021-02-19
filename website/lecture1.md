@@ -44,4 +44,4 @@ We can't have a computational course in 2021 *without* talking about epidemiolog
 
 ## Video from first session
 
-{{youtube session1}}
+available via google drive.

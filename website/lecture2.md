@@ -63,8 +63,7 @@ I asked you to install the [julia-vscode](https://www.julia-vscode.org) extentio
 ## Video from session 2
 
 
-{{youtube session2}}
-
+Videos are available for registered users via google drive.
 
 ## Notebook Formats
 
