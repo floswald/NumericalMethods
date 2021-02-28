@@ -367,7 +367,7 @@ hint(md"""
 The hessian is defined as 
 	
 $$\begin{align}
-	\frac{\partial^2 l}{\partial \beta^2} &= \frac{1}{n} \left( \sum_{y_i=1} \left[ \phi(s_i)\Phi(s_i)^{-1} + \phi(s_i)^2\Phi(s_i)^{-2} \right] x_i'x_i \right.\\
+	\frac{\partial^2 l}{\partial \beta^2} &= \frac{1}{n} \left( \sum_{y_i=1} \left[ s_i\phi(s_i)\Phi(s_i)^{-1} + \phi(s_i)^2\Phi(s_i)^{-2} \right] x_i'x_i \right.\\
 	&+ \left. \sum_{y_i=0}\left[ \phi(s_i)^2(1-\Phi(s_i))^{-2} - s_i\phi(s_i)(1-\Phi(s_i))^{-1} \right] x_i'x_i \right)
 	\end{align}$$
 	
@@ -603,7 +603,7 @@ end
 # ╠═abbf948e-72b2-11eb-3044-b5de8fee0bf5
 # ╟─c11513b0-75ee-11eb-11c0-e18b91ed923c
 # ╟─a816dc78-7232-11eb-10ad-1be6fbd99abb
-# ╟─fc476bc6-72ac-11eb-27b7-d9e4adac8a1f
+# ╠═fc476bc6-72ac-11eb-27b7-d9e4adac8a1f
 # ╠═5d0d9492-72af-11eb-2530-078dc03f6c10
 # ╟─78038cd4-72af-11eb-2d21-d1f2158975bc
 # ╟─b053bc9e-72b4-11eb-0b8e-ffc0479fea16
