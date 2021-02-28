@@ -77,11 +77,11 @@ md"
 
 * 👉 This is $\mathcal{L} = \log(L)$:
 
-$$\mathcal{L}(\beta) = \sum_{y_i=1} \log{\Phi(x_i \beta)} + \sum_{y_i=0} \log{1- \Phi(x_i \beta)}$$ 
+$$\mathcal{L}(\beta) = \sum_{y_i=1} \log\Phi(x_i \beta) + \sum_{y_i=0} \log \left(1- \Phi(x_i \beta) \right)$$ 
 
 * For numerical stability it is better to focus on the _average_ log likelihood function, hence we divide through by the sample size $n$. Additionally we multiply by negative one, since `Optim.jl` wants to _minimize_ functions. Let's call this _the log likelihood function_ in what follows:
 
-$$l(\beta) = -\frac{1}{n} \left( \sum_{y_i=1} \log{\Phi(x_i \beta)} + \sum_{y_i=0} \log{1- \Phi(x_i \beta)} \right)$$ 
+$$l(\beta) = -\frac{1}{n} \left( \sum_{y_i=1} \log\Phi(x_i \beta) + \sum_{y_i=0} \log \left(1- \Phi(x_i \beta) \right) \right)$$ 
 
 * write the function `loglik(betas::Vector,d::Dict)` which will compute the log likelihood at a given value for the β.
 * The maximum likelihood estimator will maximize that expression.
