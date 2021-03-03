@@ -1,5 +1,5 @@
 ~~~
-<h1>Lecture 4 : Optimization 1</h1>
+<h1>Lecture 4 : Optimization 2</h1>
 ~~~
 
 
@@ -10,3 +10,9 @@
 
 
 You can find the notebooks for this lecture [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week4)
+
+## Video with Animations
+
+We had some issues with the browser plugin crashing last time. Here I try again!
+
+{{youtube solverpaths}}
