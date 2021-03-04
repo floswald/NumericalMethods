@@ -7,6 +7,17 @@ using InteractiveUtils
 # ╔═╡ a31e1a3a-f637-11ea-1e0f-2d61b88049db
 using Suppressor, InteractiveUtils
 
+# ╔═╡ 886a7170-7d07-11eb-3b3f-572614aaa162
+md"
+
+# What are macros?
+
+ScPo Numerical Methods 2021
+"
+
+# ╔═╡ 945ba860-7d06-11eb-3347-df4dabfce02a
+html"<button onclick='present()'>present</button>"
+
 # ╔═╡ 80b2135e-f1ed-11ea-17ee-656b8062026a
 md"""
 # What are macros?
@@ -17,12 +28,22 @@ While functions work on values, a macro works on a **piece of Julia code**, whic
 """
 
 # ╔═╡ 7acec72a-f1fa-11ea-2753-efcf2cee8335
-md"""As a simple example, let's look at the macro called `@elapsed`, which measures how much time it takes to run a piece of code.
+md"""
+
+#
+
+As a simple example, let's look at the macro called `@elapsed`, which measures how much time it takes to run a piece of code.
 
 It does this by taking the input expression and adding extra code around it.
 
 First let's see it in action! We'll use a function that takes some time to run: the function `peakflops()` estimates how fast your computer runs. (It reports an estimate of the number of flops, i.e. floating-point operations per second, when doing matrix multiplications.)
 """
+
+# ╔═╡ e849259c-7d06-11eb-209d-81df1985eff8
+md"
+#
+
+"
 
 # ╔═╡ 0f7c908c-f1fb-11ea-18fb-c7e70278ec46
 peakflops()
@@ -37,6 +58,9 @@ md"""
 
 # ╔═╡ 5677f2d6-f1ee-11ea-3f9b-b59c8a8d07ff
 md"""
+
+# Looking Inside Macros 
+
 You can look at the transformed expression by using `@macroexpand`. Since this name begins with `@`, we can see that this is actually itself a macro!
 """
 
@@ -44,7 +68,11 @@ You can look at the transformed expression by using `@macroexpand`. Since this n
 @macroexpand @elapsed peakflops()
 
 # ╔═╡ c4e4e402-f1fa-11ea-3e5e-4344dcc7e17b
-md"Let's remove the line number information:"
+md"
+
+#
+
+Let's remove the line number information:"
 
 # ╔═╡ 9639e822-f1ee-11ea-19b6-5f377bb4b809
 Base.remove_linenums!( @macroexpand @elapsed peakflops() )
@@ -59,7 +87,9 @@ Here, the `remove_linenums!` function actually receives a Julia **expression** a
 """
 
 # ╔═╡ e3bd8fbc-f1fa-11ea-331f-bbe8f038f46a
-md"## Expressions in Julia"
+md"
+
+# Expressions in Julia"
 
 # ╔═╡ cb5e6a8a-f1fb-11ea-2f15-e7486afdfa4a
 md"One feature that makes Julia powerful is its ability (influenced by the Lisp language) to represent Julia code as Julia objects, which can be manipulated using the usual Julia features.
@@ -75,7 +105,11 @@ If we type an expression, Julia will **evaluate** it and return its value:
 x = 1 + 2
 
 # ╔═╡ 6bb8d276-f1ff-11ea-2ada-1916761bc6a8
-md"The variable `x` now contains the value `3`, the result of evaluating the expression `1 + 2`."
+md"
+
+#
+
+The variable `x` now contains the value `3`, the result of evaluating the expression `1 + 2`."
 
 # ╔═╡ 10d909b4-f1fc-11ea-080a-f9f87b3512c5
 md"We can prevent Julia from evaluating an expression by **quoting** it, which we can do in one of two ways:"
@@ -95,7 +129,11 @@ md"This *leaves the expression alone, without evaluating it*, giving as result t
 typeof(expr)
 
 # ╔═╡ 6a0fdfc8-f637-11ea-04d8-a55a4c42df3e
-md"As an example, we can create the following expression:"
+md"
+
+#
+
+As an example, we can create the following expression:"
 
 # ╔═╡ cbce40ee-f1ee-11ea-2e05-1d523acbf8b9
 expr3 = :(y + 1)
@@ -104,34 +142,49 @@ expr3 = :(y + 1)
 md"If we evaluate this expression, it gives an error, since there is no variable `y` in the current notebook:"
 
 # ╔═╡ 906e3234-f637-11ea-1f77-679dc897ec69
-y + 1
+eval(expr3)
 
 # ╔═╡ 940f888c-f637-11ea-20a0-1ddda8fb7908
-md"Since expressions are Julia objects, we can examine them using Julia's usual mechanisms. For example, the `dump` function allows us to inspect the fields inside an object:"
+md"
+
+#
+
+Since expressions are Julia objects, we can examine them using Julia's usual mechanisms. For example, the `dump` function allows us to inspect the fields inside an object:"
 
 # ╔═╡ 8dab58d4-f639-11ea-1b0b-536927639c6c
-md"We can extract the fields inside the object:"
+md"
+
+#
+
+We can extract the fields inside the object:"
+
+# ╔═╡ 3ef16efa-7d08-11eb-1a1a-bf3efcbcdb78
+expr4 = :(y + 1)
 
 # ╔═╡ e46e6c96-f1ee-11ea-3e7f-4f613282ccb1
-expr3.head
+expr4.head
 
 # ╔═╡ e631bede-f1ee-11ea-0fab-7516ab535cf5
-expr3.args
+expr4.args
 
 # ╔═╡ 95cf0d76-f639-11ea-34dc-f32852ac32b8
-md"and even modify them:"
+md"
+
+#
+
+and even modify them:"
 
 # ╔═╡ 9a587ba4-f639-11ea-2bef-37fed4d45a7f
-expr3.args[2]
+expr4.args[2]
 
 # ╔═╡ 9cd4334e-f639-11ea-26c6-e9782451ef02
-expr3.args[2] = :x
+expr4.args[2] = :x
 
 # ╔═╡ a037391e-f639-11ea-2723-455ccff4b024
 md"(`:x` and `:y` here are `Symbol`s, a special type of string.)"
 
 # ╔═╡ b6e67c1a-f639-11ea-3abe-f75671ed4ca2
-expr3
+expr4
 
 # ╔═╡ cb0cb434-f639-11ea-1ea2-93009c372885
 md"We see that we have been able to *modify the `Expr` object, which is a piece of Julia code, using Julia itself! This is the simplest example of **metaprogramming**, i.e. writing a program that modifies another *program* (instead of modifying data).
@@ -141,7 +194,7 @@ This is what macros do internally: transform Julia expressions into something el
 
 # ╔═╡ 0ff6e154-f1ef-11ea-2ee8-61eb98523642
 md"""
-## Conclusion
+# Conclusion
 
 When we see something like `@foo`, we recognise that it's a **syntactic transformation** and may modify the behavior of the language in some way!
 
@@ -188,8 +241,11 @@ with_terminal() do
 end
 
 # ╔═╡ Cell order:
+# ╟─886a7170-7d07-11eb-3b3f-572614aaa162
+# ╟─945ba860-7d06-11eb-3347-df4dabfce02a
 # ╟─80b2135e-f1ed-11ea-17ee-656b8062026a
 # ╟─7acec72a-f1fa-11ea-2753-efcf2cee8335
+# ╟─e849259c-7d06-11eb-209d-81df1985eff8
 # ╠═0f7c908c-f1fb-11ea-18fb-c7e70278ec46
 # ╠═f43139a2-f1ed-11ea-0cdf-678ffac4374a
 # ╟─67b3fb78-f1ee-11ea-2d0a-a92e81580917
@@ -215,16 +271,17 @@ end
 # ╠═906e3234-f637-11ea-1f77-679dc897ec69
 # ╟─940f888c-f637-11ea-20a0-1ddda8fb7908
 # ╠═77437eaa-f639-11ea-0c4d-3756cbd589da
-# ╠═8dab58d4-f639-11ea-1b0b-536927639c6c
+# ╟─8dab58d4-f639-11ea-1b0b-536927639c6c
+# ╠═3ef16efa-7d08-11eb-1a1a-bf3efcbcdb78
 # ╠═e46e6c96-f1ee-11ea-3e7f-4f613282ccb1
 # ╠═e631bede-f1ee-11ea-0fab-7516ab535cf5
-# ╠═95cf0d76-f639-11ea-34dc-f32852ac32b8
+# ╟─95cf0d76-f639-11ea-34dc-f32852ac32b8
 # ╠═9a587ba4-f639-11ea-2bef-37fed4d45a7f
 # ╠═9cd4334e-f639-11ea-26c6-e9782451ef02
-# ╠═a037391e-f639-11ea-2723-455ccff4b024
+# ╟─a037391e-f639-11ea-2723-455ccff4b024
 # ╠═b6e67c1a-f639-11ea-3abe-f75671ed4ca2
 # ╟─cb0cb434-f639-11ea-1ea2-93009c372885
 # ╟─0ff6e154-f1ef-11ea-2ee8-61eb98523642
 # ╟─aa3a731c-f637-11ea-3afc-9144bdeb7d6f
-# ╠═a31e1a3a-f637-11ea-1e0f-2d61b88049db
-# ╠═b440b66c-f637-11ea-393d-9d444aa58501
+# ╟─a31e1a3a-f637-11ea-1e0f-2d61b88049db
+# ╟─b440b66c-f637-11ea-393d-9d444aa58501
