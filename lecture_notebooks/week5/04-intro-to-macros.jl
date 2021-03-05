@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.20
+# v0.12.21
 
 using Markdown
 using InteractiveUtils
@@ -186,6 +186,9 @@ md"(`:x` and `:y` here are `Symbol`s, a special type of string.)"
 # ╔═╡ b6e67c1a-f639-11ea-3abe-f75671ed4ca2
 expr4
 
+# ╔═╡ 111ce380-7d97-11eb-0b9f-3fa5aebf369e
+eval(expr4)
+
 # ╔═╡ cb0cb434-f639-11ea-1ea2-93009c372885
 md"We see that we have been able to *modify the `Expr` object, which is a piece of Julia code, using Julia itself! This is the simplest example of **metaprogramming**, i.e. writing a program that modifies another *program* (instead of modifying data).
 
@@ -280,6 +283,7 @@ end
 # ╠═9cd4334e-f639-11ea-26c6-e9782451ef02
 # ╟─a037391e-f639-11ea-2723-455ccff4b024
 # ╠═b6e67c1a-f639-11ea-3abe-f75671ed4ca2
+# ╠═111ce380-7d97-11eb-0b9f-3fa5aebf369e
 # ╟─cb0cb434-f639-11ea-1ea2-93009c372885
 # ╟─0ff6e154-f1ef-11ea-2ee8-61eb98523642
 # ╟─aa3a731c-f637-11ea-3afc-9144bdeb7d6f
