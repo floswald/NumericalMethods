@@ -8,5 +8,6 @@ videos = Dict(
               "session2" => "sHCqosMRfJ8",
               "push" => "iQJQR0bsnDc",
               "session3" => "bDiBuRLxdSY",
-              "solverpaths" => "PUlOQdgWlFE"
+              "solverpaths" => "PUlOQdgWlFE",
+              "constrained-banana" => "kqjr_NYUomU"
 )
