@@ -1,4 +1,4 @@
 
 ~~~
-<h1>Lecture 6</h1>
+<h1>Lecture 6: Function Approximation</h1>
 ~~~
