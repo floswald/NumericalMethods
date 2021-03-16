@@ -53,12 +53,12 @@ This year your term project will be to replicate a paper published in an economi
 
 ### Resources
 
-* here is a great list by the AEA: https://www.aeaweb.org/rfe/showCat.php?cat_id=9
-* ECTA code and data: https://www.econometricsociety.org/publications/econometrica/journal-materials/supplemental-materials
-* RevEconDynamics codes: https://ideas.repec.org/s/red/ccodes.html
-* Each issue of RevEconDynamics , e.g. https://www.economicdynamics.org/volume-39-2021/
-* The AEA Data Editor's website: https://aeadataeditor.github.io/talks/
-* The Restud Data Editor: https://restud.github.io/data-editor/replicate/#replicate-a-paper
+* [here is a great list by the AEA](https://www.aeaweb.org/rfe/showCat.php?cat_id=9)
+* [ECTA code and data](https://www.econometricsociety.org/publications/econometrica/journal-materials/supplemental-materials)
+* [RevEconDynamics codes](https://ideas.repec.org/s/red/ccodes.html)
+* Each issue of RevEconDynamics , e.g. [https://www.economicdynamics.org/volume-39-2021/](https://www.economicdynamics.org/volume-39-2021/)
+* [The AEA Data Editor's website](https://aeadataeditor.github.io/talks/)
+* [The Restud Data Editor](https://restud.github.io/data-editor/replicate/#replicate-a-paper)
 
 ## Grade
 
