@@ -51,6 +51,8 @@ This year your term project will be to replicate a paper published in an economi
 4. You need to set up a public github repository where you will build a documentation website of your implementation. You'll learn how to do this in the course.
 5. I encourage you to let the world know about your replication effort via social media and/or email to the authors directly. This is independent of whether you were able or not to replicate the results. Replication is not about finding errors in other peoples' work. If you are able to replicate some result in julia, this may be very interesting for others.
 
+> Please use the starter kit available at [https://github.com/floswald/Replicate.jl](https://github.com/floswald/Replicate.jl) to get going!
+
 ### Resources
 
 * [here is a great list by the AEA](https://www.aeaweb.org/rfe/showCat.php?cat_id=9)
@@ -59,6 +61,7 @@ This year your term project will be to replicate a paper published in an economi
 * Each issue of RevEconDynamics , e.g. [https://www.economicdynamics.org/volume-39-2021/](https://www.economicdynamics.org/volume-39-2021/)
 * [The AEA Data Editor's website](https://aeadataeditor.github.io/talks/)
 * [The Restud Data Editor](https://restud.github.io/data-editor/replicate/#replicate-a-paper) and their [zenodo repo of replication kits](https://zenodo.org/communities/restud-replication/?page=1&size=20)
+* [The Social Science Data Editor's joint website](https://social-science-data-editors.github.io/guidance/)
 
 ## Grade
 
