@@ -69,7 +69,7 @@ $$\max_a \sum_{t\in\mathcal{T}} C_t(a_t)$$
 
 * But we cannot spend more than what we have in terms of resources, so this is subject to constraint
 
-$$\sum_{t\in\mathcal{T}} = R$$
+$$\sum_{t\in\mathcal{T}} a_t = R$$
 
 * and we don't allow borrowing: $a_t \geq 0$
 "
