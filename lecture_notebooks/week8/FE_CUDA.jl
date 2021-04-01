@@ -67,16 +67,18 @@ r_d = $df
 r_d[,"id1"] = factor(r_d[,"id1_int"])
 r_d[,"id2"] = factor(r_d[,"id2_int"])
 
+
 library(lfe)
 lfe_time = system.time(lfe <- felm(y ~x1 + x2 + x3 + x4 + x5 + x6 + x7| id1 + id2, data=r_d))
 print(paste0("R lfe time: ",lfe_time[1]))
 print(summary(lfe))
 
 # also fixest
+# how many threads?
+threads = getFixest_nthreads()
+print(paste0("fixest running on ",threads," threads"))
 fixest_time = system.time(fe <- fixest::feols(y ~x1 + x2 + x3 + x4 + x5 + x6 + x7 | id1 + id2, data=r_d))
 print(paste0("R fixest time: ",fixest_time[1]))
-
-
 
 list(lfe = lfe_time[1], fixest = fixest_time[1])
 #
