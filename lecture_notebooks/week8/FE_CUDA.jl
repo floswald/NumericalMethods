@@ -3,8 +3,9 @@
 using LinearAlgebra, Statistics
 using BenchmarkTools
 using DataFrames
-using RegressionTables, FixedEffectModels
-
+using FixedEffectModels
+using RCall
+using CUDA
 
 """
     FEbenchmark(;N=10_000_000,K= 100)
@@ -38,46 +39,48 @@ function FEbenchmark(;N=10_000_000,K= 100)
     df
 end
 
-
-# create our dataset
+# create our dataset
 df = FEbenchmark()
 
-# run a bunch of different models
-# the comments show timings of a previous version of FixedEffectModels (faster!)
-@time reg(df, @formula(y ~ x1 + x2))
-# 0.582029 seconds (852 allocations: 535.311 MiB, 18.28% gc time)
-@time reg(df, @formula(y ~ x1 + x2), Vcov.cluster(:id2))
-# 0.809652 seconds (1.55 k allocations: 649.821 MiB, 14.40% gc time)
-@time reg(df, @formula(y ~ x1 + x2 + fe(id1)))
-# 1.655732 seconds (1.21 k allocations: 734.353 MiB, 16.88% gc time)
-@time reg(df, @formula(y ~ x1 + x2 + fe(id1)), Vcov.cluster(:id1))
-#  2.113248 seconds (499.66 k allocations: 811.751 MiB, 15.08% gc time)
-@time reg(df, @formula(y ~ x1 + x2 + fe(id1) + fe(id2)))
-# 3.553678 seconds (1.36 k allocations: 1005.101 MiB, 10.55% gc time))
+# run once to compile
+println("result = reg(df, @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)))")
+result = reg(df, @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)))
 
 # let's take the biggest model as our benchmark timing
-@btime result = reg($df, @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)))
+println("FixedEffects.jl single CPU core time")
+@time result = reg(df, @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)));
 
-# using R lfe package
-using RCall
+
+println("\n\n\n\n We'll run the same data through R packages lfe and fixest now.\n\n\n")
+
 rstring = R"""
 # factorize data
-# notice that we have to pass the integer data in id1_int.
-r_d = $df
+# notice that we have to pass the integer data in id1_int.
+r_d = $df  # this is the *same* memory in my computer! no copy taken.
 r_d[,"id1"] = factor(r_d[,"id1_int"])
 r_d[,"id2"] = factor(r_d[,"id2_int"])
 
-
 library(lfe)
-lfe_time = system.time(lfe <- felm(y ~x1 + x2 + x3 + x4 + x5 + x6 + x7| id1 + id2, data=r_d))
-print(paste0("R lfe time: ",lfe_time[1]))
+library(Matrix)
+lfe_time = system.time(lfe <- felm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7| id1 + id2, data=r_d))
+print("1. Same result?")
+print("")
 print(summary(lfe))
 
-# also fixest
+print("")
+print("2. lfe timing?")
+print("")
+print(paste0("R lfe time: ",lfe_time[1]))
+
+# also fixest
 # how many threads?
+print("")
+print("3. fixest timing?")
+print("")
+library(fixest)
 threads = getFixest_nthreads()
 print(paste0("fixest running on ",threads," threads"))
-fixest_time = system.time(fe <- fixest::feols(y ~x1 + x2 + x3 + x4 + x5 + x6 + x7 | id1 + id2, data=r_d))
+fixest_time = system.time(fe <- feols(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 | id1 + id2, data=r_d))
 print(paste0("R fixest time: ",fixest_time[1]))
 
 list(lfe = lfe_time[1], fixest = fixest_time[1])
@@ -87,16 +90,21 @@ list(lfe = lfe_time[1], fixest = fixest_time[1])
 #summary(ols)
 """
 
+println("\n\n\n\n Now let's try on the GPU!\n\n\n")
 
-using CUDA
+CUDA.versioninfo()
 
 # run once to compile
-result = reg(df, 
+@show begin
+    result = reg(df, 
     @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)),
-    method = :GPU,
-    double_precision = false)
+    method = :gpu,
+    double_precision = false);
+end
 
-@btime result = reg(df, 
+println("\n FixedEffects.jl GPU timing:\n")
+
+@time result = reg(df, 
     @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)),
-    method = :GPU,
-    double_precision = false)
+    method = :gpu,
+    double_precision = false);
