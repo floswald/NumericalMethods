@@ -563,6 +563,280 @@ md"
 #
 "
 
+# ╔═╡ c1e65340-87f9-11eb-3cd7-05f14edf71d2
+md"
+#
+"
+
+# ╔═╡ 6fbaac56-87e0-11eb-3d09-39a4fd293e88
+md"
+#
+
+![](https://s3.getstickerpack.com/storage/uploads/sticker-pack/meme-pack-1/sticker_19.png?363e7ee56d4d8ad53813dae0907ef4c0&d=200x200)"
+
+# ╔═╡ a510ff40-9302-11eb-091e-6929367f6783
+md"
+
+# Infinite Time Problems
+
+* Let's now introduce the infinite time version of this.
+* For that purpose, let's rely on the well known Optimal Growth model:
+
+$$\begin{align}
+   V(k) &= \max_{0<k'<f(k)} u(f(k) - k') + \beta V(k')\\
+  f(k)  & = k^\alpha\\
+  k_0   & \text{ given} 
+\end{align}$$
+
+* The solution in finite time was simple by going backwards.
+* Here, we need to rely on results from Functional Analysis: Remember the Contraction Mapping Theorem?
+* The Contraction Mapping Theorem or the [Banache Fixed Point Theoreom](https://en.wikipedia.org/wiki/Banach_fixed-point_theorem) says there is a unique fixed point in an appropriately chosen function space. We arrive at it from an *arbitrary* starting point by just iterating on the operator $T(V)$ until $V = T(V)$
+"
+
+
+# ╔═╡ 06ff3932-9304-11eb-07cc-d798d56c0931
+md"
+
+# Implementing Value Function Iteration
+
+### Checklist
+
+1. Set parameter values
+1. define a grid for state variable $k \in [0,2]$
+1. initialize value function $V$
+1. start iteration, repeatedly computing a new version of $V$.
+1. stop if $d(V^{r},V^{r-1}) < \text{tol}$.
+1. plot value and policy function 
+1. report the maximum error of both wrt to analytic solution
+
+#
+"
+
+# ╔═╡ 2e121c60-9304-11eb-29c4-afd0a289343f
+begin
+	alpha     = 0.65
+	beta      = 0.95
+	grid_max  = 2  # upper bound of capital grid
+	n         = 150  # number of grid points
+	N_iter    = 3000  # number of iterations
+	kgrid     = 1e-2:(grid_max-1e-2)/(n-1):grid_max  # equispaced grid
+	f(x) = x^alpha  # defines the production function f(k)
+	tol = 1e-9
+end
+
+# ╔═╡ 3c8e560a-9304-11eb-2c45-7df67768f75b
+md"
+
+## Analytic Solution
+
+* If we choose $u(x)=\ln(x)$, the problem has a closed form solution.
+* We can use this to check accuracy of our solution.
+"
+
+# ╔═╡ 4849479a-9304-11eb-1c06-4b53a4163f85
+begin 
+	ab        = alpha * beta
+	c1        = (log(1 - ab) + log(ab) * ab / (1 - ab)) / (1 - beta)
+	c2        = alpha / (1 - ab)
+	# optimal analytical values
+	v_star(k) = c1 .+ c2 .* log.(k)  
+	k_star(k) = ab * k.^alpha   
+	c_star(k) = (1-ab) * k.^alpha  
+	ufun(x) = log.(x)
+end
+
+# ╔═╡ 5984cd7a-9304-11eb-0bd4-ebac2da4f300
+md"
+#
+"
+
+# ╔═╡ 5d642bca-9304-11eb-2b23-dfa47b04bb22
+# Bellman Operator
+# inputs
+# `grid`: grid of values of state variable
+# `v0`: current guess of value function
+
+# output
+# `v1`: next guess of value function
+# `pol`: corresponding policy function 
+
+#takes a grid of state variables and computes the next iterate of the value function.
+function bellman_operator(grid,v0)
+    
+    v1  = zeros(n)     # next guess
+    pol = zeros(Int,n)     # policy function
+    w   = zeros(n)   # temporary vector 
+
+    # loop over current states
+    # current capital
+    for (i,k) in enumerate(grid)
+
+        # loop over all possible kprime choices
+        for (iprime,kprime) in enumerate(grid)
+            if f(k) - kprime < 0   #check for negative consumption
+                w[iprime] = -Inf
+            else
+                w[iprime] = ufun(f(k) - kprime) + beta * v0[iprime]
+            end
+        end
+        # find maximal choice
+        v1[i], pol[i] = findmax(w)     # stores Value und policy (index of optimal choice)
+    end
+    return (v1,pol)   # return both value and policy function
+end
+
+# ╔═╡ 67d367c4-9304-11eb-0bfc-21b9bfec2fb9
+md"
+#
+"
+
+# ╔═╡ 6b33c6ca-9304-11eb-3766-fdcc42b64f2d
+# VFI iterator
+#
+## input
+# `n`: number of grid points
+# output
+# `v_next`: tuple with value and policy functions after `n` iterations.
+function VFI()
+    v_init = zeros(n)     # initial guess
+    for iter in 1:N_iter
+        v_next = bellman_operator(kgrid,v_init)  # returns a tuple: (v1,pol)
+        # check convergence
+        if maximum(abs,v_init.-v_next[1]) < tol
+            verrors = maximum(abs,v_next[1].-v_star(kgrid))
+            perrors = maximum(abs,kgrid[v_next[2]].-k_star(kgrid))
+            println("Found solution after $iter iterations")
+            println("maximal value function error = $verrors")
+            println("maximal policy function error = $perrors")
+            return (v = v_next[1], p =v_next[2], errv = verrors, errp = perrors, iter = iter)
+        elseif iter==N_iter
+            @warn "No solution found after $iter iterations"
+            return (v = v_next[1], p =v_next[2], errv = verrors, errp = perrors, iter = iter)
+        end
+        v_init = v_next[1]  # update guess 
+    end
+end
+
+
+
+# ╔═╡ 72cc3cdc-9304-11eb-3548-95962c3513ec
+md"
+#
+"
+
+# ╔═╡ 776c4712-9304-11eb-1824-a14cde26b895
+function plotVFI(v::NamedTuple)
+    
+    p = Any[]
+    
+    # value and policy functions
+    push!(p,plot(kgrid,v.v,
+            leg = false,title = "Vfun iterations: $(v.iter)",
+            ylim=(-50,-30)),
+            plot(kgrid,kgrid[v.p],
+            title = "policy function"))
+    
+    # errors of both
+    push!(p,plot(kgrid,v.v.-v_star(kgrid),
+        title = "max Vfun error: $(round(v.errv,digits=3))"),
+        plot(kgrid,kgrid[v.p].-k_star(kgrid),
+        title = "max policy error: $(round(v.errp,digits=3))"))
+
+    plot(p...,layout=grid(2,2) )
+    
+end
+
+# ╔═╡ 7999a272-9304-11eb-254c-af591bae0620
+plotVFI(VFI())
+
+# ╔═╡ 7e0a9d82-9304-11eb-1d3d-bb47fc55d033
+function bellman_operator2(grid,v0)
+    
+    v1  = zeros(n)     # next guess
+    pol = zeros(n)     # consumption policy function
+
+    Interp = interpolate((collect(grid),), v0, Gridded(Linear()) ) 
+    Interp = extrapolate(Interp,Interpolations.Flat())
+
+    # loop over current states
+    # of current capital
+    for (i,k) in enumerate(grid)
+
+        objective(c) = - (log.(c) + beta * Interp(f(k) - c))
+        # find max of ojbective between [0,k^alpha]
+        res = optimize(objective, 1e-6, f(k))  # Optim.jl
+        pol[i] = f(k) - res.minimizer   # k'
+        v1[i] = -res.minimum
+    end
+    return (v1,pol)   # return both value and policy function
+end
+
+# ╔═╡ eb09edb4-9306-11eb-131d-a7429e6294f4
+function VFI2()
+    v_init = zeros(n)     # initial guess
+    for iter in 1:N_iter
+        v_next = bellman_operator2(kgrid,v_init)  # returns a tuple: (v1,pol)
+        # check convergence
+        if maximum(abs,v_init.-v_next[1]) < tol
+            verrors = maximum(abs,v_next[1].-v_star(kgrid))
+            perrors = maximum(abs,v_next[2].-k_star(kgrid))
+            println("continuous VFI:")
+            println("Found solution after $iter iterations")
+            println("maximal value function error = $verrors")
+            println("maximal policy function error = $perrors")
+            return v_next
+        elseif iter==N_iter
+            warn("No solution found after $iter iterations")
+            return v_next
+        end
+        v_init = v_next[1]  # update guess 
+    end
+    return nothing
+end
+
+# ╔═╡ 23c44cee-9307-11eb-09f1-8b641f262e38
+function plotVFI2()
+    v = VFI2()
+    p = Any[]
+    
+    # value and policy functions
+    push!(p,plot(kgrid,v[1],
+            lab="V",
+            ylim=(-50,-30),legend=:bottomright),
+            plot(kgrid,v[2],
+            lab="policy",legend=:bottomright))
+    
+    # errors of both
+    push!(p,plot(kgrid,v[1].-v_star(kgrid),
+        lab="V error",legend=:bottomright),
+        plot(kgrid,v[2].-k_star(kgrid),
+        lab="policy error",legend=:bottomright))
+
+    plot(p...,layout=grid(2,2) )
+    
+end
+
+# ╔═╡ 597080ba-9307-11eb-2780-87474bfc5cff
+plotVFI2()
+
+# ╔═╡ 67c4bbb8-9307-11eb-3ecb-13d7af9d899a
+function policy_iter(grid,c0,u_prime,f_prime)
+
+	c1  = zeros(length(grid))     # next guess
+	pol_fun = extrapolate(interpolate((collect(grid),), c0, Gridded(Linear()) ) , Interpolations.Flat())
+
+
+	# loop over current states
+	# of current capital
+	for (i,k) in enumerate(grid)
+		objective(c) = u_prime(c) - beta * u_prime(pol_fun(f(k)-c)) * f_prime(f(k)-c)
+		c1[i] = fzero(objective, 1e-10, f(k)-1e-10) 
+	end
+	return c1
+end
+
+
+
 # ╔═╡ d18511ea-87e7-11eb-08ce-a9176a32fbd1
 function backwards_pol(grid, nperiods,β, π, yvec)
 	u_prime(c) = 0.5 * c^(-0.5)
@@ -581,11 +855,6 @@ function backwards_pol(grid, nperiods,β, π, yvec)
 	return (V,c)
 end
 
-# ╔═╡ c1e65340-87f9-11eb-3cd7-05f14edf71d2
-md"
-#
-"
-
 # ╔═╡ c339ad8a-87e7-11eb-2802-0991af7b2a78
 let
 	V,a = backwards_pol(Rspace,nperiods,β,π,yvec)
@@ -602,11 +871,43 @@ let
 	plot(pv,pa, layout = (1,2))
 end
 
-# ╔═╡ 6fbaac56-87e0-11eb-3d09-39a4fd293e88
-md"
-#
+# ╔═╡ 710a0212-9307-11eb-2cf3-e75b9c5eddab
+begin
+uprime(x) = 1.0 ./ x
+fprime(x) = alpha * x.^(alpha-1)
+end
 
-![](https://s3.getstickerpack.com/storage/uploads/sticker-pack/meme-pack-1/sticker_19.png?363e7ee56d4d8ad53813dae0907ef4c0&d=200x200)"
+# ╔═╡ 7b137330-9307-11eb-2644-390cd9c1e569
+function PFI()
+    c_init = kgrid
+    for iter in 1:N_iter
+        c_next = policy_iter(kgrid,c_init,uprime,fprime)  
+        # check convergence
+        if maximum(abs,c_init.-c_next) < tol
+            perrors =  maximum(abs,c_next.-c_star(kgrid))
+            println("PFI:")
+            println("Found solution after $iter iterations")
+            println("max policy function error = $perrors")
+            return c_next
+        elseif iter==N_iter
+            warn("No solution found after $iter iterations")
+            return c_next
+        end
+        c_init = c_next  # update guess 
+    end
+end
+
+# ╔═╡ 81ffaad8-9307-11eb-09d8-29155f2477c4
+function plotPFI()
+    v = PFI()
+    plot(kgrid,[v v.-c_star(kgrid)],
+            lab=["policy" "error"],
+            legend=:bottomright,
+            layout = 2)
+end
+
+# ╔═╡ 86669410-9307-11eb-3170-a3ff1d993e86
+plotPFI()
 
 # ╔═╡ Cell order:
 # ╟─5fab5e80-87ce-11eb-111a-d5288227b97c
@@ -661,3 +962,24 @@ md"
 # ╟─c1e65340-87f9-11eb-3cd7-05f14edf71d2
 # ╟─c339ad8a-87e7-11eb-2802-0991af7b2a78
 # ╟─6fbaac56-87e0-11eb-3d09-39a4fd293e88
+# ╠═a510ff40-9302-11eb-091e-6929367f6783
+# ╠═06ff3932-9304-11eb-07cc-d798d56c0931
+# ╠═2e121c60-9304-11eb-29c4-afd0a289343f
+# ╠═3c8e560a-9304-11eb-2c45-7df67768f75b
+# ╠═4849479a-9304-11eb-1c06-4b53a4163f85
+# ╠═5984cd7a-9304-11eb-0bd4-ebac2da4f300
+# ╠═5d642bca-9304-11eb-2b23-dfa47b04bb22
+# ╠═67d367c4-9304-11eb-0bfc-21b9bfec2fb9
+# ╠═6b33c6ca-9304-11eb-3766-fdcc42b64f2d
+# ╠═72cc3cdc-9304-11eb-3548-95962c3513ec
+# ╠═776c4712-9304-11eb-1824-a14cde26b895
+# ╠═7999a272-9304-11eb-254c-af591bae0620
+# ╠═7e0a9d82-9304-11eb-1d3d-bb47fc55d033
+# ╠═eb09edb4-9306-11eb-131d-a7429e6294f4
+# ╠═23c44cee-9307-11eb-09f1-8b641f262e38
+# ╠═597080ba-9307-11eb-2780-87474bfc5cff
+# ╠═67c4bbb8-9307-11eb-3ecb-13d7af9d899a
+# ╠═710a0212-9307-11eb-2cf3-e75b9c5eddab
+# ╠═7b137330-9307-11eb-2644-390cd9c1e569
+# ╠═81ffaad8-9307-11eb-09d8-29155f2477c4
+# ╠═86669410-9307-11eb-3170-a3ff1d993e86
