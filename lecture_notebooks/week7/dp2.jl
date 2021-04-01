@@ -273,6 +273,11 @@ function Bellman2(grid::Vector,vplus::Vector,π::Float64,yvec::Vector,β::Float6
 	return (Vt, at)
 end
 
+# ╔═╡ 99b19ed4-92c8-11eb-2daa-2df3db8736bd
+md"
+#
+"
+
 # ╔═╡ 43539482-87e0-11eb-22c8-b9380ae1ebdb
 function backwards2(grid, nperiods, π, yvec, β)
 	points = length(grid)
@@ -288,6 +293,11 @@ function backwards2(grid, nperiods, π, yvec, β)
 	end
 	return (V,a)
 end
+
+# ╔═╡ a361963a-92c8-11eb-0543-7decc61720a8
+md"
+#
+"
 
 # ╔═╡ 5f764692-87df-11eb-3b9d-e5823eb4d1b3
 let
@@ -324,6 +334,8 @@ $$V_t(R_t) = \max_{0 \leq a_t \leq R_t} \left(u(a_t) + \beta \mathbb{E} \left[ V
 
 * So let's treat it as such. We could direct optimization for the Bellman Operator!
 
+#
+
 "
 
 # ╔═╡ 3b1f5120-87e2-11eb-1b10-85900b6fbeb6
@@ -340,7 +352,6 @@ function bellman3(grid,v0,β::Float64, π, yvec)
     for (i,r) in enumerate(grid)
 
         objective(c) = - (sqrt.(c) + β * (π * Interp(r - c + yvec[2]) + (1-π) * Interp(r - c + yvec[1])) )
-        # find max of ojbective between [0,k^alpha]
         res = optimize(objective, 1e-6, r)  # search in [1e-6,r]
         pol[i] = res.minimizer
         v1[i] = -res.minimum
@@ -348,6 +359,11 @@ function bellman3(grid,v0,β::Float64, π, yvec)
     return (v1,pol)   # return both value and policy function
 end
 
+
+# ╔═╡ c6990bb0-92c8-11eb-2523-9f8a7ec1cd4a
+md"
+#
+"
 
 # ╔═╡ 0b83e920-87e3-11eb-0792-479eb843b429
 function backwards3(grid, nperiods,β, π, yvec)
@@ -364,6 +380,11 @@ function backwards3(grid, nperiods,β, π, yvec)
 	end
 	return (V,a)
 end
+
+# ╔═╡ d391139e-92c8-11eb-0888-b325a75fb10f
+md"
+#
+"
 
 # ╔═╡ 7003b4e8-87e3-11eb-28a9-f7e3668beac3
 let
@@ -414,10 +435,13 @@ md"
 ## *Just*?
 
 * There is a slight issue here. The Euler Equation in itself does not enforce the contraint that we cannot borrow any $R$. 
-* In particular, $c_{t+1} \geq 0$.
+* In particular, $R_{t} \geq 0$ is missing from the above equation.
 * look back above at the last plot of the consumption function. It has a kink!
 * The Euler Equation applies only to the *right* of that kink!
-* For small values of $R_t$ (left of kink), we cannot consume along the straight line of the prescribed consumption function, since then $R_{t+1} = R_t - c_t < 0$!
+* If tomorrow's consumption is low (we are saving a lot), today's consumption is relatively high, implying that we consume more than we have in terms of $R_t$.
+* Satisfying the Euler Equation would require to set $R_t <0$ sometimes, which is ruled out.
+
+
 "
 
 # ╔═╡ a4018f28-87ec-11eb-07f0-af86523dd26e
@@ -430,6 +454,8 @@ md"
 
 #
 
+* First, let's put down the marginal utility function and it's inverse:
+
 "
 
 # ╔═╡ 027fda74-87f1-11eb-1441-55d6e410bf4c
@@ -438,20 +464,69 @@ u_prime(c) = 0.5 .* c.^(-0.5)
 # ╔═╡ 540d8814-87f1-11eb-0b8c-23357c46f93c
 u_primeinv(u) = (2 .* u).^(-2)
 
-# ╔═╡ c75eed74-87ee-11eb-3e9a-3b893294baec
-function EEresidual(c,R,C1,grid,yvec,β)
-	# next period resources, given c0
-	R1 = R - c .+ yvec  # a (2,1) vector: R1 for each income level
+# ╔═╡ d2788ffe-92c4-11eb-19e7-4b41d9f9ebdd
+md"
 
-	# get implied next period consumption from C1
-	citp = extrapolate(interpolate(([0.0, grid...],), [0.0,C1...], Gridded(Linear())), Interpolations.Flat())
-	c1 = citp.(R1)
-	RHS = β * [1-π  π] * u_prime(c1) # expecte marginal utility of tomorrows consumption
+#
+
+* We need the _inverse_ of the marginal utility function?
+* Yes. Here is why. For any candidate consumption level $c_t$
+$$\begin{align}
+u'(c_t) & = \beta \mathbb{E} \left[ u'(c(R_{t+1})) \right] \\
+u'(c_t) & = \text{RHS}
+\end{align}$$
+* So, if we have computed the RHS, current period optimal consumption is just
+$$c_t  = \left( u' \right)^{-1}\left(\text{RHS}\right)\hspace{1cm}(\text{EEresid})$$
+
+where $\left( u' \right)^{-1}(z)$ denotes the _inverse_ of function $u'(x)$. 
+
+#
+
+### Example
+
+* Suppose tomorrow's consumption function _does_ have the kink at $R_{t+1} = 1.5$
+* I.e. $c_{t+1}^*(R_{t+1}) = R_{t+1},\forall R_{t+1} \leq 1.5$
+* Let $y_{t+1} = 1.5, R_t = 1$. Now try out consumption choice $c_t = 1$!
+
+$$\begin{align}
+R_{t+1} &= R_t - c_t+ y_{t+1} \\
+        &= 1 - 1 + 1.5 = 1.5 \\
+\Rightarrow c_{t+1}^*(1.5) &= 1.5
+\end{align}$$ 
+
+because right at the kink! 
+* Then, the Euler equation says: 
+$$\begin{align}
+u'(c_t) & = u'(c_{t+1}) \\
+c_t & = (u')^{-1}\left(u'(c_{t+1})\right) \\
+c_t & = c_{t+1} = 1.5
+\end{align}$$
+* Well, that in turn means that $R_t - c_t = 1 - 1.5 < 0$, i.e. we would have to borrow 0.5 units of $R$ in order to satisfy that Euler Equation!
+
+#
+"
+
+# ╔═╡ c75eed74-87ee-11eb-3e9a-3b893294baec
+function EEresid(ct::Number,        # candidate current (t) consumption choice 
+		         Rt::Number,        # current level of resources
+				 cfunplus::Vector,  # next period's consumption *function*
+		         grid::Vector,      # grid values on which cfunplus is defined
+				 yvec::Vector,      # vector of values for shock
+		         β::Number,         # discount factor
+				 π::Number)         # prob of high y
 	
-	# euler residual
-	# taking u_prime inverse gets predicted current consumption
-	# that should be equal to our choice c.
-	r = c .- u_primeinv(RHS)
+	# next period resources, given candidate choice ct
+	Rplus = Rt - ct .+ yvec  # a (2,1) vector: Rplus for each income level
+
+	# get implied next period consumption from cplus
+	# we add point (0,0) here to make sure that this is part of the grid.
+	citp = extrapolate(
+				interpolate(([0.0, grid...],), [0.0,cfunplus...], Gridded(Linear())), 			   Interpolations.Flat())
+	cplus = citp.(Rplus)
+	RHS = β * [1-π  π] * u_prime(cplus) # expecte marginal utility of tomorrows consumption
+	
+	# euler residual: expression EEresid from above
+	r = ct .- u_primeinv(RHS)
 	r[1]  # array of size 1
 end    
 
@@ -468,14 +543,16 @@ function policy_iter(grid,c0,u_prime,β::Float64, π, yvec)
     # of current resources
     for (i,r) in enumerate(grid)
 		# get euler residual if we consume all resources
-		res = EEresidual(r,r,c0, grid, yvec,β)
+		res = EEresid(r,r,c0, grid, yvec,β , π)
 		if res < 0
-			# we consume too little today, c_t is too small. 
+			# we consume too little today, c_t is too small for the Euler Equation.
 			# could only make it bigger by borrowing next period.
-			# we cant. so really we are consuming all we have:
+			# but we cant! so really we are consuming all we have:
 			c1[i] = r
 		else
-			c1[i] = fzero( x-> EEresidual(x,r,c0, grid, yvec, β) , 1e-6, r)
+			# no problem here: Euler Equation holds
+			# just need to find that ct that makes it zero:
+			c1[i] = fzero( x-> EEresid(x,r,c0, grid, yvec, β, π) , 1e-6, r)
 		end
     end
     return c1
@@ -556,20 +633,25 @@ md"
 # ╟─48cc5fa2-87dd-11eb-309b-9708941fd8d5
 # ╠═3f226986-87df-11eb-0bfc-953a37d5c3ff
 # ╠═04b6c4b8-87df-11eb-21dd-15a443042bd1
+# ╟─99b19ed4-92c8-11eb-2daa-2df3db8736bd
 # ╠═43539482-87e0-11eb-22c8-b9380ae1ebdb
-# ╠═5f764692-87df-11eb-3b9d-e5823eb4d1b3
+# ╟─a361963a-92c8-11eb-0543-7decc61720a8
+# ╟─5f764692-87df-11eb-3b9d-e5823eb4d1b3
 # ╟─8eb731f6-87e0-11eb-35dd-61ba070afc8b
 # ╟─02d26410-87e2-11eb-0278-99ee0bbd2923
 # ╠═de974196-87e2-11eb-2bd0-2be91745ee25
 # ╠═3b1f5120-87e2-11eb-1b10-85900b6fbeb6
+# ╟─c6990bb0-92c8-11eb-2523-9f8a7ec1cd4a
 # ╠═0b83e920-87e3-11eb-0792-479eb843b429
-# ╠═7003b4e8-87e3-11eb-28a9-f7e3668beac3
+# ╟─d391139e-92c8-11eb-0888-b325a75fb10f
+# ╟─7003b4e8-87e3-11eb-28a9-f7e3668beac3
 # ╟─4504d988-87e4-11eb-05d5-c9f9f215f785
 # ╟─6828b538-87e4-11eb-3cdd-71c31dad5a6e
 # ╟─ba19759c-87eb-11eb-1bec-51de9ac10e31
 # ╟─a4018f28-87ec-11eb-07f0-af86523dd26e
 # ╠═027fda74-87f1-11eb-1441-55d6e410bf4c
 # ╠═540d8814-87f1-11eb-0b8c-23357c46f93c
+# ╟─d2788ffe-92c4-11eb-19e7-4b41d9f9ebdd
 # ╠═c75eed74-87ee-11eb-3e9a-3b893294baec
 # ╟─ae56f4e2-87f9-11eb-10fc-e3eda66e8a1f
 # ╠═1b72f9ee-87e7-11eb-202d-47c87136deaf
