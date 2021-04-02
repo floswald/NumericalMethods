@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.21
+# v0.14.0
 
 using Markdown
 using InteractiveUtils
@@ -682,7 +682,7 @@ function bellman_operator(grid,v0)
         # find maximal choice
         v1[i], pol[i] = findmax(w)     # stores Value und policy (index of optimal choice)
     end
-    return (v1,pol)   # return both value and policy function
+    return (v1,grid[pol])   # return both value and policy function
 end
 
 # ╔═╡ 67d367c4-9304-11eb-0bfc-21b9bfec2fb9
@@ -697,14 +697,14 @@ md"
 # `n`: number of grid points
 # output
 # `v_next`: tuple with value and policy functions after `n` iterations.
-function VFI()
+function VFI(op::Function)
     v_init = zeros(n)     # initial guess
     for iter in 1:N_iter
-        v_next = bellman_operator(kgrid,v_init)  # returns a tuple: (v1,pol)
+        v_next = op(kgrid,v_init)  # returns a tuple: (v1,pol)
         # check convergence
         if maximum(abs,v_init.-v_next[1]) < tol
             verrors = maximum(abs,v_next[1].-v_star(kgrid))
-            perrors = maximum(abs,kgrid[v_next[2]].-k_star(kgrid))
+            perrors = maximum(abs,v_next[2].-k_star(kgrid))
             println("Found solution after $iter iterations")
             println("maximal value function error = $verrors")
             println("maximal policy function error = $perrors")
@@ -728,26 +728,50 @@ md"
 function plotVFI(v::NamedTuple)
     
     p = Any[]
+	    # errors of both
+	if eltype(v.p) == Int
+		policy = kgrid[v.p]
+	else
+		policy = v.p
+	end
     
     # value and policy functions
-    push!(p,plot(kgrid,v.v,
+	if !isnan(v.v[1])
+		push!(p,plot(kgrid,v.v,
             leg = false,title = "Vfun iterations: $(v.iter)",
-            ylim=(-50,-30)),
-            plot(kgrid,kgrid[v.p],
+            ylim=(-50,-30)))
+		push!(p,plot(kgrid,v.v .- v_star(kgrid),
+        title = "max Vfun error: $(round(v.errv,digits=3))"))
+		perrors = policy .- k_star(kgrid)
+	else
+		push!(p,plot(title = "Vfun iterations: $(v.iter)"), plot())
+		perrors = policy .- c_star(kgrid)
+		
+	end
+    push!(p,plot(kgrid,policy,
             title = "policy function"))
-    
-    # errors of both
-    push!(p,plot(kgrid,v.v.-v_star(kgrid),
-        title = "max Vfun error: $(round(v.errv,digits=3))"),
-        plot(kgrid,kgrid[v.p].-k_star(kgrid),
+    push!(p,plot(kgrid,perrors,
         title = "max policy error: $(round(v.errp,digits=3))"))
 
-    plot(p...,layout=grid(2,2) )
+    plot(p...,layout=grid(2,2) , leg = false)
     
 end
 
 # ╔═╡ 7999a272-9304-11eb-254c-af591bae0620
-plotVFI(VFI())
+plotVFI(VFI(bellman_operator))
+
+# ╔═╡ 84e23d2a-9388-11eb-2483-3342d1683129
+md"
+
+#
+
+## continous choice
+
+* like before, now let's treat the choice dimension as a continuous variable
+* This is almost identical to before with finite time.
+
+#
+"
 
 # ╔═╡ 7e0a9d82-9304-11eb-1d3d-bb47fc55d033
 function bellman_operator2(grid,v0)
@@ -771,60 +795,35 @@ function bellman_operator2(grid,v0)
     return (v1,pol)   # return both value and policy function
 end
 
-# ╔═╡ eb09edb4-9306-11eb-131d-a7429e6294f4
-function VFI2()
-    v_init = zeros(n)     # initial guess
-    for iter in 1:N_iter
-        v_next = bellman_operator2(kgrid,v_init)  # returns a tuple: (v1,pol)
-        # check convergence
-        if maximum(abs,v_init.-v_next[1]) < tol
-            verrors = maximum(abs,v_next[1].-v_star(kgrid))
-            perrors = maximum(abs,v_next[2].-k_star(kgrid))
-            println("continuous VFI:")
-            println("Found solution after $iter iterations")
-            println("maximal value function error = $verrors")
-            println("maximal policy function error = $perrors")
-            return v_next
-        elseif iter==N_iter
-            warn("No solution found after $iter iterations")
-            return v_next
-        end
-        v_init = v_next[1]  # update guess 
-    end
-    return nothing
-end
-
-# ╔═╡ 23c44cee-9307-11eb-09f1-8b641f262e38
-function plotVFI2()
-    v = VFI2()
-    p = Any[]
-    
-    # value and policy functions
-    push!(p,plot(kgrid,v[1],
-            lab="V",
-            ylim=(-50,-30),legend=:bottomright),
-            plot(kgrid,v[2],
-            lab="policy",legend=:bottomright))
-    
-    # errors of both
-    push!(p,plot(kgrid,v[1].-v_star(kgrid),
-        lab="V error",legend=:bottomright),
-        plot(kgrid,v[2].-k_star(kgrid),
-        lab="policy error",legend=:bottomright))
-
-    plot(p...,layout=grid(2,2) )
-    
-end
+# ╔═╡ aa891724-9388-11eb-32bb-8f8d15dc3761
+md"
+#
+"
 
 # ╔═╡ 597080ba-9307-11eb-2780-87474bfc5cff
-plotVFI2()
+plotVFI(VFI(bellman_operator2))
+
+# ╔═╡ 6f9b2b8a-9389-11eb-2731-398e1342538a
+md"
+#
+
+* Finally, policy function iteration!
+* Again, remember the euler Equation here.
+
+#
+"
+
+# ╔═╡ 710a0212-9307-11eb-2cf3-e75b9c5eddab
+begin
+	uprime(x) = 1.0 ./ x
+	fprime(x) = alpha * x.^(alpha-1)
+end
 
 # ╔═╡ 67c4bbb8-9307-11eb-3ecb-13d7af9d899a
 function policy_iter(grid,c0,u_prime,f_prime)
 
 	c1  = zeros(length(grid))     # next guess
 	pol_fun = extrapolate(interpolate((collect(grid),), c0, Gridded(Linear()) ) , Interpolations.Flat())
-
 
 	# loop over current states
 	# of current capital
@@ -871,11 +870,12 @@ let
 	plot(pv,pa, layout = (1,2))
 end
 
-# ╔═╡ 710a0212-9307-11eb-2cf3-e75b9c5eddab
-begin
-uprime(x) = 1.0 ./ x
-fprime(x) = alpha * x.^(alpha-1)
-end
+# ╔═╡ 96a55b70-9389-11eb-13a1-3146098e9cb9
+md"
+
+#
+
+"
 
 # ╔═╡ 7b137330-9307-11eb-2644-390cd9c1e569
 function PFI()
@@ -888,26 +888,23 @@ function PFI()
             println("PFI:")
             println("Found solution after $iter iterations")
             println("max policy function error = $perrors")
-            return c_next
+            return (v = fill(NaN,n), p =c_next, errv = 0.0, errp = perrors, iter = iter)
+
         elseif iter==N_iter
             warn("No solution found after $iter iterations")
-            return c_next
+            return (v = fill(NaN,n), p =c_next, errv = 0.0, errp = perrors, iter = iter)
         end
         c_init = c_next  # update guess 
     end
 end
 
-# ╔═╡ 81ffaad8-9307-11eb-09d8-29155f2477c4
-function plotPFI()
-    v = PFI()
-    plot(kgrid,[v v.-c_star(kgrid)],
-            lab=["policy" "error"],
-            legend=:bottomright,
-            layout = 2)
-end
+# ╔═╡ 9d4211e6-9389-11eb-03a4-559460e28c44
+md"
+#
+"
 
-# ╔═╡ 86669410-9307-11eb-3170-a3ff1d993e86
-plotPFI()
+# ╔═╡ 3b50f766-9386-11eb-2101-97a38644fda8
+plotVFI(PFI())
 
 # ╔═╡ Cell order:
 # ╟─5fab5e80-87ce-11eb-111a-d5288227b97c
@@ -962,24 +959,26 @@ plotPFI()
 # ╟─c1e65340-87f9-11eb-3cd7-05f14edf71d2
 # ╟─c339ad8a-87e7-11eb-2802-0991af7b2a78
 # ╟─6fbaac56-87e0-11eb-3d09-39a4fd293e88
-# ╠═a510ff40-9302-11eb-091e-6929367f6783
-# ╠═06ff3932-9304-11eb-07cc-d798d56c0931
+# ╟─a510ff40-9302-11eb-091e-6929367f6783
+# ╟─06ff3932-9304-11eb-07cc-d798d56c0931
 # ╠═2e121c60-9304-11eb-29c4-afd0a289343f
-# ╠═3c8e560a-9304-11eb-2c45-7df67768f75b
+# ╟─3c8e560a-9304-11eb-2c45-7df67768f75b
 # ╠═4849479a-9304-11eb-1c06-4b53a4163f85
 # ╠═5984cd7a-9304-11eb-0bd4-ebac2da4f300
 # ╠═5d642bca-9304-11eb-2b23-dfa47b04bb22
-# ╠═67d367c4-9304-11eb-0bfc-21b9bfec2fb9
+# ╟─67d367c4-9304-11eb-0bfc-21b9bfec2fb9
 # ╠═6b33c6ca-9304-11eb-3766-fdcc42b64f2d
-# ╠═72cc3cdc-9304-11eb-3548-95962c3513ec
-# ╠═776c4712-9304-11eb-1824-a14cde26b895
+# ╟─72cc3cdc-9304-11eb-3548-95962c3513ec
+# ╟─776c4712-9304-11eb-1824-a14cde26b895
 # ╠═7999a272-9304-11eb-254c-af591bae0620
+# ╟─84e23d2a-9388-11eb-2483-3342d1683129
 # ╠═7e0a9d82-9304-11eb-1d3d-bb47fc55d033
-# ╠═eb09edb4-9306-11eb-131d-a7429e6294f4
-# ╠═23c44cee-9307-11eb-09f1-8b641f262e38
+# ╟─aa891724-9388-11eb-32bb-8f8d15dc3761
 # ╠═597080ba-9307-11eb-2780-87474bfc5cff
-# ╠═67c4bbb8-9307-11eb-3ecb-13d7af9d899a
+# ╟─6f9b2b8a-9389-11eb-2731-398e1342538a
 # ╠═710a0212-9307-11eb-2cf3-e75b9c5eddab
+# ╠═67c4bbb8-9307-11eb-3ecb-13d7af9d899a
+# ╟─96a55b70-9389-11eb-13a1-3146098e9cb9
 # ╠═7b137330-9307-11eb-2644-390cd9c1e569
-# ╠═81ffaad8-9307-11eb-09d8-29155f2477c4
-# ╠═86669410-9307-11eb-3170-a3ff1d993e86
+# ╟─9d4211e6-9389-11eb-03a4-559460e28c44
+# ╠═3b50f766-9386-11eb-2101-97a38644fda8
