@@ -763,8 +763,6 @@ plotVFI(VFI(bellman_operator))
 # ╔═╡ 84e23d2a-9388-11eb-2483-3342d1683129
 md"
 
-#
-
 ## continous choice
 
 * like before, now let's treat the choice dimension as a continuous variable
@@ -964,7 +962,7 @@ plotVFI(PFI())
 # ╠═2e121c60-9304-11eb-29c4-afd0a289343f
 # ╟─3c8e560a-9304-11eb-2c45-7df67768f75b
 # ╠═4849479a-9304-11eb-1c06-4b53a4163f85
-# ╠═5984cd7a-9304-11eb-0bd4-ebac2da4f300
+# ╟─5984cd7a-9304-11eb-0bd4-ebac2da4f300
 # ╠═5d642bca-9304-11eb-2b23-dfa47b04bb22
 # ╟─67d367c4-9304-11eb-0bfc-21b9bfec2fb9
 # ╠═6b33c6ca-9304-11eb-3766-fdcc42b64f2d
