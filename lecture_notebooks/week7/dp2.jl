@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.0
+# v0.14.1
 
 using Markdown
 using InteractiveUtils
@@ -9,9 +9,6 @@ using PlutoUI
 
 # ╔═╡ d1096078-87dc-11eb-2567-356e2376c9d7
 using Plots, LaTeXStrings
-
-# ╔═╡ 3f226986-87df-11eb-0bfc-953a37d5c3ff
-using Interpolations
 
 # ╔═╡ de974196-87e2-11eb-2bd0-2be91745ee25
 using Optim
@@ -506,6 +503,14 @@ c_t & = c_{t+1} = 1.5
 #
 "
 
+# ╔═╡ f81bfd95-c526-4adc-9687-26519029f450
+let
+	c = rand(10)
+	g = 1:10
+	itp = extrapolate(interpolate((g,), c, Gridded(Linear())), Interpolations.Linear())
+	itp(0.5)
+end
+
 # ╔═╡ c75eed74-87ee-11eb-3e9a-3b893294baec
 function EEresid(ct::Number,        # candidate current (t) consumption choice 
 		         Rt::Number,        # current level of resources
@@ -521,7 +526,7 @@ function EEresid(ct::Number,        # candidate current (t) consumption choice
 	# get implied next period consumption from cplus
 	# we add point (0,0) here to make sure that this is part of the grid.
 	citp = extrapolate(
-				interpolate(([0.0, grid...],), [0.0,cfunplus...], Gridded(Linear())), 			   Interpolations.Flat())
+				interpolate(([0.0, grid...],), [0.0,cfunplus...], Gridded(Linear())), Interpolations.Flat())
 	cplus = citp.(Rplus)
 	RHS = β * [1-π  π] * u_prime(cplus) # expecte marginal utility of tomorrows consumption
 	
@@ -705,9 +710,6 @@ function VFI(op::Function)
         if maximum(abs,v_init.-v_next[1]) < tol
             verrors = maximum(abs,v_next[1].-v_star(kgrid))
             perrors = maximum(abs,v_next[2].-k_star(kgrid))
-            println("Found solution after $iter iterations")
-            println("maximal value function error = $verrors")
-            println("maximal policy function error = $perrors")
             return (v = v_next[1], p =v_next[2], errv = verrors, errp = perrors, iter = iter)
         elseif iter==N_iter
             @warn "No solution found after $iter iterations"
@@ -759,6 +761,30 @@ end
 
 # ╔═╡ 7999a272-9304-11eb-254c-af591bae0620
 plotVFI(VFI(bellman_operator))
+
+# ╔═╡ a4ba5a96-ad59-4319-bd94-636f525853c6
+function VFI_converge(op::Function,steps)
+    v_init = zeros(n)     # initial guess
+	pl = plot(kgrid, v_star(kgrid), color = :red, label = "true")
+    for iter in 1:steps
+		plot!(pl, kgrid, v_init, label = "", color = :grey)
+        v_next = op(kgrid,v_init)  # returns a tuple: (v1,pol)
+        # check convergence
+        if maximum(abs,v_init.-v_next[1]) < tol
+            verrors = maximum(abs,v_next[1].-v_star(kgrid))
+            perrors = maximum(abs,v_next[2].-k_star(kgrid))
+            return (v = v_next[1], p =v_next[2], errv = verrors, errp = perrors, iter = iter)
+        elseif iter==N_iter
+            @warn "No solution found after $iter iterations"
+            return (v = v_next[1], p =v_next[2], errv = verrors, errp = perrors, iter = iter)
+        end
+        v_init = v_next[1]  # update guess 
+    end
+	pl
+end
+
+# ╔═╡ c881819e-ca81-40b0-9e0f-93abcb43a2b4
+VFI_converge(bellman_operator, 50)
 
 # ╔═╡ 84e23d2a-9388-11eb-2483-3342d1683129
 md"
@@ -883,9 +909,6 @@ function PFI()
         # check convergence
         if maximum(abs,c_init.-c_next) < tol
             perrors =  maximum(abs,c_next.-c_star(kgrid))
-            println("PFI:")
-            println("Found solution after $iter iterations")
-            println("max policy function error = $perrors")
             return (v = fill(NaN,n), p =c_next, errv = 0.0, errp = perrors, iter = iter)
 
         elseif iter==N_iter
@@ -904,8 +927,14 @@ md"
 # ╔═╡ 3b50f766-9386-11eb-2101-97a38644fda8
 plotVFI(PFI())
 
+# ╔═╡ 10e1dde1-fd81-4943-92d9-5327749f9630
+using Interpolations
+
+# ╔═╡ 3f226986-87df-11eb-0bfc-953a37d5c3ff
+using Interpolations
+
 # ╔═╡ Cell order:
-# ╟─5fab5e80-87ce-11eb-111a-d5288227b97c
+# ╠═5fab5e80-87ce-11eb-111a-d5288227b97c
 # ╟─705e96f2-87ce-11eb-3f5a-eb6cdb8c49d4
 # ╟─34403942-87d2-11eb-1172-7bd285bf7d75
 # ╟─b9ed265e-87d2-11eb-1028-05b4c4ccbc74
@@ -948,6 +977,8 @@ plotVFI(PFI())
 # ╠═027fda74-87f1-11eb-1441-55d6e410bf4c
 # ╠═540d8814-87f1-11eb-0b8c-23357c46f93c
 # ╟─d2788ffe-92c4-11eb-19e7-4b41d9f9ebdd
+# ╠═10e1dde1-fd81-4943-92d9-5327749f9630
+# ╠═f81bfd95-c526-4adc-9687-26519029f450
 # ╠═c75eed74-87ee-11eb-3e9a-3b893294baec
 # ╟─ae56f4e2-87f9-11eb-10fc-e3eda66e8a1f
 # ╠═1b72f9ee-87e7-11eb-202d-47c87136deaf
@@ -969,6 +1000,8 @@ plotVFI(PFI())
 # ╟─72cc3cdc-9304-11eb-3548-95962c3513ec
 # ╟─776c4712-9304-11eb-1824-a14cde26b895
 # ╠═7999a272-9304-11eb-254c-af591bae0620
+# ╠═a4ba5a96-ad59-4319-bd94-636f525853c6
+# ╠═c881819e-ca81-40b0-9e0f-93abcb43a2b4
 # ╟─84e23d2a-9388-11eb-2483-3342d1683129
 # ╠═7e0a9d82-9304-11eb-1d3d-bb47fc55d033
 # ╟─aa891724-9388-11eb-32bb-8f8d15dc3761
