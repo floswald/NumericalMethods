@@ -6,5 +6,4 @@
 
 * We talked about how to solve the Rust Bus Model
 * The notebook is [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week10)
-* Here is a static [version](https://raw.githack.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week10/Zurcher.html)
-
+* Here is a static [version](https://raw.githack.com/floswald/NumericalMethods/master/lecture_notebooks/week10/Zurcher.html)
