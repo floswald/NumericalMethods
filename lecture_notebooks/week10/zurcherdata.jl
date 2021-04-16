@@ -115,6 +115,9 @@ md"
 # ╔═╡ 9e70d9c2-3ab7-4480-b17d-5de0fd4a6bf6
 d2 = d[in.(d.bustype, Ref([3,4])), :]  # `true` if d.bustype is in [3,4]
 
+# ╔═╡ 50258756-bc0b-460b-9294-65ce802564a3
+filter(row -> in.(row.bustype,Ref([3,4])), d)
+
 # ╔═╡ 9459156c-a4f2-4f7b-8e74-8de42c8d73c4
 g2 = groupby(d2, :bustype)  # `true` if d.bustype is in [3,4]
 
@@ -315,22 +318,23 @@ end
 # ╟─8e3cee88-06c2-45a0-9009-e31d7702d6fa
 # ╠═4d716ed7-1355-4f5d-9e30-adb985a111d5
 # ╟─33fcb555-3719-42e7-b15f-bd34408b4ddf
-# ╟─1cb3e4e9-bc78-4fa7-b446-dc1551b50b61
+# ╠═1cb3e4e9-bc78-4fa7-b446-dc1551b50b61
 # ╟─10fd401d-f1e1-4357-9481-75a1bafdd507
 # ╟─c1471871-9d29-4a08-978c-730578b65c26
 # ╟─f90c0bd3-1462-41f0-99be-2395f4941e53
-# ╟─bc26a596-1213-4ffd-aa24-30554de83caf
-# ╟─80ac5022-3e2d-4768-bf67-eb05a973e50d
+# ╠═bc26a596-1213-4ffd-aa24-30554de83caf
+# ╠═80ac5022-3e2d-4768-bf67-eb05a973e50d
 # ╟─18eb0748-749c-4e3c-a7a2-f8f1a5b74778
-# ╟─c3de6dd8-3fca-41e2-a8a2-21d8cee59918
+# ╠═c3de6dd8-3fca-41e2-a8a2-21d8cee59918
 # ╟─6e9ab972-b7a3-4870-a455-a4200133f4ca
 # ╟─97ba5281-51a0-415e-a291-3689d25d9103
-# ╟─9e70d9c2-3ab7-4480-b17d-5de0fd4a6bf6
+# ╠═9e70d9c2-3ab7-4480-b17d-5de0fd4a6bf6
+# ╠═50258756-bc0b-460b-9294-65ce802564a3
 # ╟─9459156c-a4f2-4f7b-8e74-8de42c8d73c4
 # ╟─9a1b7efe-9b27-49cb-98d1-55bcf938bb5e
-# ╟─75550463-d03d-4ab3-884e-91af9cb5824e
+# ╠═75550463-d03d-4ab3-884e-91af9cb5824e
 # ╟─dd46962d-c42c-4ee4-b06a-b92e3f85df80
-# ╟─3ac80f68-9022-4adb-bbb3-eff307f989a5
+# ╠═3ac80f68-9022-4adb-bbb3-eff307f989a5
 # ╟─e73ac274-e563-4d49-958d-10465cbcb314
 # ╟─1d256bb4-90d6-4fef-b1e3-27a4f67b1cb0
 # ╟─85419f82-c11b-48af-ba8d-d965f3424da2

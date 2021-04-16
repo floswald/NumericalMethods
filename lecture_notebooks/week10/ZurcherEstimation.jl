@@ -304,6 +304,9 @@ function busdata(z::Harold; bustype = 4)
 	df = df[idx,:]
 end
 
+# ╔═╡ fe4345fd-3eb2-471a-9be6-0e7d39cb2d1a
+bd = busdata(Harold())
+
 # ╔═╡ 91b85c93-a2d4-45bc-b181-b51695bf6178
 function dplots(n)
 	dd = busdata(Harold(n = n))
@@ -419,13 +422,14 @@ nfxp(n = 175,β = 0.99, doθ = true)
 # ╠═daf361e3-9e68-4f64-8e33-a51ce443d3fa
 # ╟─387d9de3-9dc1-4e3c-8b9b-cbb7cc9cb85c
 # ╠═ec467235-26c1-45c7-886d-d3c5a572a784
-# ╠═d3221610-1791-4d87-acdd-4a5bd9a2b37a
+# ╟─d3221610-1791-4d87-acdd-4a5bd9a2b37a
 # ╠═724b6d55-9757-4c58-94ef-9de0e8f64669
-# ╠═62893e3f-195f-4581-aa07-7a8b9115560b
+# ╟─62893e3f-195f-4581-aa07-7a8b9115560b
 # ╠═5168797e-01d0-4697-b796-c0e270550348
 # ╠═57632a86-1479-4331-a8e8-94865193a4eb
 # ╠═1b0fb366-0557-4dc4-bf79-553f4d068737
-# ╠═c6ed299c-b9a7-47e7-ab3a-959031aa7d0a
+# ╠═fe4345fd-3eb2-471a-9be6-0e7d39cb2d1a
+# ╟─c6ed299c-b9a7-47e7-ab3a-959031aa7d0a
 # ╟─2e555776-ce29-4791-9542-27093d132a0e
 # ╠═06645c70-959c-490e-b3e5-c5eebe42268e
 # ╠═31c0c8b6-3630-432a-97c6-f59842b7185c
