@@ -298,7 +298,7 @@ $$u(x,d,\theta_1)=\left \{
 
 ### Avoiding Numerical Issues
 
-* Rust is careful with numerical precision. computing `exp` for large numbers is an issue.
+* Rust is careful with numerical precision. computing `exp` for very large or very small numbers is an issue.
 * So instead of computing the log-sum as
 $$\log \big( \exp[v(x',0)] + \exp[v(x',1)] \big)$$
 
@@ -498,10 +498,10 @@ Big Thanks again to [Fedor Iskhakov](https://github.com/fediskhakov/CompEcon) fo
 "
 
 # ╔═╡ Cell order:
-# ╟─307997a8-98a9-11eb-345d-cb8acfdf7e4a
+# ╠═307997a8-98a9-11eb-345d-cb8acfdf7e4a
 # ╟─967e4554-3a10-4661-8965-cd84a14ec1ca
-# ╟─2d376efe-49ce-4629-90a4-7bea521ffa97
-# ╟─6692f61f-1aa9-4a7d-b22d-54cdbc072c0d
+# ╠═2d376efe-49ce-4629-90a4-7bea521ffa97
+# ╠═6692f61f-1aa9-4a7d-b22d-54cdbc072c0d
 # ╟─6bf55a2d-f998-4866-850f-826044ebbfb8
 # ╟─484255dc-63f1-4e98-b5a7-2ce00f544b78
 # ╟─e9145508-1f60-4dba-af41-e1c779b1d44a
@@ -514,11 +514,11 @@ Big Thanks again to [Fedor Iskhakov](https://github.com/fediskhakov/CompEcon) fo
 # ╠═7f7733dd-816e-4076-b4a1-0eb79f6bc598
 # ╟─3a7bbc63-bf47-43fe-899d-b86b047d365d
 # ╟─a2bccdc5-acd3-4130-9ae5-fe123a46896b
-# ╟─b05a9f0e-6966-4f0c-8ac5-acc219872848
+# ╠═b05a9f0e-6966-4f0c-8ac5-acc219872848
 # ╠═fb398266-3d14-4c77-aa00-90dd673b05b4
 # ╟─e068ad7a-be3d-40e1-8082-9a96d6a42ad6
 # ╠═48b44af3-e854-4b06-ba50-eabcbdda6958
-# ╟─53ebae3d-9caf-48b6-be21-d18696602d64
+# ╠═53ebae3d-9caf-48b6-be21-d18696602d64
 # ╠═0dc836e1-b750-4130-ad73-22e44efbde0f
 # ╟─5b25b9f2-a574-4a18-8290-238ef0b6634c
 # ╠═b4ba36b9-d7f5-46aa-a39b-4f2965ed8252
