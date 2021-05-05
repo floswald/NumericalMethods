@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.2
+# v0.14.0
 
 using Markdown
 using InteractiveUtils
@@ -9,6 +9,9 @@ using PlutoUI
 
 # ╔═╡ d1096078-87dc-11eb-2567-356e2376c9d7
 using Plots, LaTeXStrings
+
+# ╔═╡ 3f226986-87df-11eb-0bfc-953a37d5c3ff
+using Interpolations
 
 # ╔═╡ de974196-87e2-11eb-2bd0-2be91745ee25
 using Optim
@@ -927,14 +930,8 @@ md"
 # ╔═╡ 3b50f766-9386-11eb-2101-97a38644fda8
 plotVFI(PFI())
 
-# ╔═╡ 10e1dde1-fd81-4943-92d9-5327749f9630
-using Interpolations
-
-# ╔═╡ 3f226986-87df-11eb-0bfc-953a37d5c3ff
-using Interpolations
-
 # ╔═╡ Cell order:
-# ╠═5fab5e80-87ce-11eb-111a-d5288227b97c
+# ╟─5fab5e80-87ce-11eb-111a-d5288227b97c
 # ╟─705e96f2-87ce-11eb-3f5a-eb6cdb8c49d4
 # ╟─34403942-87d2-11eb-1172-7bd285bf7d75
 # ╟─b9ed265e-87d2-11eb-1028-05b4c4ccbc74
@@ -977,7 +974,6 @@ using Interpolations
 # ╠═027fda74-87f1-11eb-1441-55d6e410bf4c
 # ╠═540d8814-87f1-11eb-0b8c-23357c46f93c
 # ╟─d2788ffe-92c4-11eb-19e7-4b41d9f9ebdd
-# ╠═10e1dde1-fd81-4943-92d9-5327749f9630
 # ╠═f81bfd95-c526-4adc-9687-26519029f450
 # ╠═c75eed74-87ee-11eb-3e9a-3b893294baec
 # ╟─ae56f4e2-87f9-11eb-10fc-e3eda66e8a1f

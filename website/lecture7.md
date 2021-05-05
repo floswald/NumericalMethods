@@ -13,4 +13,6 @@
 
 You can find the notebooks for this lecture [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week7)
 
+Here is a static html of the dynamic programming [notebook](https://raw.githack.com/floswald/NumericalMethods/master/lecture_notebooks/week7/dp.jl.html)
+
 
