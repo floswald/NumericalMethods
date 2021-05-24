@@ -33,7 +33,7 @@ end
 md"""
 # Homework 0.2: Getting up and running
 
-* This is homeowork 0 from the MIT course [computational thinking](https://htmlpreview.github.io/?https://github.com/mitmath/18S191/blob/Fall20/homework/homework0/hw0.html)
+* This is homework 0 from the MIT course [computational thinking](https://htmlpreview.github.io/?https://github.com/mitmath/18S191/blob/Fall20/homework/homework0/hw0.html)
 """
 
 # ╔═╡ 339c2d5c-e6ce-11ea-32f9-714b3628909c
