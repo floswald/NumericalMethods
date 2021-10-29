@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -16,6 +16,7 @@ end
 # ╔═╡ 74b008f6-ed6b-11ea-291f-b3791d6d1b35
 begin
 	using Colors, ColorVectorSpace, ImageShow, FileIO, ImageIO
+	using QuartzImageIO
 	using PlutoUI
 	using HypertextLiteral
 end
@@ -71,38 +72,13 @@ md"""
 _When running this notebook for the first time, this could take up to 15 minutes. Hang in there!_
 """
 
-# ╔═╡ e0d8d064-c1b7-40fb-b7bc-b8acd6be5002
-md"""
-# License and Copyright
-
-* Attribution: This notebook is based on the [MIT Computational Thinking](https://computationalthinking.mit.edu/Spring21/images/) course, licensed under a [creative commons license](https://creativecommons.org/licenses/by-sa/4.0/). Alan Edelman, David P. Sanders and Fons van der Plas, 2021,
-* Changes made: 
-"""
-
 # ╔═╡ ca1b507e-6017-11eb-34e6-6b85cd189002
 md"""
 # Images as examples of data  all around us
-Welcome to the Computational Thinking using Julia for Real-World Problems, at MIT in Spring 2021!
 
-The aim of this course is to bring together concepts from computer science and applied math with coding in the modern **Julia language**, and to see how to apply these techniques to study interesting applications (and of course to have fun).
+This notebook is based on the MIT course *Computational Thinking* - please see the license notice at the bottom.
 
-We would be pleased if students who have been interested in computer science now become interested in computational science and those interested in scientific applications learn computer science they may not see elsewhere.
-... and for all students, we wish to share the value of 
-the Julia  language as the best of both worlds.
-"""
-
-# ╔═╡ e9ff96d8-6bc1-11eb-0f6a-234b9fae047e
-md"""
-
-## Alan's Essay: Are all programming languages the same? 
-
->Superficially, many programming languages are very similar.  "Showoffs" will compare functional programming vs imperative programming.  Others will compare compiled languages vs dynamic languages.  I will avoid such fancy terms in this little essay, preferring to provide this course's pedagogical viewpoint.
->
->Generally speaking beginning programmers should learn to create "arrays" write "for loops", "conditionals", "comparisons", express mathematical formulas, etc. So why Julia at a time when Python seems to be the language of teaching, and Java and C++ so prominent in the corporate world?
->
->As you might imagine, we believe Julia is special.   Oh you will still have the nitty gritty of when to use a bracket and a comma.  You might have strong opinions as to whether arrays should begin with 0 or 1 (joke: some say it's time to compromise and use ½.)  Getting past these irrelevant issues,  you will begin to experience one by one what makes Julia so very special.  For starters, a language that runs fast is more fun.  We can have you try things that would just be so slow in other languages it would be boring.  We also think you will start to notice how natural Julia is, how it feels like the mathematics, and how flexible it can be.  
->
->Getting to see the true value of fancy terms like multiple dispatch, strong typing, generic programming, and composable software will take a little longer, but stick with us, and you too will see why Julia is so very special.
+We want to use this notebook to play around with the notion of an *Array* in julia. 
 """
 
 # ╔═╡ 9111db10-6bc3-11eb-38e5-cf3f58536914
@@ -127,12 +103,6 @@ Applications of computer science in the real world use **data**, i.e. informatio
 - Images:
   - Diseased versus healthy tissue in a medical scan
   - Pictures of your favourite dog
-"""
-
-# ╔═╡ b795dcb4-6bc3-11eb-20ec-db2cc4b89bfb
-md"""
-#### Exercise: 
-> Think of another two examples in each category. Can you think of other categories of data?
 """
 
 # ╔═╡ 8691e434-6bc4-11eb-07d1-8169158484e6
@@ -207,15 +177,18 @@ output is more interesting than code.  This takes some getting used to.)
 """
 
 # ╔═╡ 34ee0954-601e-11eb-1912-97dc2937fd52
-url = "https://user-images.githubusercontent.com/6933510/107239146-dcc3fd00-6a28-11eb-8c7b-41aaf6618935.png" 
+url = "https://upload.wikimedia.org/wikipedia/commons/0/0f/Freeride_Arlberg.jpg" 
+
+# ╔═╡ 88c82fef-4c9b-4dd1-8b33-89a4375d5d5d
+md"Picture credit: André Pedak, CC BY-SA 3.0 AT <https://creativecommons.org/licenses/by-sa/3.0/at/deed.en>, via Wikimedia Commons"
 
 # ╔═╡ 9180fbcc-601e-11eb-0c22-c920dc7ee9a9
 md"""
-Step 2: Now we use the aptly-named `download` function to download the image file to our own computer. (Philip is Prof. Edelman's corgi.)
+Step 2: Now we use the aptly-named `download` function to download the image file to our own computer. (a `skier` is a person who skis.)
 """
 
 # ╔═╡ 34ffc3d8-601e-11eb-161c-6f9a07c5fd78
-philip_filename = download(url) # download to a local file. The filename is returned
+skier_filename = download(url) # download to a local file. The filename is returned
 
 # ╔═╡ abaaa980-601e-11eb-0f71-8ff02269b775
 md"""
@@ -224,15 +197,14 @@ Using the `Images.jl` package (loaded at the start of this notebook; scroll up a
 """
 
 # ╔═╡ aafe76a6-601e-11eb-1ff5-01885c5238da
-philip = load(philip_filename)
+skier = load(skier_filename)
 
 # ╔═╡ e86ed944-ee05-11ea-3e0f-d70fc73b789c
-md"_Hi there Philip_"
+md"_Nice Turn_"
 
 # ╔═╡ c99d2aa8-601e-11eb-3469-497a246db17c
 md"""
-We see that the Pluto notebook has recognised that we created an object representing an image, and automatically displayed the resulting image of Philip, the cute Welsh Pembroke corgi and co-professor of this course.
-Poor Philip will undergo quite a few transformations as we go along!
+We see that the Pluto notebook has recognised that we created an object representing an image, and automatically displayed the resulting image of the skier.
 """
 
 # ╔═╡ 11dff4ce-6bca-11eb-1056-c1345c796ed4
@@ -268,7 +240,7 @@ The first thing we might want to know is the size of the image:
 """
 
 # ╔═╡ 75c5c85a-602c-11eb-2fb1-f7e7f2c5d04b
-philip_size = size(philip)
+skier_size = size(skier)
 
 # ╔═╡ 77f93eb8-602c-11eb-1f38-efa56cc93ca5
 md"""
@@ -276,10 +248,10 @@ Julia returns a pair of two numbers. Comparing these with the picture of the ima
 """
 
 # ╔═╡ 96b7d801-c427-4e27-ab1f-e2fd18fc24d0
-philip_height = philip_size[1]
+skier_height = skier_size[1]
 
 # ╔═╡ f08d02af-6e38-4ace-8b11-7af4930b64ea
-philip_width = philip_size[2]
+skier_width = skier_size[2]
 
 # ╔═╡ f9244264-64c6-11eb-23a6-cfa76f8aff6d
 md"""
@@ -294,7 +266,7 @@ In Julia we use (square) brackets, `[` and `]` for indexing:
 """
 
 # ╔═╡ bd22d09a-64c7-11eb-146f-67733b8be241
-a_pixel = philip[200, 100]
+a_pixel = skier[200, 100]
 
 # ╔═╡ 28860d48-64c8-11eb-240f-e1232b3638df
 md"""
@@ -317,16 +289,16 @@ md"""
 """
 
 # ╔═╡ 08d61afb-c641-4aa9-b995-2552af89f3b8
-@bind row_i Slider(1:size(philip)[1], show_value=true)
+@bind row_i Slider(1:size(skier)[1], show_value=true)
 
 # ╔═╡ 6511a498-7ac9-445b-9c15-ec02d09783fe
-@bind col_i Slider(1:size(philip)[2], show_value=true)
+@bind col_i Slider(1:size(skier)[2], show_value=true)
 
 # ╔═╡ 94b77934-713e-11eb-18cf-c5dc5e7afc5b
 row_i,col_i
 
 # ╔═╡ ff762861-b186-4eb0-9582-0ce66ca10f60
-philip[row_i, col_i]
+skier[row_i, col_i]
 
 # ╔═╡ c9ed950c-dcd9-4296-a431-ee0f36d5b557
 md"""
@@ -336,7 +308,7 @@ We saw that we can use the **row number** and **column number** to index a _sing
 """
 
 # ╔═╡ f0796032-8105-4f6d-b5ee-3647b052f2f6
-philip[550:650, 1:philip_width]
+skier[250:500, 1:skier_width]
 
 # ╔═╡ b9be8761-a9c9-49eb-ba1b-527d12097362
 md"""
@@ -354,7 +326,7 @@ You can also use a `:` without start and end to mean "_every index_"
 """
 
 # ╔═╡ 4e6a31d6-1ef8-4a69-b346-ad58cfc4d8a5
-philip[550:650, :]
+skier[250:500, :]
 
 # ╔═╡ e11f0e47-02d9-48a6-9b1a-e313c18db129
 md"""
@@ -362,26 +334,26 @@ Let's get a single row of pixels:
 """
 
 # ╔═╡ 9e447eab-14b6-45d8-83ab-1f7f1f1c70d2
-philip[550, :]
+skier[450, :]
 
 # ╔═╡ c926435c-c648-419c-9951-ac8a1d4f3b92
-philip_head = philip[470:800, 140:410]
+skier_head = skier[100:200, 220:350]
 
 # ╔═╡ 32e7e51c-dd0d-483d-95cb-e6043f2b2975
 md"""
-#### Scroll in on Philip's nose!
+#### Scroll in on the Skier's goggles!
 
 Use the widgets below (slide left and right sides).
 """
 
 # ╔═╡ 4b64e1f2-d0ca-4e22-a89d-1d9a16bd6788
-@bind range_rows RangeSlider(1:size(philip_head)[1])
+@bind range_rows RangeSlider(1:size(skier_head)[1])
 
 # ╔═╡ 85919db9-1444-4904-930f-ba572cff9460
-@bind range_cols RangeSlider(1:size(philip_head)[2])
+@bind range_cols RangeSlider(1:size(skier_head)[2])
 
 # ╔═╡ 2ac47b91-bbc3-49ae-9bf5-4def30ff46f4
-nose = philip_head[range_rows, range_cols]
+goggles = skier_head[range_rows, range_cols]
 
 # ╔═╡ 5a0cc342-64c9-11eb-1211-f1b06d652497
 md"""
@@ -451,10 +423,10 @@ red = RGB(0.8, 0.1, 0.1)
 invert(red)
 
 # ╔═╡ 846b1330-ee0b-11ea-3579-7d90fafd7290
-md"Can you invert the picture of Philip?"
+md"Can you invert the picture of our skier?"
 
 # ╔═╡ 943103e2-ee0b-11ea-33aa-75a8a1529931
-philip_inverted = missing
+skier_inverted = missing
 
 # ╔═╡ 2ee543b2-64d6-11eb-3c39-c5660141787e
 md"""
@@ -468,8 +440,8 @@ We do this by assigning a new value to the color of a pixel:
 
 # ╔═╡ 53bad296-4c7b-471f-b481-0e9423a9288a
 let
-	temp = copy(philip_head)
-	temp[100, 200] = RGB(1.0, 0.0, 0.0)
+	temp = copy(skier_head)
+	temp[10, 20] = RGB(1.0, 0.0, 0.0)
 	temp
 end
 
@@ -487,7 +459,7 @@ For example, we can extract a horizontal strip 1 pixel tall:
 """
 
 # ╔═╡ e29b7954-64cb-11eb-2768-47de07766055
-philip_head[50, 50:100]
+skier_head[50, 50:100]
 
 # ╔═╡ 8e7c4866-64cc-11eb-0457-85be566a8966
 md"""
@@ -503,7 +475,7 @@ And then modify it:
 
 # ╔═╡ 4f03f651-56ed-4361-b954-e6848ac56089
 let
-	temp = copy(philip_head)
+	temp = copy(skier_head)
 	temp[50, 50:100] .= RGB(1.0, 0.0, 0.0)
 	temp
 end
@@ -515,7 +487,7 @@ Similarly we can modify a whole rectangular block of pixels:
 
 # ╔═╡ 1bd53326-d705-4d1a-bf8f-5d7f2a4e696f
 let
-	temp = copy(philip_head)
+	temp = copy(skier_head)
 	temp[50:100, 50:100] .= RGB(1.0, 0.0, 0.0)
 	temp
 end
@@ -544,7 +516,7 @@ Maybe we would also like to reduce the size of this image, since it's rather lar
 """
 
 # ╔═╡ ae542fe4-64cc-11eb-29fc-73b7a66314a9
-reduced_image = philip[1:10:end, 1:10:end]
+reduced_image = skier[1:10:end, 1:10:end]
 
 # ╔═╡ c29292b8-64cc-11eb-28db-b52c46e865e6
 md"""
@@ -571,7 +543,7 @@ Finally, we want to be able to save our new creation to a file. To do so, you ca
 """
 
 # ╔═╡ 3db09d92-64cc-11eb-0333-45193c0fd1fe
-save("reduced_phil.png", reduced_image)
+save("reduced_skier.png", reduced_image)
 
 # ╔═╡ 61606acc-6bcc-11eb-2c80-69ceec9f9702
 md"""
@@ -670,11 +642,11 @@ We often want to join vectors and matrices together. We can do so using an exten
 """
 
 # ╔═╡ 7d9ad134-60ee-11eb-1b2a-a7d63f3a7a2d
-[philip_head  philip_head]
+[skier_head  skier_head]
 
 # ╔═╡ 8433b862-60ee-11eb-0cfc-add2b72997dc
-[philip_head                   reverse(philip_head, dims=2)
- reverse(philip_head, dims=1)  rot180(philip_head)]
+[skier_head                   reverse(skier_head, dims=2)
+ reverse(skier_head, dims=1)  rot180(skier_head)]
 
 # ╔═╡ 5e52d12e-64d7-11eb-0905-c9038a404e24
 md"""
@@ -752,6 +724,16 @@ Let's summarize the main ideas from this notebook:
 # ╔═╡ 9025a5b4-6066-11eb-20e8-099e9b8f859e
 md"""
 ----
+"""
+
+# ╔═╡ e0d8d064-c1b7-40fb-b7bc-b8acd6be5002
+md"""
+# License and Copyright
+
+* Attribution: This notebook is based on the [MIT Computational Thinking](https://computationalthinking.mit.edu/Spring21/images/) course, licensed under a [creative commons license](https://creativecommons.org/licenses/by-sa/4.0/). Alan Edelman, David P. Sanders and Fons van der Plas, 2021,
+* Changes made: 
+    1. I changed the picture to be used
+    2. I shortened some of the original content
 """
 
 # ╔═╡ 5da8cbe8-eded-11ea-2e43-c5b7cc71e133
@@ -1059,6 +1041,7 @@ end
 myface1 = process_raw_camera_data(webcam_data1);
 
 # ╔═╡ 6224c74b-8915-4983-abf0-30e6ba04a46d
+# let's create a matrix of ourselves with the `[` operator:
 [
 	myface1              myface1[   :    , end:-1:1]
 	myface1[end:-1:1, :] myface1[end:-1:1, end:-1:1]
@@ -1160,6 +1143,7 @@ HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 ImageIO = "82e4d734-157c-48bb-816b-45c225c6df19"
 ImageShow = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+QuartzImageIO = "dca85d43-d64c-5e67-8c65-017450d5d020"
 
 [compat]
 ColorVectorSpace = "~0.9.6"
@@ -1169,6 +1153,7 @@ HypertextLiteral = "~0.9.0"
 ImageIO = "~0.5.8"
 ImageShow = "~0.3.2"
 PlutoUI = "~0.7.9"
+QuartzImageIO = "~0.7.4"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -1491,6 +1476,12 @@ git-tree-sha1 = "afadeba63d90ff223a6a48d2009434ecee2ec9e8"
 uuid = "92933f4c-e287-5a05-a399-4b506db050ca"
 version = "1.7.1"
 
+[[QuartzImageIO]]
+deps = ["FileIO", "ImageCore", "Libdl"]
+git-tree-sha1 = "16de3b880ffdfbc8fc6707383c00a2e076bb0221"
+uuid = "dca85d43-d64c-5e67-8c65-017450d5d020"
+version = "0.7.4"
+
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -1604,10 +1595,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─9b49500c-0164-4556-a17b-7595e35c5ede
 # ╠═74b008f6-ed6b-11ea-291f-b3791d6d1b35
 # ╟─ca1b507e-6017-11eb-34e6-6b85cd189002
-# ╟─e9ff96d8-6bc1-11eb-0f6a-234b9fae047e
 # ╟─9111db10-6bc3-11eb-38e5-cf3f58536914
-# ╠═fb8a99ac-6bc1-11eb-0835-3146734a1c99
-# ╟─b795dcb4-6bc3-11eb-20ec-db2cc4b89bfb
+# ╟─fb8a99ac-6bc1-11eb-0835-3146734a1c99
 # ╟─8691e434-6bc4-11eb-07d1-8169158484e6
 # ╟─546db74c-6d4e-11eb-2e27-f5bed9dbd9ba
 # ╟─6385d174-6d4e-11eb-093b-6f6fafb79f84
@@ -1619,7 +1608,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─9b004f70-6bc9-11eb-128c-914eadfc9a0e
 # ╟─62fa19da-64c6-11eb-0038-5d40a6890cf5
 # ╠═34ee0954-601e-11eb-1912-97dc2937fd52
-# ╟─9180fbcc-601e-11eb-0c22-c920dc7ee9a9
+# ╟─88c82fef-4c9b-4dd1-8b33-89a4375d5d5d
+# ╠═9180fbcc-601e-11eb-0c22-c920dc7ee9a9
 # ╠═34ffc3d8-601e-11eb-161c-6f9a07c5fd78
 # ╟─abaaa980-601e-11eb-0f71-8ff02269b775
 # ╠═aafe76a6-601e-11eb-1ff5-01885c5238da
@@ -1670,7 +1660,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─f6cc03a0-ee07-11ea-17d8-013991514d42
 # ╠═63e8d636-ee0b-11ea-173d-bd3327347d55
 # ╟─2cc2f84e-ee0d-11ea-373b-e7ad3204bb00
-# ╟─b8f26960-ee0a-11ea-05b9-3f4bc1099050
+# ╠═b8f26960-ee0a-11ea-05b9-3f4bc1099050
 # ╠═5de3a22e-ee0b-11ea-230f-35df4ca3c96d
 # ╠═4e21e0c4-ee0b-11ea-3d65-b311ae3f98e9
 # ╠═6dbf67ce-ee0b-11ea-3b71-abc05a64dc43
