@@ -19,12 +19,10 @@ I recommend that you download the entire [folder](https://github.com/floswald/Nu
 5. start the `Probit.jl` notebook.
 
 
+## Homework Submission
 
-## Homework Submission - no moodle!
 
-You need to submit by Thursday evening before the next class on Friday. Please **everybody** submit via the _dropbox file request link_ I shared on slack with you!
-
-**How and What to Submit?**
-
-* What? your Pluto notebook (that's a simple `.jl` file for the notebook)
-* How? Please submit via dropbox file request. _please stick to the convention of naming your .jl files like `lastname_firstname_HWx.jl` for homework `x` - thanks!_
+1. When: You have 7 days.
+2. Who: teams of max 2
+3. What: one rendered HTML output of your notebook. make sure all cells (code?) that you want me to see are *visible* in your notebook, or they won't  be visible in the HTML either.
+4. How: dropbox link (here)
