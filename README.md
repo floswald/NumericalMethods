@@ -5,14 +5,10 @@
 
 <p align="center"><a href="https://floswald.github.io/NumericalMethods/"> <b>Go to course website</b> :balloon:</a></p>
 
-* **Teacher:** Florian Oswald, [florian.oswald@sciencespo.fr](mailto:florian.oswald@sciencespo.fr)
-* **Class Times:** Fridays 10:15-12:15 starting 29 Jan 2021
-* **Class Location:** Zoom
-* **Slack**: There will be a slack channel for all communication
 
 ## Course Description
 
-This is a course for PhD students at the [Department of Economics at Sciences Po](http://econ.sciences-po.fr) in Computational Economics. 
+This is a course for PhD students in Computational Economics. 
 
 ## Course Overview
 
@@ -41,40 +37,6 @@ True to that motto, there will be homeworks for you to try out what you learned 
 1. [What is Version Control? watch this 5 minute video.](http://git-scm.com/video/what-is-version-control) and go back to Clement's stuff if unclear.
 
 
-## Homeworks
-
-There will be homeworks. They will be listed within the [Course Outline](#course-outline).
-
-
-## Term Project
-
-This year your term project will be to replicate a paper published in an economics journal. Ideally this would be related to your field of interest. The requirements for choice of paper to replicate are:
-
-1. Published version and replication kit is available online.
-2. The paper to replicate must not use julia.
-3. You must use julia for your replication.
-    * Ideally your choice will involve at least some level of computational interest (i.e. more than an IV regression)
-    * However, you can replicate a paper with an IV regression, but you have to go all the way to get the exact same results as in the paper. I.e. if the author typed the stata command `ivreg2 lw s expr tenure rns smsa _I* (iq=med kww age), cluster(year)` you will have to write (or find) julia code which will match all output from this, including standard errors. I do not recommend to do this.
-4. You need to set up a public github repository where you will build a documentation website of your implementation. You'll learn how to do this in the course.
-5. I encourage you to let the world know about your replication effort via social media and/or email to the authors directly. This is independent of whether you were able or not to replicate the results. Replication is not about finding errors in other peoples' work. If you are able to replicate some result in julia, this may be very interesting for others.
-
-## Grade
-
-Your grade will be 60% homeworks, 40% term project.
-
-  
-
-## Textbooks
-
-There are some excellent references for computational methods out there. This course will use material from 
-
-* **Fackler and Miranda** (2002), Applied Computational Economics and Finance, MIT Press
-* **Kenneth Judd** (1998), Numerical Methods in Economics, MIT Press
-* **Nocedal, Jorge, and Stephen J. Wright** (2006): Numerical Optimization, Springer-Verlag
-* [**Kochenderfer and Wheeler**](https://mitpress.mit.edu/books/algorithms-optimization) (2019), Algorithms for Optimization, MIT Press
-* [**A Gentle Introduction to Effective Computing in Quantitative Research**](https://mitpress.mit.edu/books/gentle-introduction-effective-computing-quantitative-research) - What Every Research Assistant Should Know, Harry J. Paarsch and Konstantin Golyaev
-
-<p align="center"><a href="https://floswald.github.io/NumericalMethods/"> <b>Go to course website</b> :balloon:</a></p>
 
 
 ## License
