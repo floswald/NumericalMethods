@@ -427,7 +427,7 @@ md"Nothing!
 
 Surprised? 
 
-We take not that the operator `[]` makes a *copy* of the data. Our object `s` is allocated on a *different* set of memory locations than the original array `v`, hence changing `s` does not affect `v`.
+We take note that the operator `[]` makes a *copy* of the data. Our object `s` is allocated on a *different* set of memory locations than the original array `v`, hence changing `s` does not affect `v`.
 
 Here is an alternative:
 
