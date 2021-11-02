@@ -9,13 +9,7 @@ Here is a static version [just to look at quickly](https://raw.githack.com/flosw
 
 ## Homework Submission
 
-You need to submit by Thursday before the next class on Friday. 
-
-**How and What to Submit?**
-
-* What? your Pluto notebook (that's a simple `.jl` file for each notebook)
-* How?
-    * SciencesPo Students: please use the dedicated hand-in facility on moodle
-    * Other Institutions: please send me a private message on slack with your files attached
-
-
+1. When: You have 7 days.
+2. Who: teams of max 2
+3. What: one rendered HTML output of your notebook. make sure all cells (code?) that you want me to see are *visible* in your notebook, or they won't  be visible in the HTML either.
+4. How: dropbox link (here)

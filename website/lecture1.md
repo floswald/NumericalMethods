@@ -20,7 +20,12 @@ Check out the [installation](/installation/) page on this website which was copi
 
 In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.
 
-[Slide for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia? [**does not run in safari browser! 🙁]
+[Slides for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia? **(does not run in safari browser! 🙁)**
+
+### Resources
+
+* [Aruoba and Fernandez-Villaverde](https://www.sas.upenn.edu/~jesusfv/comparison_languages.pdf)
+* [Jesus' Julia Tutorial](https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf)
 
 ## So, Julia is *Fast*?
 
@@ -40,8 +45,3 @@ Arrays are very important in computational work. Here we have a notebook:
 We can't have a computational course in 2021 *without* talking about epidemiological models! So we'll present the workhorse model in this week's notebooks as well.
 
 [Notebook also here.](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
-
-
-## Video from first session
-
-available via google drive.
