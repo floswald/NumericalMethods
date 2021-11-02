@@ -18,10 +18,10 @@ The latter allows you to plug in values that you would have defined here.
              `prepath` to an empty string. Finally, adjust this if you want the
              deployed page to be in a subfolder e.g.: `YourPackage.jl/web/`.
 -->
-@def title       = "ScPo Computational Economics"
+@def title       = "Computational Economics"
 @def prepath     = "NumericalMethods"
 @def description = """
-                   Computational Economics for PhD Students at SciencesPo Paris
+                   Computational Economics for PhD Students
                    """
 @def author     = "Florian Oswald"
 

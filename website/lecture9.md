@@ -5,7 +5,6 @@
 
 ## Still Dynamic Programming!
 
-* Finish up dynamic programming 2 (`dp2.jl`) in the [this](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week7) folder.
 * Talk about [Chase Coleman, Spencer Lyon, Lilia Maliar and Serguei Maliar, (2018). "Matlab, Python, Julia: What to choose in economics?" forthcoming in Computational Economics](https://web.stanford.edu/~maliars/Files/CEPR-DP13210.pdf): *Seven ways to solve the optimal growth model*. 
     * The offical repo of Spencer Lyon is here [https://github.com/sglyon/CLMMJuliaPythonMatlab](https://github.com/sglyon/CLMMJuliaPythonMatlab)
     * I prepared an updated notebook for julia 1.5+ [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week8/).
