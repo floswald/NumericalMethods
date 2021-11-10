@@ -175,9 +175,6 @@ md"Applying the function to objects of other types gives an error:"
 # ╔═╡ 9371209e-f6db-11ea-3ba2-c3597d42d8ed
 width(3)   # throws an error
 
-# ╔═╡ b16a7348-6d16-11eb-1200-6967c76a9f5e
-
-
 # ╔═╡ d1166a30-670b-11eb-320d-9b13b96824fb
 md"#"
 
@@ -829,7 +826,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─92cef0a4-670a-11eb-2df2-5b31a1602299
 # ╟─d19385e0-678a-11eb-3156-c51cb20abe3e
 # ╟─082b1918-678b-11eb-1a78-2316091d6272
-# ╟─e97a60e6-678c-11eb-0b37-fd80c3f0e8aa
+# ╠═e97a60e6-678c-11eb-0b37-fd80c3f0e8aa
 # ╠═aa5adfba-678e-11eb-02e4-210b8b753e21
 # ╠═bff062f0-678e-11eb-131d-e11297e36d4b
 # ╟─bed2a154-f6d1-11ea-0812-1f5c628a9785
@@ -861,7 +858,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═91e21d28-f6db-11ea-1b0f-336719682f28
 # ╟─2ef7392e-f6dc-11ea-00e4-770cdf9a102e
 # ╠═9371209e-f6db-11ea-3ba2-c3597d42d8ed
-# ╠═b16a7348-6d16-11eb-1200-6967c76a9f5e
 # ╟─d1166a30-670b-11eb-320d-9b13b96824fb
 # ╟─b916acb4-f6dc-11ea-3cdf-2b8ab3c34e03
 # ╠═6fe1b332-f6dd-11ea-39d4-1954aeda6f08
