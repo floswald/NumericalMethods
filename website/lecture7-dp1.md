@@ -1,1 +1,1 @@
-{{ plutonotebookpage  ../notebooks/week7/dp1.jl }}
+{{ plutonotebookpage  ../notebooks/week7/dp.jl }}

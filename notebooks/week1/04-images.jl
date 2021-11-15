@@ -16,9 +16,11 @@ end
 # ╔═╡ 74b008f6-ed6b-11ea-291f-b3791d6d1b35
 begin
 	using Colors, ColorVectorSpace, ImageShow, FileIO, ImageIO
-	using QuartzImageIO
 	using PlutoUI
 	using HypertextLiteral
+	@static if Sys.isapple()
+		using QuartzImageIO
+│   end
 end
 
 # ╔═╡ e91d7926-ec6e-41e7-aba2-9dca333c8aa5
