@@ -25,6 +25,5 @@ exclude=[
     "homework/homework2/epidemic.jl",
     "homework/homework4/Assets.jl",
     "homework/homework5/TimeManage.jl",
-    "homework/homework7/ZurcherData.jl"
-    
+    "homework/homework7/zurcherdata.jl",
 ]
