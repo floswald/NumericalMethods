@@ -4,9 +4,8 @@
 ~~~
 
 
-You can find the notebooks for this lecture [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week5)
+## Notebooks
 
-
-## Constrained Rosenbrock Banana
-
-{{youtube constrained-banana}}
+Topic | Notebook
+:-----: | :--------:
+Introduction to Macros | [click for notebook](../lecture5-macros)

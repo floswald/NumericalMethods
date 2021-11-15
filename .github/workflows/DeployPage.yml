@@ -2,7 +2,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - master
+      - static
 jobs:
   build-and-deploy:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -16,6 +16,14 @@ jobs:
       uses: julia-actions/setup-julia@v1
       with:
         version: 1.6
+    - name: Run Pluto notebooks
+      run: julia -e '
+        Pkg.activate(mktempdir());
+        Pkg.add([
+          Pkg.PackageSpec(name="PlutoSliderServer", version="0.2.1-0.2.6"),
+        ]);
+        import PlutoSliderServer;
+        github_action("."; Export_cache_dir="pluto_state_cache");'
     - run: julia -e '
             using Pkg;
             Pkg.add(["NodeJS", "JSON", "Franklin"]);
@@ -23,10 +31,12 @@ jobs:
             cd("website");
             run(`$(npm_cmd()) install highlight.js`);
             using Franklin;
-            optimize()'
+            optimize();
+            "== Place rendered notebooks in the website folder ==";
+            cp("../notebooks", "__site/notebooks");'
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
+        BRANCH: static
         FOLDER: website/__site

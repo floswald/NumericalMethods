@@ -16,6 +16,18 @@ Check out the [installation](/installation/) page on this website which was copi
 
 {{youtube installation}}
 
+## (Rendered) Notebooks
+
+We used several Pluto.jl notebooks in this lecture. Here are three rendered ones:
+
+Topic | Notebook
+:-----: | :--------:
+Arrays | [click for notebook](../lecture1-arrays)
+SIR Model | [click for notebook](../lecture1-SIR)
+Data as Images | [click for notebook](../lecture1-images)
+
+Please run the [01-fast.jl](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/01-fast.jl) notebook on your own computer for the benchmarks! 🏎️
+
 ## Introduction and: Why Julia?
 
 In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.
@@ -27,21 +39,4 @@ In this section we want to understand why julia is a good choice for computation
 * [Aruoba and Fernandez-Villaverde](https://www.sas.upenn.edu/~jesusfv/comparison_languages.pdf)
 * [Jesus' Julia Tutorial](https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf)
 
-## So, Julia is *Fast*?
 
-We will dive right in with a fun benchmarking exercise where we compare julia to other commonly used languages.
-
-[Right click to save Notebooks from here!](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
-
-## Basics of Arrays in Julia
-
-Arrays are very important in computational work. Here we have a notebook:
-
-[Notebook](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)
-
-
-## Introduction to SIR Epidemiologic Modelling
-
-We can't have a computational course in 2021 *without* talking about epidemiological models! So we'll present the workhorse model in this week's notebooks as well.
-
-[Notebook also here.](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/)

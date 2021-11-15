@@ -3,6 +3,13 @@
 <h1>Lecture 7 - FuncApprox and Dynamic Programming 1</h1>
 ~~~
 
+## Notebooks
+
+Topic | Notebook
+:-----: | :--------:
+Dynamic Programming 1 | [click for notebook](../lecture7-dp1)
+Dynamic Programming 2 | [click for notebook](../lecture7-dp2)
+
 ## Plan
 
 1. Talk about term project and scaffold code on [https://github.com/floswald/Replicate.jl](https://github.com/floswald/Replicate.jl)
