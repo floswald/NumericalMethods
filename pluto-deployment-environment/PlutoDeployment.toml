@@ -5,6 +5,27 @@ ignore_cache = [
     "index.jl",
 ]
 create_index = false
+exclude=[
+    # these are in the repo but not used on the website
+    "notebooks/introspection.jl",
+    "notebooks/04-probability.jl",
+    "notebooks/basic_syntax.jl",
+    "notebooks/week1/01-fast.jl",
+    "notebooks/week3/01-abstraction.jl",
+    "notebooks/week3/02-vatiations_fixedpoint.jl",
+    "notebooks/week4/03-functions-are-objects.jl",
+    "notebooks/week8/FE_CUDA.jl",
+
+    # don't run homeworks
+    "homework/homework0/hw0.jl",
+    "homework/homework0/pizza.jl",
+    "homework/homework1/discrete_lockdown.jl",
+    "homework/homework2/epidemic.jl",
+    "homework/homework4/Assets.jl",
+    "homework/homework5/TimeManage.jl",
+    "homework/homework7/zurcherdata.jl",
+]
+
 
 [SliderServer]
 exclude=[
