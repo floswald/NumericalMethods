@@ -27,7 +27,7 @@ end
 
 # ╔═╡ 110bde78-7381-4e0d-8ac8-4b878bd4de9b
 md"""
-# Optimization 2: Algorithms and `Optim.jl` Applications
+# Optimization 2: Algorithms and some `Optim.jl` Applications
 
 Florian Oswald, 2021
 """
@@ -94,6 +94,7 @@ md"""
 * Suppose we have a bracket $[a,b]$ on $f$ and that we can only evaluate $f$ twice.
 * Where to evaluate it?
 * Let's split the interval into 3 equal pieces:
+(The next few pictures are ©️ Kochenderfer and Wheeler)
 
 
 
@@ -138,7 +139,7 @@ PlutoUI.LocalResource("golden2.png")
 
 # ╔═╡ adcd9256-650f-4d0e-8fe8-9b842b6b4c34
 md"""
-## `Optim.jl`
+## `Optim.jl`
 
 Let's optimize a simple function with optim. 
 """
@@ -231,9 +232,9 @@ md"""
 * We will now look at a first class of algorithms, which are very simple, but sometimes a good starting point.
 * They just *compare* function values.
 * *Grid Search* : Compute the objective function at $G=\{x_1,\dots,x_N\}$ and pick the highest value of $f$. 
-	* This is very slow.
-	* It requires large $N$.
-	* But it's robust (will find global optimizer for large enough $N$)
+  * This is very slow.
+  * It requires large $N$.
+  * But it's robust (will find global optimizer for large enough $N$)
 """
 
 # ╔═╡ 4a0dc0c1-ce50-425b-84ca-657c93b10966
@@ -299,10 +300,10 @@ md"""
 * Radius $\delta$ of trust region is changed based on how well $\hat{f}$ fits $f$ in trust region.
 * Get $\mathbf{x'}$ via
 
-    $$\begin{aligned}
+$$\begin{align}
     \min_{\mathbf{x'}} &\quad \hat{f}(\mathbf{x'}) \\
     \text{subject to } &\quad \Vert \mathbf{x}-\mathbf{x'} \leq \delta \Vert
-    \end{aligned}$$
+\end{align}$$
 """
 
 # ╔═╡ c031fe39-0f8c-4f6a-b851-266deb8f5b55
@@ -364,6 +365,9 @@ md"5000 iteration = $(@bind i5k Slider(1:5000, show_value = true, default = 1))"
 
 # ╔═╡ 1a84b8d7-cfdc-420c-b4ff-d6cf32b82622
 res_gd_zoom = optimize(ro, [-1,1.], GradientDescent(), Optim.Options(store_trace=true, extended_trace=true, iterations = 5000));
+
+# ╔═╡ d0d68f47-95dd-4aba-8817-d015090f8c4c
+md"1000 iteration = $(@bind ik Slider(1:1000, show_value = true, default = 1))"
 
 # ╔═╡ 2cd50a99-f3d5-442d-9beb-cad56362ae1e
 md"""
@@ -439,7 +443,7 @@ end
 plot_optim(res_gd, [-4,3.], -4.1:0.01:2, -4.5:0.01:4.1,i5k)
 
 # ╔═╡ e992331a-a739-45f7-9820-7ba6a6603cf9
-plot_optim(res_gd_zoom, [-1,1], -2.5:0.01:2, -1.5:0.01:2,i5k)
+plot_optim(res_gd_zoom, [-1,1], -2.5:0.01:2, -1.5:0.01:2,ik)
 
 # ╔═╡ 86c1c1df-9ee4-47a0-a40a-69fa3c245a94
 begin
@@ -464,7 +468,235 @@ Let's look at some timings.
 @benchmark optimize(ro, [0.0, 0.0], Optim.Newton(),Optim.Options(show_trace=false))
 
 # ╔═╡ b62d94d4-4f64-4d3f-ae30-06e84013d3c7
-@benchmark optimize(ro, g!, h!, [0.0, 0.0], Optim.Newton(),Optim.Options(show_trace=false))
+@benchmark optimize(ro, g!, h!, [0.0, 0.0], Optim.Newton(),
+	Optim.Options(show_trace=false))
+
+# ╔═╡ 691f4695-c307-408f-892d-587b0b29a832
+@benchmark optimize(ro, g!, h!,  [-1.0, 3.0], BFGS())
+
+# ╔═╡ e09184ba-da9d-43a2-bd6e-1a739e0722f5
+@benchmark optimize(ro, g!, h!,  [-1.0, 3.0], LBFGS())  # low memory
+
+# ╔═╡ 6d9670cf-5257-48af-8f62-3de6a88cbc51
+md"""
+## Direct Methods
+
+* No derivative information is used - *derivative free*
+* If it's very hard / impossible to provide gradient information, this is our only chance.
+* Direct methods use other criteria than the gradient to inform the next step (and ulimtately convergence).
+
+### Cyclic Coordinate Descent -- Taxicab search
+
+* We do a line search over each dimension, one after the other
+* *taxicab* because the path looks like a NYC taxi changing direction at each block.
+* given $\mathbf{x}^{(1)}$, we proceed
+    
+$$\begin{aligned}
+    \mathbf{x}^{(2)} &= \arg \min_{x_1} f(x_1,x_2^{(1)},\dots,x_n^{(1)}) \\
+    \mathbf{x}^{(3)} &= \arg \min_{x_2} f(x_1^{(2)},x_2,x_3^{(2)}\dots,x_n^{(2)}) \\    
+    \end{aligned}$$
+
+* unfortunately this can easily get stuck because it can only move in 2 directions.
+
+```julia
+©️ Kochenderfer and Wheeler
+# start to setup a basis function, i.e. unit vectors to index each direction:
+basis(i, n) = [k == i ? 1.0 : 0.0 for k in 1 : n]
+
+function cyclic_coordinate_descent(f, x, ε) 
+	Δ, n = Inf, length(x)
+	while abs(Δ) > ε
+		x′ = copy(x) 
+			for i in 1 : n
+				d = basis(i, n)
+				x = line_search(f, x, d) 
+			end
+		Δ = norm(x - x′) 
+	end
+	return x 
+end  
+```
+"""
+
+# ╔═╡ 92212ec0-b822-4464-b346-dd221ad6f669
+md"""
+### General Pattern Search
+
+* We search according to an arbitrary *pattern* $\mathcal{P}$ of candidate points, anchored at current guess $\mathbf{x}$.
+* With step size $\alpha$ and set $\mathcal{D}$ of directions
+
+$$\mathcal{P} = {\mathbf{x} + \alpha \mathbf{d} \text{ for } \mathbf{d}\in\mathcal{D} }$$
+* Convergence is guaranteed under the condition: $\mathcal{D}$ must be a positive spanning set: at least one $\mathbf{d}\in\mathcal{D}$ has a non-zero gradient.
+* We check for a distance $\alpha$ into the $\mathbf{d}$ direction for whether we can improve the objective.
+"""
+
+# ╔═╡ 4738c3b3-5c67-4ec6-8291-6426485a7832
+PlutoUI.LocalResource("spanning-set.png")
+
+# ╔═╡ 27e77174-2232-4d67-ba8f-d9d944cce543
+# ©️ Kochenderfer and Wheeler
+function generalized_pattern_search(f, x, α, D, ε, γ=0.5) 
+    y, n = f(x), length(x)
+    evals = 0
+    while α > ε
+        improved = false
+        for (i,d) in enumerate(D)
+            x′ = x + α*d 
+            y′ = f(x′) 
+            evals += 1
+            if y′ < y
+                x, y, improved = x′, y′, true
+                D = pushfirst!(deleteat!(D, i), d) 
+                break
+            end 
+        end
+        if !improved 
+            α *= γ
+        end 
+    end
+    println("$evals evaluations")
+    return x 
+end
+
+# ╔═╡ 496a4d17-0a31-4b6c-bae0-1461603b92e9
+let
+	D = [[1,0],[0,1],[-1,-0.5]] # 3 different directions
+	generalized_pattern_search(ro,zeros(2),0.8,D,1e-6 )
+end
+
+# ╔═╡ 5e289cc6-5528-42d9-a3cb-a0d9dac6a849
+md"""
+## Bracketing for Multidimensional Problems: Nelder-Mead
+
+* The Goal here is to find the simplex containing the local minimizer $x^*$
+* In the case where $f$ is n-D, this simplex has $n+1$ vertices
+* In the case where $f$ is 2-D, this simplex has $2+1$ vertices, i.e. it's a triangle.
+* The method proceeds by evaluating the function at all $n+1$ vertices, and by replacing the worst function value with a new guess.
+* this can be achieved by a sequence of moves:
+  * reflect
+  * expand
+  * contract
+  * shrink
+  movements.
+
+
+"""
+
+# ╔═╡ 4921b275-6773-4efa-91ce-02869c527dba
+PlutoUI.LocalResource("nelder-mead.png")
+
+# ╔═╡ b9d44daa-8781-4c55-b8ef-f0a8b1c92406
+md"""
+* this is a very popular method. The matlab functions `fmincon` and `fminsearch` implements it.
+* When it works, it works quite fast.
+* No derivatives required.
+"""
+
+# ╔═╡ 9e0b8149-482d-4323-9670-a9756236fbeb
+@benchmark optimize(ro, [0.0, 0.0], NelderMead())
+
+# ╔═╡ 51fa22fd-9d3b-40f1-a428-f0cdd8bb2374
+md"""
+## Stochastic Optimization Methods
+
+* Gradient based methods like steepest descent may be susceptible to getting stuck at local minima.
+* Randomly shocking the value of the descent direction may be a solution to this.
+* For example, one could modify our gradient descent from before to become
+
+$$\mathbf{x}^{(k+1)} \longleftarrow \mathbf{x}^{(k)} +\alpha^k\mathbf{g}^{(k)} + \mathbf{\varepsilon}^{(k)}$$
+
+* where $\mathbf{\varepsilon}^{(k)} \sim N(0,\sigma_k^2)$, decreasing with $k$.
+* This *stochastic gradient descent* is often used when training neural networks.
+
+"""
+
+# ╔═╡ 2f6abe0f-43f5-40af-af51-561b76fcb29c
+md"""
+### Simulated Annealing
+
+* We specify a *temperature* that controls the degree of randomness.
+* At first the temperature is high, letting the search jump around widely. This is to escape local minima.
+* The temperature is gradually decreased, reducing the step sizes. This is to find the local optimimum in the *best* region.
+* At every iteration $k$, we accept new point $\mathbf{x'}$ with
+
+$$\Pr(\text{accept }\mathbf{x'}) = \begin{cases}
+1 & \text{if }\Delta y \leq0 \\
+\min(e^{\Delta y / t},1) & \text{if }\Delta y > 0 
+\end{cases}$$
+
+* here $\Delta y = f(\mathbf{x'}) - f(\mathbf{x})$, and $t$ is the *temperature*.
+* We call $\Pr(\text{accept }\mathbf{x'})$ the **Metropolis Criterion**, building block of *Accept/Reject* algorithms.
+"""
+
+# ╔═╡ 7ff00636-cb5d-45a5-b3d3-011054902f8e
+# ©️ Kochenderfer and Wheeler
+# f: function
+# x: initial point
+# T: transition distribution
+# t: temp schedule, k_max: max iterations
+function simulated_annealing(f, x, T, t, k_max) 
+    y = f(x)
+    ytrace = zeros(typeof(y),k_max)
+    x_best, y_best = x, y 
+    for k in 1 : k_max
+        x′ = x + rand(T)
+        y′ = f(x′)
+        Δy = y′ - y
+        if Δy ≤ 0 || rand() < exp(-Δy/t(k))
+            x, y = x′, y′ 
+        end
+        if y′ < y_best
+            x_best, y_best = x′, y′
+        end 
+        ytrace[k] = y_best
+    end
+    return x_best,ytrace
+end
+
+# ╔═╡ 3cc0c7d6-0bd7-435c-abde-2c70f51d437e
+# enough banana. here is a function for big boys and girls to optimize!
+function ackley(x, a=20, b=0.2, c=2π) 
+    d = length(x)
+    return -a*exp(-b*sqrt(sum(x.^2)/d)) - exp(sum(cos.(c*xi) for xi in x)/d) + a + exp(1)
+end
+
+# ╔═╡ e3ba1d6c-e781-4447-948c-51b4b6bc7813
+packley() = surface(-30:0.1:30,-30:0.1:30,(x,y)->ackley([x, y]),cbar=false)
+
+# ╔═╡ fcbf2bf1-f037-4fb1-8f71-c512699173a9
+packley()
+
+# ╔═╡ fb98ac86-bb03-49a5-a1a9-0eae38889823
+anneal1 = Optim.optimize(ackley, [-30.0,-30], [30.0,30.0], [-20.0,-20], SAMIN(), Optim.Options(iterations=10^6))
+
+# ╔═╡ f13056dc-3f17-438c-8b77-d8e1dc613c98
+md"""
+* let's have Nelder Mead have a go at this as well. 😈
+"""
+
+# ╔═╡ 83299874-e44b-4be3-8778-920df01581f4
+nmackley = Optim.optimize(ackley, [-30.0,-30], [30.0,30.0], [-20.0,-20], NelderMead(), Optim.Options(iterations=10^6))
+
+# ╔═╡ b43f3c20-aa3d-43ba-8a50-24645bd07ef1
+let
+	p0 = packley()
+	scatter!([Optim.minimizer(anneal1)[1]],[Optim.minimizer(anneal1)[2]],[Optim.minimum(anneal1)],ms = 3, color = :red, label = "SAMIN")
+	scatter!([Optim.minimizer(nmackley)[1]],[Optim.minimizer(nmackley)[2]],[Optim.minimum(nmackley)],ms = 3, color = :green, label = "Nelder-Mead")
+end
+
+# ╔═╡ ec549333-676d-4409-9256-8b4a8d8bf894
+begin
+danger(head,text) = Markdown.MD(Markdown.Admonition("danger", head, [text]));
+danger(text) = Markdown.MD(Markdown.Admonition("danger", "Attention", [text]));
+info(text) = Markdown.MD(Markdown.Admonition("info", "Info", [text]));
+end
+
+# ╔═╡ 4717e637-07ab-4486-ac9a-c56b03ec7361
+danger("Careful now.",md"""
+Lagarias et al. (SIOPT, 1999): At present there is no function in any dimension greater than one, for which the original Nelder-Mead algorithm has been proved to converge to a minimizer.
+
+Given all the known inefficiencies and failures of the Nelder-Mead algorithm [...], one might wonder why it is *used at all*, let alone *why it is so extraordinarily popular*.
+""")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1515,62 +1747,86 @@ version = "0.9.1+5"
 # ╔═╡ Cell order:
 # ╟─110bde78-7381-4e0d-8ac8-4b878bd4de9b
 # ╠═cdfd0cac-4c43-441d-bfb4-21ea5653a3a1
-# ╠═e40bdc58-43a9-11ec-2c84-492ead8ce7c5
-# ╠═a691d7e0-84d4-4a69-ba41-68147254ff16
-# ╠═b7f8381c-3a9b-452e-9fc5-b7c9d4d69323
+# ╟─e40bdc58-43a9-11ec-2c84-492ead8ce7c5
+# ╟─a691d7e0-84d4-4a69-ba41-68147254ff16
+# ╟─b7f8381c-3a9b-452e-9fc5-b7c9d4d69323
 # ╠═d2a1181a-1146-478b-bcb2-cc763d6f211f
 # ╠═8db8d806-a6d1-4b98-9153-a92280de174a
 # ╠═46533fde-5d5c-4a1a-a535-923672956f46
 # ╠═25c0a22e-af50-4455-93fd-d23f26b23d52
-# ╠═08d053d9-c865-4ff3-a551-823b5fb41524
-# ╠═df826745-a4c4-4301-af27-066fe8e634f5
+# ╟─08d053d9-c865-4ff3-a551-823b5fb41524
+# ╟─df826745-a4c4-4301-af27-066fe8e634f5
 # ╟─4cf52278-d871-4eb2-967d-d6368d01b0c8
-# ╠═62ed62ba-ce10-4d6d-b65f-0eb349465970
-# ╠═d2ce25bc-0aa8-419d-832e-4582ac83ba86
-# ╠═39170a86-c216-447a-b6fc-367f0c1c82a8
-# ╠═8e7d4e57-578a-4c25-8c37-65a3fcda7b40
-# ╠═dbac8440-659e-4a8d-a4b7-16bfd6d22c15
-# ╠═d0b6dacf-8c13-4e31-a4a6-d4b5ee6a2f69
-# ╠═adcd9256-650f-4d0e-8fe8-9b842b6b4c34
-# ╠═a32820d0-5d91-4808-b942-202b760aec18
+# ╟─62ed62ba-ce10-4d6d-b65f-0eb349465970
+# ╟─d2ce25bc-0aa8-419d-832e-4582ac83ba86
+# ╟─39170a86-c216-447a-b6fc-367f0c1c82a8
+# ╟─8e7d4e57-578a-4c25-8c37-65a3fcda7b40
+# ╟─dbac8440-659e-4a8d-a4b7-16bfd6d22c15
+# ╟─d0b6dacf-8c13-4e31-a4a6-d4b5ee6a2f69
+# ╟─adcd9256-650f-4d0e-8fe8-9b842b6b4c34
+# ╟─a32820d0-5d91-4808-b942-202b760aec18
 # ╟─fd1fba34-1c4f-48f7-83b4-fd60c796ac17
 # ╠═1a3b8f05-aae9-4975-b8b5-9268145c1e82
 # ╟─f127562c-d6c9-42c6-8cca-b1fd33ad4fbe
-# ╠═dc4c2888-8ff1-417d-a3bd-c133fb3bbbff
-# ╠═59b26c7c-f6c5-4ba6-a067-9d07f179fc12
-# ╠═f615768b-f212-4f40-ac9c-9eb96c0d6ea1
-# ╠═1df4c4f2-6856-4431-afbb-df16541d22f7
+# ╟─dc4c2888-8ff1-417d-a3bd-c133fb3bbbff
+# ╟─59b26c7c-f6c5-4ba6-a067-9d07f179fc12
+# ╟─f615768b-f212-4f40-ac9c-9eb96c0d6ea1
+# ╟─1df4c4f2-6856-4431-afbb-df16541d22f7
 # ╟─fc015791-cd9e-4a1c-b6ea-4c70284bef64
-# ╠═32898baf-25d3-44cf-b92a-92e8ee320935
-# ╠═20664b8a-59d7-4d80-9926-7a982f72b276
-# ╠═625e38ee-04c1-4792-bf3e-8689bdb4df3b
+# ╟─32898baf-25d3-44cf-b92a-92e8ee320935
+# ╟─20664b8a-59d7-4d80-9926-7a982f72b276
+# ╟─625e38ee-04c1-4792-bf3e-8689bdb4df3b
 # ╠═4a0dc0c1-ce50-425b-84ca-657c93b10966
 # ╟─7a8a9f51-49bc-4b6d-b68d-20f06dd7e350
-# ╠═a6f1e909-9b87-42c7-b47a-d7190ba245bf
+# ╟─a6f1e909-9b87-42c7-b47a-d7190ba245bf
 # ╠═2f970459-c1b1-418a-bab2-615aeba2e6c4
-# ╟─962e1fef-5ea1-4037-9e59-6b56c3f60909
-# ╠═c031fe39-0f8c-4f6a-b851-266deb8f5b55
+# ╠═962e1fef-5ea1-4037-9e59-6b56c3f60909
+# ╟─c031fe39-0f8c-4f6a-b851-266deb8f5b55
 # ╟─3dab6ba2-7dd7-4f41-b1f3-e34d52211afb
-# ╠═794092bf-cd6b-4cb8-aa11-c647157a0037
+# ╟─794092bf-cd6b-4cb8-aa11-c647157a0037
 # ╟─712a650d-4ada-4548-81ad-6c10b14d1a89
 # ╠═1117da28-0103-4264-95b2-07562c98103b
 # ╠═45468faf-d2c1-4a68-997f-41f9879ede0f
 # ╠═11956a74-3ea2-491c-8eb1-d60db132c5c7
-# ╠═cef266b6-7913-4abd-a665-03bd491049b0
+# ╟─cef266b6-7913-4abd-a665-03bd491049b0
 # ╠═5a508717-8a42-466e-9415-ea6447290d19
 # ╠═1a84b8d7-cfdc-420c-b4ff-d6cf32b82622
+# ╟─d0d68f47-95dd-4aba-8817-d015090f8c4c
 # ╠═e992331a-a739-45f7-9820-7ba6a6603cf9
-# ╠═2cd50a99-f3d5-442d-9beb-cad56362ae1e
+# ╟─2cd50a99-f3d5-442d-9beb-cad56362ae1e
 # ╠═28726ab6-747c-4537-94fd-df4f69ff0df5
-# ╠═ca9fd4bb-f934-48df-8daf-f786013b6d69
+# ╟─ca9fd4bb-f934-48df-8daf-f786013b6d69
 # ╟─7728ef9f-c84d-48b0-a25d-eb534f126d65
-# ╠═08339a83-73b6-4cb4-8b59-e30324fdfc8f
-# ╠═5e8a328f-3624-4401-ad7a-f19bc94dd6cd
+# ╟─08339a83-73b6-4cb4-8b59-e30324fdfc8f
+# ╟─5e8a328f-3624-4401-ad7a-f19bc94dd6cd
 # ╠═86c1c1df-9ee4-47a0-a40a-69fa3c245a94
 # ╟─37e8339e-cedc-46e4-8bcc-cae6bf2384a8
 # ╠═6e297fb4-cf31-4928-9ec3-38b389fa6b58
 # ╟─9ac7bf69-d1e2-46a4-96e8-4a8cb0ed3781
 # ╠═c798c1a9-0f64-46fa-8844-3678c63708ef
 # ╠═b62d94d4-4f64-4d3f-ae30-06e84013d3c7
+# ╠═691f4695-c307-408f-892d-587b0b29a832
+# ╠═e09184ba-da9d-43a2-bd6e-1a739e0722f5
+# ╟─6d9670cf-5257-48af-8f62-3de6a88cbc51
+# ╟─92212ec0-b822-4464-b346-dd221ad6f669
+# ╠═4738c3b3-5c67-4ec6-8291-6426485a7832
+# ╠═27e77174-2232-4d67-ba8f-d9d944cce543
+# ╠═496a4d17-0a31-4b6c-bae0-1461603b92e9
+# ╟─5e289cc6-5528-42d9-a3cb-a0d9dac6a849
+# ╟─4921b275-6773-4efa-91ce-02869c527dba
+# ╟─b9d44daa-8781-4c55-b8ef-f0a8b1c92406
+# ╠═9e0b8149-482d-4323-9670-a9756236fbeb
+# ╟─4717e637-07ab-4486-ac9a-c56b03ec7361
+# ╟─51fa22fd-9d3b-40f1-a428-f0cdd8bb2374
+# ╟─2f6abe0f-43f5-40af-af51-561b76fcb29c
+# ╠═7ff00636-cb5d-45a5-b3d3-011054902f8e
+# ╠═3cc0c7d6-0bd7-435c-abde-2c70f51d437e
+# ╟─e3ba1d6c-e781-4447-948c-51b4b6bc7813
+# ╠═fcbf2bf1-f037-4fb1-8f71-c512699173a9
+# ╠═fb98ac86-bb03-49a5-a1a9-0eae38889823
+# ╟─f13056dc-3f17-438c-8b77-d8e1dc613c98
+# ╠═83299874-e44b-4be3-8778-920df01581f4
+# ╠═b43f3c20-aa3d-43ba-8a50-24645bd07ef1
+# ╠═ec549333-676d-4409-9256-8b4a8d8bf894
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
