@@ -24,7 +24,7 @@ jobs:
           Pkg.PackageSpec(name="PlutoSliderServer", version="0.2.1-0.2.6"),
         ]);
         import PlutoSliderServer;
-        github_action("."; Export_cache_dir="pluto_state_cache");'
+        PlutoSliderServer.github_action("."; Export_cache_dir="pluto_state_cache");'
     - run: julia -e '
             using Pkg;
             Pkg.add(["NodeJS", "JSON", "Franklin"]);
