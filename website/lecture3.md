@@ -1,1 +1,0 @@
-{{ plutonotebookpage  ../notebooks/week3/optimization1.jl }}

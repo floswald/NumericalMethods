@@ -1,0 +1,166 @@
+\documentclass[11pt, a4paper]{article}
+%\usepackage{geometry}
+\usepackage[inner=1.5cm,outer=1.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\pagestyle{empty}
+\usepackage{graphicx}
+\usepackage{fancyhdr, lastpage, bbding, pmboxdraw}
+\usepackage[usenames,dvipsnames]{color}
+\definecolor{darkblue}{rgb}{0,0,.6}
+\definecolor{darkred}{rgb}{.7,0,0}
+\definecolor{darkgreen}{rgb}{0,.6,0}
+\definecolor{red}{rgb}{.98,0,0}
+\usepackage[colorlinks,pagebackref,pdfusetitle,urlcolor=darkblue,citecolor=darkblue,linkcolor=darkred,bookmarksnumbered,plainpages=false]{hyperref}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\pagestyle{fancyplain}
+\fancyhf{}
+\lhead{ \fancyplain{}{Computational Economics for PhDs} }
+%\chead{ \fancyplain{}{} }
+\rhead{ \fancyplain{}{\today} }
+%\rfoot{\fancyplain{}{page \thepage\ of \pageref{LastPage}}}
+\fancyfoot[RO, LE] {page \thepage\ of \pageref{LastPage} }
+\thispagestyle{plain}
+
+%%%%%%%%%%%% LISTING %%%
+\usepackage{listings}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\usepackage{verbatim} % used to display code
+\usepackage{fancyvrb}
+\usepackage{acronym}
+\usepackage{amsthm}
+\VerbatimFootnotes % Required, otherwise verbatim does not work in footnotes!
+
+
+
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{lightlightgray}{gray}{0.93}
+
+
+
+\lstset{
+%language=bash,                          % Code langugage
+basicstyle=\ttfamily,                   % Code font, Examples: \footnotesize, \ttfamily
+keywordstyle=\color{OliveGreen},        % Keywords font ('*' = uppercase)
+commentstyle=\color{gray},              % Comments font
+numbers=left,                           % Line nums position
+numberstyle=\tiny,                      % Line-numbers fonts
+stepnumber=1,                           % Step between two line-numbers
+numbersep=5pt,                          % How far are line-numbers from code
+backgroundcolor=\color{lightlightgray}, % Choose background color
+frame=none,                             % A frame around the code
+tabsize=2,                              % Default tab size
+captionpos=t,                           % Caption-position = bottom
+breaklines=true,                        % Automatic line breaking?
+breakatwhitespace=false,                % Automatic breaks only at whitespace?
+showspaces=false,                       % Dont make spaces visible
+showtabs=false,                         % Dont make tabls visible
+columns=flexible,                       % Column format
+morekeywords={__global__, __device__},  % CUDA specific keywords
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{center}
+{\Large \textsc{Computational Economics for PhD Students}}
+\end{center}
+\begin{center}
+Quarter 2, November-December 2021
+\end{center}
+%\date{September 26, 2014}
+
+\begin{center}
+\rule{6in}{0.4pt}
+\begin{minipage}[t]{.75\textwidth}
+\begin{tabular}{llcccll}
+\textbf{Instructor:} & Florian Oswald & & &  & \textbf{Time:} & Tue+Thu 10:20-11:50 \\
+\textbf{Email:} &  \href{mailto:florian.oswald@sciencespo.fr}{florian.oswald@sciencespo.fr} & & & & \textbf{Place:} & Università Bocconi
+\end{tabular}
+\end{minipage}
+\rule{6in}{0.4pt}
+\end{center}
+\vspace{.5cm}
+\setlength{\unitlength}{1in}
+\renewcommand{\arraystretch}{2}
+
+\noindent\textbf{Course Page:} \url{https://floswald.github.io/NumericalMethods/} This website has all relevant info and required material, so please have a look at it to get a good overview of what we do in this course.
+
+\vskip.15in
+\noindent\textbf{Course Overview:}  In this course you will learn about some commonly used methods in Computational Economics. 
+These methods are being used in all fields of Economics. The course has a clear focus on applying what you learn. 
+We will cover the theoretical concepts that underlie each topic, but you should expect a fair amount of 
+hands on action required on your behalf. In the words of the great \href{https://www.econometricsociety.org/content/che-lin-su}{Che-Lin Su}:
+
+\begin{quote}
+Doing Computation is the only way to learn Computation.\\
+Doing Computation is the only way to learn Computation.\\ 
+Doing Computation is the only way to learn Computation.
+\end{quote}
+
+True to that motto, there will be homeworks for you to try out what you learned in class. There will also be a term paper. 
+
+\vskip.15in
+\noindent\textbf{Course Objective:} \emph{To take the fear out of computation.} In this course I want to help you to develop your computational skills. 
+I will give you tools that are relatively easy to use, sometimes even fun (!) to use. Key to this endeavour is the julia programming language, which is both performant (you can use it for \emph{real} work),
+and at the same time easier to use than more traditional languages like FORTRAN or C++. While we will spend a good amount of time on the \emph{usual suspects} like Dynamic Programming and Optimization,
+I want to give a good overview of the available methods out there.
+
+
+\vskip.15in
+\noindent\textbf{Office Hours:} By appointment
+
+\vskip.15in
+\noindent\textbf{Textbooks:} %\footnotemark
+There are some excellent references for computational methods out there. This course will use material from
+\begin{itemize}
+\item Fackler and Miranda (2002), Applied Computational Economics and Finance, MIT Press
+\item Kenneth Judd (1998), Numerical Methods in Economics, MIT Press
+\item Nocedal, Jorge, and Stephen J. Wright (2006): Numerical Optimization, Springer-Verlag
+\item Kochenderfer and Wheeler (2019), Algorithms for Optimization, MIT Press
+\item A Gentle Introduction to Effective Computing in Quantitative Research - What Every Research Assistant Should Know, Harry J. Paarsch and Konstantin Golyaev
+\end{itemize}
+
+
+\vskip.15in
+\noindent\textbf{Term Project:} Your term project will be to replicate a paper published in an economics journal. 
+Ideally this would be related to your field of interest. The requirements for choice of paper to replicate are:
+\begin{itemize}
+\item Published version and replication kit is available online.
+
+\item The paper to replicate must not use the julia language.
+
+\item You must use the julia language for your replication.
+
+\item Ideally your choice will involve at least some level of computational interest.
+
+\item You need to set up a public github repository where you will build a documentation website of your implementation. You'll learn how to do this in the course.
+\end{itemize}
+I encourage you to let the world know about your replication effort via social media and/or email to the authors directly. This is independent of whether you were able or not to replicate the results. Replication is not about finding errors in other peoples' work. If you are able to replicate some result in julia, this may be very interesting for others.
+
+\noindent There is more detail and resources on the course website at \url{https://floswald.github.io/NumericalMethods/#term_project}
+
+\vskip.15in
+\noindent\textbf{Prerequisites:}
+\begin{enumerate}
+    \item You should be familiar with the material from Introduction to Programming taught by Clement Mazet in M1. Check out his material at \url{https://cms27.github.io/teaching/}
+    \item You must sign up for a free account at github.com. Choose a reasonable user name and upload a profile picture.
+    \item Before you come to the first class, please download the latest stable julia release from \url{https://julialang.org}
+    \item You \textbf{must} know what the UNIX shell (or windows command line) is. Clement's course above, if not.
+    \item You \textbf{must} know what version control is. Whatch \href{https://git-scm.com/video/what-is-version-control}{this video} and go to Clement's course above, if not.
+\end{enumerate}
+\noindent It is natural that some students have better programming skills than others because of previous exposure and inclination. This course takes this into account. For example at SciencesPo, where I usually teach this course, the entire cohort of PhDs signed up, with a lot of heterogeneity in skills. Feel free to send me an email for specific questions in this regard.
+
+\vspace*{.15in}
+
+\noindent \textbf{Tentative Course Schedule:} Please consult \url{https://floswald.github.io/NumericalMethods/#course_schedule}
+
+
+\vspace*{.15in}
+\noindent\textbf{Grading:} Homeworks (60\%),  Final Project (40\%).
+
+
+%%%%%% THE END 
+\end{document} 
