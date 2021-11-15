@@ -1,1 +1,209 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/NumericalMethods/css/franklin.css"> <link rel=stylesheet  href="/NumericalMethods/css/poole_hyde.css"> <link rel=stylesheet  href="/NumericalMethods/css/custom.css"> <style> html {font-size: 17px;} .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;} @media (min-width: 940px) { .franklin-content {width: 100%; margin-left: auto; margin-right: auto;} } @media (max-width: 768px) { .franklin-content {padding-left: 6%; padding-right: 6%;} } </style> <link rel=icon  href="/NumericalMethods/assets/favicon.png"> <title>Computational Economics</title> <div class=sidebar > <div class="container sidebar-sticky"> <div class=sidebar-about > <br> <img src="/NumericalMethods/assets/Bocconi-logo.jpg" style="width: 80px; height: auto; display: inline"> <img src="/NumericalMethods/assets/julia-logo.svg" style="margin-left:1em; width: 80px; height: auto; display: inline"> <div style="opacity: 0.85; font-weight: bold; margin-bottom: 0.5em">Università Bocconi Milano, Fall 2021</div> <h1 style="font-size:1em; opacity: 0.95;"><a href="/NumericalMethods/">Computational Economics for PhDs</a></h1> <div style="line-height:18px; font-size: 15px; opacity: 0.85">by <a href="https://floswald.github.io">Florian Oswald</a></div> </div> <br> <style> </style> <nav class=sidebar-nav  style="opacity: 0.9"> <a class="sidebar-nav-item " href="/NumericalMethods/">Course home</a> <a class="sidebar-nav-item " href="/NumericalMethods/installation/">Software installation</a> <a class="sidebar-nav-item " href="/NumericalMethods/cheatsheets/">Cheatsheets</a> <a class="sidebar-nav-item " href="/NumericalMethods/hw0/"><b>Homework 0</b></a> <br> <small style="text-transform: uppercase; font-size: 0.75em">Course content</small> <a class="sidebar-nav-item " href="/NumericalMethods/lecture1/"><b>Lecture 1</b> - <em>Why Julia?</em></a> <a class="sidebar-nav-item active" href="/NumericalMethods/lecture2/"><b>Lecture 2</b> - <em>First Examples</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw1/"><b>Homework 1</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture3/"><b>Lecture 3</b> - <em>Optimization 1</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw2/"><b>Homework 2</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture4/"><b>Lecture 4</b> - <em>Optimization 2</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw3/"><b>Homework 3</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture5/"><b>Lecture 5</b> - <em>Optimization 3</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw4/"><b>Homework 4</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture6/"><b>Lecture 6</b> - <em>Function Approximation</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture7/"><b>Lecture 7</b> - <em>Dynamic Programming</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture8/"><b>Lecture 8</b> - <em>Dynamic Programming 2</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw5/"><b>Homework 5</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture9/"><b>Lecture 9</b> - <em>Dynamic Programming 3</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw6/"><b>Homework 6</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture10/"><b>Lecture 10</b> - <em>Dynamic Discrete Choice</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/hw7/"><b>Homework 7</b></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture11/"><b>Lecture 11</b> - <em>Estimating DDC Models</em></a> <a class="sidebar-nav-item " href="/NumericalMethods/lecture12/"><b>Lecture 12</b> - <em>Dynamic Discrete+Continous</em></a> </nav> </div> </div> <div class="content container"> <div class=franklin-content > <h1>Getting Started with Julia</h1> <p>In this lecture we will start talking <code>julia</code>&#33; We will go through a series of notebooks in tutorial style. You can find the notebooks <a href="https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week2">here</a></p> <p><strong>Table of Contents</strong></p> <div class=franklin-toc ><ol><li><a href="#arrays">Arrays</a><li><a href="#vscode_and_julia">VScode and Julia</a><li><a href="#julia_packages_pkgjl_and_environments">Julia Packages, <code>Pkg.jl</code> and Environments</a><li><a href="#notebook_formats">Notebook Formats</a></ol></div> <h2 id=arrays ><a href="#arrays" class=header-anchor >Arrays</a></h2> <h2 id=vscode_and_julia ><a href="#vscode_and_julia" class=header-anchor >VScode and Julia</a></h2> <p>I asked you to install the <a href="https://www.julia-vscode.org">julia-vscode</a> extention for the vscode editor <a href="../#prerequisites">initially</a>. Today we&#39;ll have a first look at this environment. Some things we&#39;ll go over are:</p> <ol> <li><p>How to start a julia REPL</p> <li><p>How to run code line by line</p> <li><p>How to run a file</p> <li><p>Package environments</p> <li><p>More advanced features &#40;already couple of months back, but still&#41; are explained in this <a href="https://youtu.be/IdhnP00Y1Ks">video by one of the package authors</a>.</p> </ol> <h2 id=julia_packages_pkgjl_and_environments ><a href="#julia_packages_pkgjl_and_environments" class=header-anchor >Julia Packages, <code>Pkg.jl</code> and Environments</a></h2> <ol> <li><p>What&#39;s a <strong>package</strong>?</p> <ul> <li><p>Basically, a <code>module</code>. </p> <li><p>Why do we need packages?</p> <li><p>Here an <a href="https://github.com/JuliaLang/Example.jl">Example</a></p> </ul> <li><p>The problem with user-contributed packages and open source software is that there is no central authority imposing a strict versioning. </p> <ul> <li><p>&#91;Why not? 👉 Because thou shall not force volunteers to do stuff &#40;<a href="https://academic.oup.com/restud/article-abstract/70/3/489/1571401">Benabou and Tirole</a>&#41;.&#93; </p> <li><p>For example, my package could depend on a feature of your package. </p> <li><p>You decide to remove that feature.</p> <li><p>My package breaks.</p> <li><p>Now what?</p> </ul> <li><p>What do other open source languages do here?</p> <ul> <li><p><code>R</code>: nothing. You install whichever version you want and hope it all works. Latest versions is a good idea.</p> <li><p><code>python</code>: versioning problem comes even before packages&#33; Python 2.7 incompativel with python 3.6. So we have <em>virtual environments</em> for different python versions</p> <ul> <li><p>It can get complicated <a href="https://github.com/econ-ark/KrusellSmith/issues/3">really easily</a>.</p> </ul> </ul> <li><p>What is an <em>environment</em></p> <ul> <li><p>It&#39;s like a box inside which a certain set of versions can be assumed.</p> <li><p>It&#39;s great for reproducibility: you know exactly which set of versions produced which set of results.</p> <li><p>A docker container is an example of an environment in a remote data center, where you specify what kind of machine you want and what software should be available.</p> </ul> <li><p>julia: <a href="https://julialang.github.io/Pkg.jl/v1/"><code>Pkg.jl</code> package manager</a>. </p> <ul> <li><p>Environments are specified in a text file <code>Project.toml</code> at the root of a given package or folder.</p> <li><p>It specifies the required packages to run the current <em>project</em> &#40;or whatever code you have in the current folder&#41;</p> <li><p>You can see an example <a href="https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week2/Project.toml">here</a></p> <li><p>A second file called <code>Manifest.toml</code> specifies the <em>exact</em> list of dependencies that are implied by the packages you rely on in <code>Project.toml</code>. </p> <li><p>Including both <code>Project.toml</code> and <code>Manifest.toml</code> in a folder provides an <strong>exact</strong> snapshot of the code needed to reproduce the results.</p> <li><p>It&#39;s a major step ahead to improve reproducibility of results.</p> </ul> <li><p>Demonstrate how to activate a package in REPL.</p> <li><p>Show some <code>&#93;</code> package manager commands and <code>help</code></p> </ol> <h2 id=notebook_formats ><a href="#notebook_formats" class=header-anchor >Notebook Formats</a></h2> <p>You will notice that there are two different notebook formats in our course: the new Pluto.jl format, and the more traditional jupyter notebook. Here&#39;s a quick video of how to launch a jupyter notebook server on your computer to run those notebooks - on the example of our course content.</p> <iframe id=jupyter-notebooks  width="100%" height=360  src="https://www.youtube.com/embed/MFgMO8Xwx-k" frameborder=0  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> <div class=page-foot > <div class=copyright > <a href="https://github.com/ScPoEcon/NumericalMethods/tree/master/website"><b>Edit this page on <img class=github-logo  src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></b></a> Last modified: November 10, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> <script> var els = document.querySelectorAll(".language-julia") for (var i=0, l = els.length; i < l; i++) { var el = els[i] var out = el.parentNode.nextSibling if (out.tagName === "PRE") { out.className = out.className + " code-output" } } </script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-JNZ5SC5FM3"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-JNZ5SC5FM3'); </script>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+  <link rel="stylesheet" href="/NumericalMethods/css/franklin.css">
+<link rel="stylesheet" href="/NumericalMethods/css/poole_hyde.css">
+<link rel="stylesheet" href="/NumericalMethods/css/custom.css">
+<!-- style adjustments -->
+<style>
+  html {font-size: 17px;}
+  .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;}
+  @media (min-width: 940px) {
+    .franklin-content {width: 100%; margin-left: auto; margin-right: auto;}
+  }
+  @media (max-width: 768px) {
+    .franklin-content {padding-left: 6%; padding-right: 6%;}
+  }
+</style>
+<link rel="icon" href="/NumericalMethods/assets/favicon.png">
+
+   <title>Computational Economics</title>  
+</head>
+<body>
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <br>
+      <img src="/NumericalMethods/assets/Bocconi-logo.jpg" style="width: 80px; height: auto; display: inline">
+      <img src="/NumericalMethods/assets/julia-logo.svg" style="margin-left:1em; width: 80px; height: auto; display: inline">
+      <div style="opacity: 0.85; font-weight: bold; margin-bottom: 0.5em">Università Bocconi Milano, Fall 2021</div>
+      <h1 style="font-size:1em; opacity: 0.95;"><a href="/NumericalMethods/">Computational Economics for PhDs</a></h1>
+      <div style="line-height:18px; font-size: 15px; opacity: 0.85">by <a href="https://floswald.github.io">Florian Oswald</a></div>
+    </div>
+    <br>
+    <style>
+    </style>
+    <nav class="sidebar-nav" style="opacity: 0.9">
+      <a class="sidebar-nav-item " href="/NumericalMethods/">Course home</a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/installation/">Software installation</a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/cheatsheets/">Cheatsheets</a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw0/"><b>Homework 0</b></a>
+      <br>
+      <small style="text-transform: uppercase; font-size: 0.75em">Course content</small>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture1/"><b>Lecture 1</b> - <em>Why Julia?</em></a>
+      <a class="sidebar-nav-item active" href="/NumericalMethods/lecture2/"><b>Lecture 2</b> - <em>First Examples</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw1/"><b>Homework 1</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture3/"><b>Lecture 3</b> - <em>Optimization 1</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw2/"><b>Homework 2</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture4/"><b>Lecture 4</b> - <em>Optimization 2</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw3/"><b>Homework 3</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture5/"><b>Lecture 5</b> - <em>Optimization 3</em></a>     
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw4/"><b>Homework 4</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture6/"><b>Lecture 6</b> - <em>Function Approximation</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture7/"><b>Lecture 7</b> - <em>Dynamic Programming</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture8/"><b>Lecture 8</b> - <em>Dynamic Programming 2</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw5/"><b>Homework 5</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture9/"><b>Lecture 9</b> - <em>Dynamic Programming 3</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw6/"><b>Homework 6</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture10/"><b>Lecture 10</b> - <em>Dynamic Discrete Choice</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/hw7/"><b>Homework 7</b></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture11/"><b>Lecture 11</b> - <em>Estimating DDC Models</em></a>
+      <a class="sidebar-nav-item " href="/NumericalMethods/lecture12/"><b>Lecture 12</b> - <em>Dynamic Discrete+Continous</em></a>
+    </nav>
+
+  </div>
+</div>
+<div class="content container">
+
+
+
+<!-- Content appended here -->
+<div class="franklin-content">
+<h1>Getting Started with Julia</h1>
+
+<p>In this lecture we will start talking <code>julia</code>&#33; We will go through a series of notebooks in tutorial style. Here is again a table with pre-rendered notebooks for you to look at:</p>
+<table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Julia By Example</td><td align="center"><a href="../lecture2-example">click for notebook</a></td></tr><tr><td align="center">Defining Data Types</td><td align="center"><a href="../lecture2-types">click for notebook</a></td></tr><tr><td align="center">Intro do Differential Equations</td><td align="center"><a href="../lecture2-diffeq">click for notebook</a></td></tr></table>
+<p><strong>Table of Contents</strong></p>
+<div class="franklin-toc"><ol><li><a href="#arrays">Arrays</a></li><li><a href="#vscode_and_julia">VScode and Julia</a></li><li><a href="#julia_packages_pkgjl_and_environments">Julia Packages, <code>Pkg.jl</code> and Environments</a></li><li><a href="#notebook_formats">Notebook Formats</a></li></ol></div>
+<h2 id="arrays"><a href="#arrays">Arrays</a></h2>
+<h2 id="vscode_and_julia"><a href="#vscode_and_julia">VScode and Julia</a></h2>
+<p>I asked you to install the <a href="https://www.julia-vscode.org">julia-vscode</a> extention for the vscode editor <a href="../#prerequisites">initially</a>. Today we&#39;ll have a first look at this environment. Some things we&#39;ll go over are:</p>
+<ol>
+<li><p>How to start a julia REPL</p>
+</li>
+<li><p>How to run code line by line</p>
+</li>
+<li><p>How to run a file</p>
+</li>
+<li><p>Package environments</p>
+</li>
+<li><p>More advanced features &#40;already couple of months back, but still&#41; are explained in this <a href="https://youtu.be/IdhnP00Y1Ks">video by one of the package authors</a>.</p>
+</li>
+</ol>
+<h2 id="julia_packages_pkgjl_and_environments"><a href="#julia_packages_pkgjl_and_environments">Julia Packages, <code>Pkg.jl</code> and Environments</a></h2>
+<ol>
+<li><p>What&#39;s a <strong>package</strong>?</p>
+<ul>
+<li><p>Basically, a <code>module</code>. </p>
+</li>
+<li><p>Why do we need packages?</p>
+</li>
+<li><p>Here an <a href="https://github.com/JuliaLang/Example.jl">Example</a></p>
+</li>
+</ul>
+</li>
+<li><p>The problem with user-contributed packages and open source software is that there is no central authority imposing a strict versioning. </p>
+<ul>
+<li><p>&#91;Why not? 👉 Because thou shall not force volunteers to do stuff &#40;<a href="https://academic.oup.com/restud/article-abstract/70/3/489/1571401">Benabou and Tirole</a>&#41;.&#93; </p>
+</li>
+<li><p>For example, my package could depend on a feature of your package. </p>
+</li>
+<li><p>You decide to remove that feature.</p>
+</li>
+<li><p>My package breaks.</p>
+</li>
+<li><p>Now what?</p>
+</li>
+</ul>
+</li>
+<li><p>What do other open source languages do here?</p>
+<ul>
+<li><p><code>R</code>: nothing. You install whichever version you want and hope it all works. Latest versions is a good idea.</p>
+</li>
+<li><p><code>python</code>: versioning problem comes even before packages&#33; Python 2.7 incompativel with python 3.6. So we have <em>virtual environments</em> for different python versions</p>
+<ul>
+<li><p>It can get complicated <a href="https://github.com/econ-ark/KrusellSmith/issues/3">really easily</a>.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>What is an <em>environment</em></p>
+<ul>
+<li><p>It&#39;s like a box inside which a certain set of versions can be assumed.</p>
+</li>
+<li><p>It&#39;s great for reproducibility: you know exactly which set of versions produced which set of results.</p>
+</li>
+<li><p>A docker container is an example of an environment in a remote data center, where you specify what kind of machine you want and what software should be available.</p>
+</li>
+</ul>
+</li>
+<li><p>julia: <a href="https://julialang.github.io/Pkg.jl/v1/"><code>Pkg.jl</code> package manager</a>. </p>
+<ul>
+<li><p>Environments are specified in a text file <code>Project.toml</code> at the root of a given package or folder.</p>
+</li>
+<li><p>It specifies the required packages to run the current <em>project</em> &#40;or whatever code you have in the current folder&#41;</p>
+</li>
+<li><p>You can see an example <a href="https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week2/Project.toml">here</a></p>
+</li>
+<li><p>A second file called <code>Manifest.toml</code> specifies the <em>exact</em> list of dependencies that are implied by the packages you rely on in <code>Project.toml</code>. </p>
+</li>
+<li><p>Including both <code>Project.toml</code> and <code>Manifest.toml</code> in a folder provides an <strong>exact</strong> snapshot of the code needed to reproduce the results.</p>
+</li>
+<li><p>It&#39;s a major step ahead to improve reproducibility of results.</p>
+</li>
+</ul>
+</li>
+<li><p>Demonstrate how to activate a package in REPL.</p>
+</li>
+<li><p>Show some <code>&#93;</code> package manager commands and <code>help</code></p>
+</li>
+</ol>
+<h2 id="notebook_formats"><a href="#notebook_formats">Notebook Formats</a></h2>
+<p>You will notice that there are two different notebook formats in our course: the new Pluto.jl format, and the more traditional jupyter notebook. Here&#39;s a quick video of how to launch a jupyter notebook server on your computer to run those notebooks - on the example of our course content.</p>
+<iframe id="jupyter-notebooks" width="100%" height="360"
+src="https://www.youtube.com/embed/MFgMO8Xwx-k"
+frameborder="0"
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+
+<div class="page-foot">
+  <div class="copyright">
+    <a href="https://github.com/ScPoEcon/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
+    Last modified: November 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+
+    </div>  <!-- div: content container -->
+
+    
+
+    
+    <script>
+        var els =  document.querySelectorAll(".language-julia")
+        for (var i=0, l = els.length; i < l; i++) {
+            var el = els[i]
+            var out = el.parentNode.nextSibling
+            if (out.tagName === "PRE") {
+                out.className = out.className + " code-output"
+            }
+        }
+    </script>
+    
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JNZ5SC5FM3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JNZ5SC5FM3');
+    </script>
+  </body>
+</html>

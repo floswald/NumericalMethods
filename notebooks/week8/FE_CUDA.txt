@@ -1,0 +1,140 @@
+floswald@scpo-floswald:~/g/N/l/week8:master$ julia --project=.
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.6.0 (2021-03-24)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia> include("FE_CUDA.jl")
+┌ Warning: RCall.jl: During startup - Warning message:
+│ Setting LC_CTYPE failed, using "C" 
+└ @ RCall ~/.julia/packages/RCall/eRsxl/src/io.jl:160
+result = reg(df, @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)))
+FixedEffects.jl single CPU core time
+ 12.295085 seconds (359.76 k allocations: 3.239 GiB, 1.10% gc time, 1.75% compilation time)
+
+
+
+
+ We'll run the same data through R packages lfe and fixest now.
+
+
+
+┌ Warning: RCall.jl: Loading required package: Matrix
+└ @ RCall ~/.julia/packages/RCall/eRsxl/src/io.jl:160
+[1] "1. Same result?"
+[1] ""
+
+Call:
+   felm(formula = y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 | id1 + id2,      data = r_d) 
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.2422 -0.6707  0.0001  0.6712  5.1279 
+
+Coefficients:
+    Estimate Std. Error t value Pr(>|t|)    
+x1 2.9997788  0.0003178    9439   <2e-16 ***
+x2 4.9998201  0.0003176   15740   <2e-16 ***
+x3 0.9994933  0.0003178    3145   <2e-16 ***
+x4 1.0003401  0.0003178    3147   <2e-16 ***
+x5 1.0000133  0.0003178    3147   <2e-16 ***
+x6 1.0000983  0.0003178    3147   <2e-16 ***
+x7 1.0004496  0.0003178    3148   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.9998 on 9899894 degrees of freedom
+Multiple R-squared(full model): 0.9986   Adjusted R-squared: 0.9986 
+Multiple R-squared(proj model): 0.975   Adjusted R-squared: 0.9748 
+F-statistic(full model):6.907e+04 on 100105 and 9899894 DF, p-value: < 2.2e-16 
+F-statistic(proj model): 5.518e+07 on 7 and 9899894 DF, p-value: < 2.2e-16 
+
+
+[1] ""
+[1] "2. lfe timing?"
+[1] ""
+[1] "R lfe time: 26.778"
+[1] ""
+[1] "3. fixest timing?"
+[1] ""
+[1] "fixest running on 4 threads"
+[1] "R fixest time: 7.03800000000001"
+
+
+
+
+ Now let's try on the GPU!
+
+
+
+CUDA toolkit 11.1.1, artifact installation
+CUDA driver 11.2.0
+NVIDIA driver 460.32.3
+
+Libraries: 
+- CUBLAS: 11.3.0
+- CURAND: 10.2.2
+- CUFFT: 10.3.0
+- CUSOLVER: 11.0.1
+- CUSPARSE: 11.3.0
+- CUPTI: 14.0.0
+- NVML: 11.0.0+460.32.3
+- CUDNN: 8.10.0 (for CUDA 11.2.0)
+- CUTENSOR: 1.2.2 (for CUDA 11.1.0)
+
+Toolchain:
+- Julia: 1.6.0
+- LLVM: 11.0.1
+- PTX ISA support: 3.2, 4.0, 4.1, 4.2, 4.3, 5.0, 6.0, 6.1, 6.3, 6.4, 6.5, 7.0
+- Device support: sm_35, sm_37, sm_50, sm_52, sm_53, sm_60, sm_61, sm_62, sm_70, sm_72, sm_75, sm_80
+
+1 device:
+  0: GeForce GTX 1050 Ti (sm_61, 3.802 GiB / 3.943 GiB available)
+begin
+    #= /home/floswald/git/NumericalMethods/lecture_notebooks/week8/FE_CUDA.jl:99 =#
+    result = reg(df, #= /home/floswald/git/NumericalMethods/lecture_notebooks/week8/FE_CUDA.jl:100 =# @formula(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + fe(id1) + fe(id2)), method = :gpu, double_precision = false)
+end =                       Fixed Effect Model                      
+==============================================================
+Number of obs:        10000000  Degrees of freedom:     100107
+R2:                      0.999  R2 Adjusted:             0.999
+F Statistic:         5.51788e7  p-value:                 0.000
+R2 within:               0.975  Iterations:                  6
+Converged:                true  
+==============================================================
+     Estimate   Std.Error t value Pr(>|t|) Lower 95% Upper 95%
+--------------------------------------------------------------
+x1    2.99978 0.000317822 9438.55    0.000   2.99916    3.0004
+x2    4.99982 0.000317641 15740.5    0.000    4.9992   5.00044
+x3   0.999493 0.000317762 3145.41    0.000   0.99887   1.00012
+x4    1.00034 0.000317822 3147.49    0.000  0.999717   1.00096
+x5    1.00001 0.000317757  3147.1    0.000  0.999391   1.00064
+x6     1.0001 0.000317764  3147.3    0.000  0.999476   1.00072
+x7    1.00045 0.000317755 3148.49    0.000  0.999827   1.00107
+==============================================================
+
+
+ FixedEffects.jl GPU timing:
+
+  5.932190 seconds (396.94 k allocations: 2.976 GiB, 5.28% gc time, 4.29% compilation time)
+                      Fixed Effect Model                      
+==============================================================
+Number of obs:        10000000  Degrees of freedom:     100107
+R2:                      0.999  R2 Adjusted:             0.999
+F Statistic:         5.51788e7  p-value:                 0.000
+R2 within:               0.975  Iterations:                  6
+Converged:                true  
+==============================================================
+     Estimate   Std.Error t value Pr(>|t|) Lower 95% Upper 95%
+--------------------------------------------------------------
+x1    2.99978 0.000317822 9438.55    0.000   2.99916    3.0004
+x2    4.99982 0.000317641 15740.5    0.000    4.9992   5.00044
+x3   0.999493 0.000317762 3145.41    0.000   0.99887   1.00012
+x4    1.00034 0.000317822 3147.49    0.000  0.999717   1.00096
+x5    1.00001 0.000317757  3147.1    0.000  0.999391   1.00064
+x6     1.0001 0.000317764  3147.3    0.000  0.999476   1.00072
+x7    1.00045 0.000317755 3148.49    0.000  0.999827   1.00107
+==============================================================
