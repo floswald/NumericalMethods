@@ -16,9 +16,73 @@ end
 
 # ╔═╡ c1388e32-4a26-11ec-3def-9d7f551edcca
 md"""
-# Application: Rao Aiyagari (1994)
+# Application: Uninsured Idiosyncratic Risk and Aggregate Saving, Aiyagari (QJE 1994)
 
-Model description tbd
+[This paper](https://academic.oup.com/qje/article-abstract/109/3/659/1838287) is a workhorse macro model of incomplete markets: consumers cannot perfectly insure against income fluctations. There is a borrowing constraint. The GE nature of the model stems from the assumption that the aggregate capital stock $K$ needs to be built out of the savings of individual households.
+
+## Firms
+
+Firm output is given by
+
+$$Y_t = A K_t^\alpha N^{1-\alpha}$$
+
+Notice that we keep productivity $A > 0$ and labor supply $N>0$ constant here. This form of production function implies:
+
+1. Firms produce output by combining capital and labor.
+2. The production function has constant returns to scale: it does not make a difference whether we have
+    - 3 firms that each use $K$ capital and $N$ workers: they output $3Y$.
+    - a single firm that uses $3K$ capital and $3N$ workers. it outputs
+$$A (3K)_t^\alpha (3N)^{1-\alpha} = 3AK_t^\alpha N^{1-\alpha} = 3Y$$
+3. So we just look at *a single representative firm*
+4. (The firm *still* is a price taker as if there were *many competitors around*!)
+
+The the firm's problem is as usual to maximize profits. There is just one final good, so no relative price to consider, and we want that the firm
+
+$$\max_{K_t,N} A K_t^\alpha N^{1-\alpha} - (r + \delta)K_t - wN$$
+
+where $\delta$ is the depreciation rate of capital and where $(r,w)$ are the rental prices of capital and labor, respectively. $w$ is usually called *wage* 😉. First order conditions on this last expression yield
+
+$$\begin{align}
+r_t &= A\alpha \left(\frac{N}{K_t}\right)^{1-\alpha} - \delta\\
+w_t &= A(1-\alpha) \left(\frac{N}{K_t}\right)^{-\alpha} \\
+\end{align}$$
+
+Now express the first one in terms of $\frac{N}{K_t}$ and plug into the second one to find
+
+$$w(r_t) = A(1-\alpha) \left(\frac{A \alpha}{r + \delta}\right)^{\frac{\alpha}{1-\alpha}}$$
+
+
+"""
+
+# ╔═╡ bfbc42d2-c7bb-4a13-8c5d-95512940ceee
+md"""
+## Consumers
+
+They solve a savings problem:
+
+$$\max_{\{c_t\}_{t=0}^\infty} \sum_{t=0}^\infty \beta^t u(c_t)$$
+
+subject to
+
+$$a_{t+1} + c_t = w_t z_t + (1+r_t)a_t, c_t\geq 0 , a_t \geq -B$$
+
+Here:
+* $z_t$ is an exogenously evolving productivity shock with transition matrix $\mathbb{P}$
+* $w_t,r_t$ are as above
+
+## Equilibrium
+
+* Aggregates and prices are constant over time
+* firms optimize profits and are price takers
+* households maximize utility, also as price takers
+* household savings represents *capital supply*, and in equilibrium it has to match *capital demand* of firms.
+
+## Algorithm
+
+1. Pick a value $K_t$
+2. Obtain prices $r_t,w_t$ from the above equations.
+3. Solve consumer problem
+4. compute aggregate capital as $$K_{t+1} \int \sigma(s) d\mu$$, where $\sigma$ is the optimal policy at state $s$ and where $\mu$ is the steady state (i.e. *invariant*) distribution of agents over the state space in equilibrium.
 
 
 """
@@ -1489,6 +1553,7 @@ version = "0.9.1+5"
 
 # ╔═╡ Cell order:
 # ╟─c1388e32-4a26-11ec-3def-9d7f551edcca
+# ╟─bfbc42d2-c7bb-4a13-8c5d-95512940ceee
 # ╟─20ef10f8-8a61-492e-9496-3bdd10aaadef
 # ╠═07e68196-1f07-41f2-9849-685d1748a3d7
 # ╟─46a3710c-64c6-4af3-8c6f-099ef2ac8e0f
