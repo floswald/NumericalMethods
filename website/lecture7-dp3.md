@@ -1,1 +1,1 @@
-{{ plutonotebookpage  ../notebooks/week7/Aiyagari.jl }}
+{{ plutonotebookpage  ../notebooks/week7/EGM.jl }}
