@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>⚡ Pluto.jl ⚡</title>
     <meta charset="utf-8" />
     <script>
-        console.log("Pluto.jl, by Fons van der Plas (https://github.com/fonsp), Mikołaj Bochenski (https://github.com/malyvsen), Michiel Dral (https://github.com/dralletje) and friends 🌈")
+        console.log(
+            "Pluto.jl, by Fons van der Plas (https://github.com/fonsp), Mikołaj Bochenski (https://github.com/malyvsen), Michiel Dral (https://github.com/dralletje) and friends 🌈"
+        )
     </script>
     <meta name="theme-color" content="#ffffff" />
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/img/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/img/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/img/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/img/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/img/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/img/favicon-96x96.png" />
     <meta name="description" content="Pluto.jl notebooks" />
-    <link rel="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/img/logo.svg" />
-    <link rel="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/img/favicon_unsaturated.svg" />
+    <link rel="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/img/logo.svg" />
+    <link rel="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/img/favicon_unsaturated.svg" />
 
-    <link rel="pluto-sw" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/sw.js" />
+    <link rel="pluto-sw" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/sw.js" />
     <script>
         navigator.serviceWorker?.register(document.head.querySelector("link[rel='pluto-sw']").getAttribute("href"), { scope: "./" }).catch(console.warn)
     </script>
@@ -26,37 +27,35 @@
     <script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.2.11/js/iframeResizer.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/ansi_up@5.0.1/ansi_up.min.js" defer></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/editor.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/hide-ui.css" type="text/css" media="all" data-pluto-file="hide-ui">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/binder.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/treeview.css" type="text/css" />
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/juliamono.css" as="style">
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/vollkorn.css" as="style">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.2.0/build/styles/atom-one-light.min.css">
+    <!-- This doesn't do anything unless activated, and it makes sure parcel bundles this -->
+    <script id="iframe-resizer-content-window-script" src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.2.11/js/iframeResizer.contentWindow.min.js" crossorigin="anonymous" defer></script>
 
-    <!-- The instant feedback form at the bottom of the page uses Google Firestore to save feedback. -->
-    <script src="https://cdn.jsdelivr.net/npm/firebase@7.13.1/firebase-app.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/firebase@7.13.1/firebase-firestore.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/editor.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/hide-ui.css" type="text/css" media="all" data-pluto-file="hide-ui" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/binder.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/treeview.css" type="text/css" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/juliamono.css" as="style" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/vollkorn.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.2.0/build/styles/atom-one-light.min.css" />
 
     <script data-pluto-file="launch-parameters">
 window.pluto_notebook_id = undefined;
+window.pluto_isolated_cell_ids = undefined;
 window.pluto_notebookfile = "data:text/julia;charset=utf-8;base64,IyMjIEEgUGx1dG8uamwgbm90ZWJvb2sgIyMjCiMgdjAuMTcuMQoKdXNpbmcgTWFya2Rvd24KdXNpbmcgSW50ZXJhY3RpdmVVdGlscwoKIyDilZTilZDilaEgNTAxZmU5YTctZDFhMC00M2IzLWJlMmEtNDc0ZWQzYWM1N2Y2Cm1kIiIiCiMgU29sdmluZyBTeXN0ZW1zIG9mIEVxdWF0aW9ucwoKKiBJbiBlY29ub21pY3MgYXJlIG1vZGVscyBhcmUgb2Z0ZW4gZGVmaW5lZCBieSBhIHNldCBvZiBlcXVhdGlvbnMgd2hpY2ggbW9zdCBob2xkIGF0IGEgc29sdXRpb24uCiogRm9yIGV4YW1wbGUsIHRoZSBFdWxlciBFcXVhdGlvbiBpbiBjb25zdW1wdGlvbi1zYXZpbmdzIHByb2JsZW1zLCBvciBhbnkgb3RoZXIgb3B0aW1hbGl0eSBjb25kaXRpb24uCiogSW4gdGhpcyBub3RlYm9vayB3ZSBsb29rIGF0IGFwcHJvYWNoZXMgdG8gc29sdmUgdGhvc2UuCiIiIgoKIyDilZTilZDilaEgN2Y2ZjVlMDgtNmNjOS00OTVmLTliYjMtZGQyYTk4ZGI2YTkzCgoKIyDilZTilZDilaEgZDM2NWIzYzAtNDQ3MC0xMWVjLTAzZGUtYjcyY2JkZjM0MDg1CgpiZWdpbgpkYW5nZXIoaGVhZCx0ZXh0KSA9IE1hcmtkb3duLk1EKE1hcmtkb3duLkFkbW9uaXRpb24oImRhbmdlciIsIGhlYWQsIFt0ZXh0XSkpOwpkYW5nZXIodGV4dCkgPSBNYXJrZG93bi5NRChNYXJrZG93bi5BZG1vbml0aW9uKCJkYW5nZXIiLCAiQXR0ZW50aW9uIiwgW3RleHRdKSk7CmluZm8odGV4dCkgPSBNYXJrZG93bi5NRChNYXJrZG93bi5BZG1vbml0aW9uKCJpbmZvIiwgIkluZm8iLCBbdGV4dF0pKTsKdGlwKHRleHQpID0gTWFya2Rvd24uTUQoTWFya2Rvd24uQWRtb25pdGlvbigidGlwIiwgIlRpcCIsIFt0ZXh0XSkpOwplbmQKCiMg4pWU4pWQ4pWhIENlbGwgb3JkZXI6CiMg4pWf4pSANTAxZmU5YTctZDFhMC00M2IzLWJlMmEtNDc0ZWQzYWM1N2Y2CiMg4pWg4pWQN2Y2ZjVlMDgtNmNjOS00OTVmLTliYjMtZGQyYTk4ZGI2YTkzCiMg4pWg4pWQZDM2NWIzYzAtNDQ3MC0xMWVjLTAzZGUtYjcyY2JkZjM0MDg1Cg==";
 window.pluto_disable_ui = true;
 window.pluto_slider_server_url = undefined;
-window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.17.1";
+window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.17.2";
 window.pluto_statefile = "systems.plutostate";
 </script>
 <!-- [automatically generated launch parameters can be inserted here] -->
 
 
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/editor.js" type="module" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/warn_old_browsers.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/editor.js" type="module" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/warn_old_browsers.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.1/frontend/common/SetupMathJax.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.17.2/frontend/common/SetupMathJax.js"></script>
     <script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-svg-full.js" async></script>
-
 </head>
 
 <body class="loading no-MαθJax"></body>
-
 </html>
