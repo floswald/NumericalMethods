@@ -12,13 +12,20 @@ begin
 	using Parameters
 	using Statistics
 	using QuantEcon
+	using Roots: fzero
 end
 
-# ╔═╡ c1388e32-4a26-11ec-3def-9d7f551edcca
+# ╔═╡ 305d8ffd-8e96-4463-b4d3-f4a5a770d3a2
 md"""
 # Application: Uninsured Idiosyncratic Risk and Aggregate Saving, Aiyagari (QJE 1994)
 
-[This paper](https://academic.oup.com/qje/article-abstract/109/3/659/1838287) is a workhorse macro model of incomplete markets: consumers cannot perfectly insure against income fluctations. There is a borrowing constraint. The GE nature of the model stems from the assumption that the aggregate capital stock $K$ needs to be built out of the savings of individual households.
+[This paper](https://academic.oup.com/qje/article-abstract/109/3/659/1838287) is a workhorse macro model of incomplete markets: *consumers cannot perfectly insure against income fluctations*. 
+"""
+
+# ╔═╡ c1388e32-4a26-11ec-3def-9d7f551edcca
+md"""
+
+In the model, there is one riskless asset which people can use to smooth consumption fluctuations (by saving), but there is a borrowing constraint. The GE nature of the model stems from the assumption that the aggregate capital stock $K$ needs to be built out of the savings of individual households. 
 
 ## Firms
 
@@ -43,15 +50,13 @@ $$\max_{K_t,N} A K_t^\alpha N^{1-\alpha} - (r + \delta)K_t - wN$$
 where $\delta$ is the depreciation rate of capital and where $(r,w)$ are the rental prices of capital and labor, respectively. $w$ is usually called *wage* 😉. First order conditions on this last expression yield
 
 $$\begin{align}
-r_t &= A\alpha \left(\frac{N}{K_t}\right)^{1-\alpha} - \delta\\
-w_t &= A(1-\alpha) \left(\frac{N}{K_t}\right)^{-\alpha} \\
+r_t &= A\alpha \left(\frac{N}{K_t}\right)^{1-\alpha} - \delta \quad \quad\quad \quad (1)\\
+w_t &= A(1-\alpha) \left(\frac{N}{K_t}\right)^{-\alpha} \quad \quad\quad \quad (2)\\
 \end{align}$$
 
 Now express the first one in terms of $\frac{N}{K_t}$ and plug into the second one to find
 
-$$w(r_t) = A(1-\alpha) \left(\frac{A \alpha}{r + \delta}\right)^{\frac{\alpha}{1-\alpha}}$$
-
-
+$$w(r_t) = A(1-\alpha) \left(\frac{A \alpha}{r + \delta}\right)^{\frac{\alpha}{1-\alpha}}  \quad \quad\quad \quad (3)$$
 """
 
 # ╔═╡ bfbc42d2-c7bb-4a13-8c5d-95512940ceee
@@ -67,29 +72,21 @@ subject to
 $$a_{t+1} + c_t = w_t z_t + (1+r_t)a_t, c_t\geq 0 , a_t \geq -B$$
 
 Here:
-* $z_t$ is an exogenously evolving productivity shock with transition matrix $\mathbb{P}$
-* $w_t,r_t$ are as above
+* There is an exogenously evolving productivity shock $z_t$ with transition matrix $\mathbb{P}$
+* Prices $w_t,r_t$ are as above
 
 ## Equilibrium
 
-* Aggregates and prices are constant over time
+* Aggregates and prices are constant over time: That concerns in particular $K$ ($N$ assumed constant).
 * firms optimize profits and are price takers
 * households maximize utility, also as price takers
 * household savings represents *capital supply*, and in equilibrium it has to match *capital demand* of firms.
-
-## Algorithm
-
-1. Pick a value $K_t$
-2. Obtain prices $r_t,w_t$ from the above equations.
-3. Solve consumer problem
-4. compute aggregate capital as $$K_{t+1} \int \sigma(s) d\mu$$, where $\sigma$ is the optimal policy at state $s$ and where $\mu$ is the steady state (i.e. *invariant*) distribution of agents over the state space in equilibrium.
-
 
 """
 
 # ╔═╡ 20ef10f8-8a61-492e-9496-3bdd10aaadef
 md"""
-## `QuantEcon.jl` implementation: the `DP` type
+# `QuantEcon.jl` implementation: the `DP` type
 
 The [`QuantEcon`](https://julia.quantecon.org/dynamic_programming/discrete_dp.html) website introduces the `DP` type (discrete dynamic programming). We will quickly introduce this object and use it to solve the Aiyagari model with it.
 
@@ -103,12 +100,6 @@ Let us start by loading the required packages and by defining a named tuple for 
 
 """
 
-# ╔═╡ 46a3710c-64c6-4af3-8c6f-099ef2ac8e0f
-md"""
-explain the contents
-
-"""
-
 # ╔═╡ 1a1ffd28-2f8a-415c-b188-7a51c18733b7
 md"""
 ## Setting up the State Space
@@ -116,15 +107,14 @@ md"""
 * Organising the data layout of a model is an important task and you should dedicate enough time to designing it.
 * It [can matter for performance](https://docs.julialang.org/en/v1/manual/performance-tips/#man-performance-column-major) how you access memory in arrays.
 * The present consumer model has two state variables: $a$ and $z$. 
-* So, we recursively the above problem as
+* So, we recursively write the above problem as
 
 $$V(a,z) = \max_{a'} u((1+r)a + wz - a') + \beta \mathbb{E}_{z'|z}\left(V(a',z')\right)$$
 
-* In the `DP` implementation, both state and choice space (and $z$) will be discretized, hence calling $\mathbb{P}$ the transition matrix of $z$, we have
+* In the `DP` implementation, both state and choice space (and $z$) will be discretized, hence calling $\mathbf{P}$ the transition matrix of $z$, we have
 
-$$V(a_i,z_j) = \max_{a_k} u((1+r)a_i + wz_j - a_k) + \beta \sum_{m=1}^M \pi_{m,j} V(a_k,z_m)$$ 
+$$V(a_i,z_j) = \max_{a_k} u((1+r)a_i + wz_j - a_k) + \beta \sum_{m=1}^M \mathbf{P}(z_m|z_j) V(a_k,z_m).$$ 
   
-where $\pi_{m,j} = \mathbb{P}(z_m|z_j)$.
 
 * The `DP` API wants us to provide a single index $i$ which runs down the rows of a matrix with `a_size * z_size` rows and `a_size` columns. 
 * We need on object that maps $i$ into a value of both $(a,z)$.
@@ -134,7 +124,7 @@ where $\pi_{m,j} = \mathbb{P}(z_m|z_j)$.
 
 # ╔═╡ c9cc0192-6965-4a8b-b8ea-5fe54a6860a9
 md"""
-This matrix has for each state index (each row) the values of each state variable. Of course, if we had 3 instaed of 2 state variables, here we would have 3 columns. This was obtained with the very useful `gridmake` function from the `QuantEcon.jl` library:
+This matrix has for each state index (each row) the values of each state variable. Of course, if we had 3 instead of 2 state variables, here we would have 3 columns. This was obtained with the very useful `gridmake` function from the `QuantEcon.jl` library:
 """
 
 # ╔═╡ dac90a6c-190b-4d32-82ff-40e4d55cada0
@@ -152,7 +142,7 @@ Now we can take a stab at setting up the required objects for this toolbox:
 
 ## Setting up `Q` and `R`
 
-The key input from the user is going to be set up both arrays. Again, indexing with $i$ states and with $j$ actions, the contents of both arrays are
+The key input from the user is going to be set up both arrays `Q` and `R`. Again, indexing with $i$ states and with $j$ actions, the contents of both arrays are
 
 $$R[i,j] = \begin{cases}u( w z(i) + (1 + r)a(i) - a_j) & \text{if }w z(i) + (1 + r)a(i) - a_j >0 \\
 \infty & \text{else.}\end{cases}$$
@@ -161,9 +151,9 @@ So here, $i$ runs over both state variables, and I have written $a(i),z(i)$ as o
 
 Here is $Q$:
 
-$$Q[i,j,i_+] = \mathbb{P}(i,i_+)$$
+$$Q[i,j,i_+] = \mathbf{P}(i,i_+)$$
 
-where $\mathbb{P}(i,i_+)$ is row $i$, column $i_+$ from the transition matrix describing the process of $z$.
+where $\mathbf{P}(i,i_+)$ is row $i$, column $i_+$ from the transition matrix describing the process of $z$ - $j$ is the index of the asset choice.
 """
 
 # ╔═╡ cc388378-4ea9-453f-b079-30ecbf2e79a8
@@ -229,6 +219,7 @@ Household = @with_kw (r = 0.01,
                       s_vals = gridmake(a_vals, z_chain.state_values),
                       s_i_vals = gridmake(1:a_size, 1:z_size),
                       u = σ == 1 ? x -> log(x) : x -> (x^(1 - σ) - 1) / (1 - σ),
+					  # will define those two functions in detail below!
                       R = setup_R!(fill(-Inf, n, a_size), a_vals, s_vals, r, w, u),
                       # -Inf is the utility of dying (0 consumption)
                       Q = setup_Q!(zeros(n, a_size, n), s_i_vals, z_chain))
@@ -252,6 +243,7 @@ So let's create one of those households, tell them what the interest and their w
 # ╔═╡ 25f75bf9-a55a-459d-8ecb-3b07c7dda94c
 begin
 	# Create an instance of Household
+	# we SET the interest and wage here!
 	am = Household(a_max = 20.0, r = 0.03, w = 0.956)
 
 	# Use the instance to build a discrete dynamic program
@@ -281,7 +273,7 @@ md"""
 
 # ╔═╡ b3f376ae-a00a-493c-9c6a-b4816300ba4f
 let
-	# make an a by z array of optimal values
+	# make an `a` by `z` array of optimal values
 	vstar = reshape(results.v,am.a_size,am.z_size)
 	plot(am.a_vals,vstar, legend = :bottomright, label = ["low z" "high z"],
 	     xlab = "a",ylab = "V")
@@ -299,9 +291,9 @@ function plota(am)
 	z_vals = am.z_chain.state_values
 	a_star = reshape([a_vals[results.sigma[s_i]] for s_i in 1:n], a_size, z_size)
 	labels = ["z = $(z_vals[1])" "z = $(z_vals[2])"]
-	plot(a_vals, a_star, label = labels, lw = 2, alpha = 0.6, leg = :bottomright)
+	plot(a_vals, a_star, label = labels, lw = 2, alpha = 0.6, leg = :bottomright, title = L"\sigma(a,z) \mapsto a'")
 	plot!(a_vals, a_vals, label = "", color = :black, linestyle = :dash)
-	plot!(xlabel = "a", ylabel = "a'")
+	plot!(xlabel = L"a", ylabel = L"a'")
 end
 
 # ╔═╡ 92a82ecc-1421-4ca2-9698-96449c1b03c6
@@ -309,37 +301,73 @@ plota(am)
 
 # ╔═╡ 3883bd18-c2a3-43d0-977e-d966db842257
 md"""
-## Stationary Distribution
+## Stationary Distribution $\mu$
 
 We have an optimal policy $\sigma(a,z)$, and we have a law of motion for the exogenous state $z$. How will this system play out if we let this agent behave optimally for a long long time?
 
-As you can read up [here](https://julia.quantecon.org/tools_and_techniques/finite_markov.html), if the transition matrix $\mathbb{P}$ is well-defined, it admits a unique stationary distribution $\mu$ of agents over the state space.
+As you can read up [here](https://julia.quantecon.org/tools_and_techniques/finite_markov.html), if the transition matrix $\mathbf{P}$ is well-defined, it admits a unique stationary distribution $\mu$ of agents over the state space.
 
-In our setup, the distribution $\mu$ is a function of the policy $\sigma(a,z)$, hence $\mu(\sigma)$ will be a distribution over the state space induced by policy $\sigma$ - imagine it as an `(a_size,z_size)` matrix; This will be a *stationary* distribution, if 
+First, we need to form a composition of the exogenous law of motion $\mathbf{P}$ and the model-implied decision rules $\sigma$. Let's write it as
 
-$$\mu^*(\sigma) = \mu^*(\sigma)\mathbb{P}$$
+$$\mathbb{P}_\sigma(a',z'|a,z) = \sigma(a,z) \circ \mathbf{P}$$
 
-in other words, post-multiplying the transition matrix of $z$ with distribution over the state space yields the same distribution over the state space.
+i.e. we *compose* functions $\sigma$ and $\mathbf{P}$. In practice it's all about reshaping and what shape your state space is in, so this notation keeps it at a general level.
 
-So, an important question you should ask: what does this $\mu$ thing look like? It encodes what happens to agent in this stochastic environment under optimal behaviour. That is, we know that $\sigma(a,z) \mapsto a'$, but we don't know what combination $(a',z')$ we will end up in.
+In our setup, the distribution function $\mu(a,z)$ will tells us the probability density of agents at state $(a,z)$ *in the long run*, or in other words, *in the steady state* of this model. 
+
+Now, if $\mu$ is a *stationary* distribution, it satisfies
+
+$$\mu^* = \mu^*\mathbb{P}_\sigma$$
+
+in other words, post-multiplying distribution $\mu^*$ with the *Model-times-Shocks Transition Matrix* $\mathbb{P}_\sigma$, yields the same distribution $\mu^*$ over the state space.
+
+So, a first important question you should ask: what does this $\mathbb{P}_\sigma$ thing look like? It encodes what happens to agent in this stochastic environment under optimal behaviour. That is, we know that $\sigma(a,z) \mapsto a'$, but we don't know what combination $(a',z')$ we will end up in.
+
+Here is what it looks like as a matrix:
 """
 
 # ╔═╡ 6fc89260-4d01-4103-8d20-97eef0cf1d55
 results.mc.p
+
+# ╔═╡ 76b08cb1-d121-471e-a268-59e79933ce40
+md"""
+### Understanding Matrix $\mathbb{P}_\sigma(a',z'|a,z) = \sigma(a,z) \circ \mathbf{P}$
+
+Here is a plot of the transition matrix that combines state with optimal actions. I suggest you read the plot row-wise, i.e. the row labeled `400` is the on assiociated to state $i=400$, i.e. highest $z$ and highest $a$, and you can now go across columns to see in which future states $(a',z')$ we are likely to end up in from here. 
+
+* Black means *probability zero*, hence there is no way that you end up in state $(a_1,z_1)$. 
+* There is a colored pixel (violet colour) representing a probability of 0.1 somewhere in the middle of the first row - so with prob 0.1 your choice $\sigma(a,z) \mapsto a'$ will take you to this very pixel. It's the state $(a',z_1)$, i.e. low income shock. 
+* At the far end, the yellow point, is reached with probability 0.9, hence, it's the point $(a',z_1)$.
+"""
 
 # ╔═╡ 1ac0515a-de55-4b9a-9323-ea5e19f4621b
 heatmap(results.mc.p, color = cgrad(:thermal,[0.1, 0.9],categorical = true), xlab = L"(a',z')", ylab = L"(a,z)", title = L"\mathbb{P}_\sigma(a',z'|a,z)")
 
 # ╔═╡ ef4cfd16-4a02-4bc6-b65b-b7abf656bf59
 md"""
-A very useful method in this context is the `stationary_distributions` function, which will return the dynamics of the state variable if our agent follows the optimal policy (i.e. follows `results.sigma`). This distribution was obtained by starting from an arbitrary distribution over the state space and iterating on $\mu$ until convergence:
+
+### Obtaining $\mu$
+
+A very useful method in this context is the `stationary_distributions` function, which will return the dynamics of the state variable if our agent follows the optimal policy (i.e. follows `results.sigma`). This distribution was obtained by starting from an arbitrary distribution over the state space and iterating on $\mu$ until convergence. Basically, the algorithm will iterate on
+
+$$\mu = \mu\mathbb{P}_\sigma$$
+
+starting with $\mu_0$ until left and right hand sides don't change any longer.
 """
 
 # ╔═╡ c3e404c0-dd90-44a7-aaaa-4c726dd49a77
 mm = reshape(stationary_distributions(results.mc)[1], am.a_size,am.z_size);
 
 # ╔═╡ 9a82365e-d6ac-4e79-a23d-6792d00c9d94
-bar(mm, bar_width = 2, alpha = [0.9 0.4],xticks = (1:15:am.a_size, round.(am.a_vals[1:15:am.a_size],digits = 0)),xlab = "Assets", title = "Stationary distribution of assets given z", labels = ["z low" "z high"])
+bar(mm, bar_width = 2, alpha = [0.9 0.4],xticks = (1:15:am.a_size, round.(am.a_vals[1:15:am.a_size],digits = 0)),xlab = "Assets", title = "Stationary distribution of assets given z", labels = ["z low" "z high"],ylab = "Probability")
+
+# ╔═╡ 43d1b826-9f01-4dc4-99f4-af53b49b1b6c
+md"""
+same object but as seen *from above*
+"""
+
+# ╔═╡ 214c2f3b-cefc-4ffc-8158-bdf295b719f4
+heatmap(mm', yticks = ([1,2],["zlow", "zhigh"]), xlab = "assets", color = :viridis,colorbar_title = "\n Probability",right_margin = 0.5Plots.cm, title = "Stationary Distribution")
 
 # ╔═╡ 7c5332a7-814e-43fd-bcd1-372ff0406a38
 function plotc(am)
@@ -348,13 +376,16 @@ function plotc(am)
 	z_vals = am.z_chain.state_values
 	c_star = reshape([am.s_vals[s_i,1]*(1+am.r) + am.w * am.s_vals[s_i,2] -  a_vals[results.sigma[s_i]] for s_i in 1:n], a_size, z_size)
 	labels = ["z = $(z_vals[1])" "z = $(z_vals[2])"]
-	plot(a_vals, c_star, label = labels, lw = 2, alpha = 0.6, leg = :topleft)
+	plot(a_vals, c_star, label = labels, lw = 2, alpha = 0.6, leg = :topleft, title = "Consumption Function")
 	plot!(a_vals, a_vals, label = "", color = :black, linestyle = :dash)
 	plot!(xlabel = "a", ylabel = "c")
 end
 
 # ╔═╡ 137f1aac-0121-45af-aa73-bc48dfd5bd6d
 plotc(am)
+
+# ╔═╡ 7cc1e183-f1ad-451e-b2a9-0b8e385f2b8f
+stationary_distributions(results.mc)[1]
 
 # ╔═╡ cbf78d45-604b-4447-93bd-dc7bd3a2a18a
 md"""
@@ -365,8 +396,174 @@ md"""
 
 # ╔═╡ a8b1395d-4c19-4b8e-abf4-95ca7f37b650
 md"""
-## Now embed this household in an Economy!
+# Now GE! Firms demand $K$!
+
+Let's put it together with firms now. The key here is that aggregate capital is going to be assembled from the sum of savings of all households. Households *supply* capital, firms *demand* it. The price of capital is the rental rate $r$, which will adjust in order to make people save more or less and in order to make firms rent more or less of it. 
+
+1. We have not made the dependence of behaviour on $r$ explicit so far.
+2. We have kept it *out of our state space*. Well, actually it's part of the agent's environment, so part of the state.
+3. Not to have to reimplement everything, let's just *index* the policy function $\sigma$ by the *prevailing interest rate* $r$ in the market, like so: 
+
+$$\sigma_r(a,z) \mapsto a'$$
 """
+
+
+# ╔═╡ 62a52d7a-842a-47c3-8565-e02e89b49516
+md"""
+
+
+Here is the key equation of how $K$ is built:
+
+$$K_r = \int \sigma_r(a,z) d\mu \quad \quad \quad (4)$$
+
+You can see that for different values of $r$, people will save more or less, and the capital stock will depend on $r$. This is a typical *fixed point problem* - at which number $r$ will this equation stabilize? Here is an algorithm to find out:
+
+## Algorithm 1
+
+0. At iteration $j$:
+1. Pick a value $K^{(j)}$
+2. Obtain prices $r^{(j)},w^{(j)}$ from equations $(1)$ and $(3)$.
+3. Solve consumer problem and obtain $\sigma_r(a,z)$
+3. Get stationary distribution $\mu^{(j)}$.
+4. compute aggregate capital as $$K^{(j+1)} = \int \sigma_r(a,s) d\mu^{(j)}$$
+5. Stop if $K^{(j)} = K^{(j+1)}$, else repeat.
+
+## Visual 1
+
+* Let's first try with a plot.
+* We want to trace out capital supply and demand as a function of it's price, the interest rate. So the axis are $K$ and $r$.
+
+"""
+
+# ╔═╡ 116834f6-907f-4cfc-be0f-84784d0e3c7a
+begin
+	
+	# equation (3)
+	function r_to_w(r,fp)
+		@unpack A, α, δ = fp
+	    return A * (1 - α) * (A * α / (r + δ)) ^ (α / (1 - α))
+	end
+
+	# equation (1)
+	function rd(K,fp)
+		@unpack A, α, δ, N = fp
+	    return A * α * (N / K) ^ (1 - α) - δ
+	end
+	
+	
+end
+
+# ╔═╡ c7cbcc04-836c-483b-9523-1d84489b12e0
+# capital stock implied by consumer behaviour when interest is r
+function next_K_stock(am, r, fp )
+	# derive wage	
+	w = r_to_w(r,fp)
+	@unpack a_vals, s_vals, u = am
+
+	# rebuild R! cash on hand depends on both r and w of course!
+	setup_R!(am.R, a_vals, s_vals, r, w, u)
+
+	aiyagari_ddp = DiscreteDP(am.R, am.Q, am.β)
+
+	# Compute the optimal policy
+	results = solve(aiyagari_ddp, PFI)
+
+	# Compute the stationary distribution
+	stationary_probs = stationary_distributions(results.mc)[1]
+
+	# Return equation (4): Average steady state capital
+	return dot(am.s_vals[:, 1], stationary_probs)  # s_vals[:, 1] are asset values
+	end
+
+# ╔═╡ 2ae833d2-52de-4701-a619-8a33cf1df820
+function alleqs(;A = 1,N = 1, α = 0.33, β = 0.96, δ = 0.05)
+
+	# create a firm parameter
+	fp = @with_kw (A = A, N = N, α = α, δ = δ)
+
+ 	# Create an instance of Household
+	am = Household(β = β, a_max = 20.0)
+
+	# Create a grid of r values at which to compute demand and supply of capital
+	r_vals = range(0.005, 0.04, length = 20)
+
+	# Compute supply of capital
+	k_vals = next_K_stock.(Ref(am), r_vals, fp )  # notice the broadcast!
+
+	demand = rd.(k_vals,fp)
+	
+	(k_vals,r_vals,demand)
+end
+
+# ╔═╡ 5ca1933b-6ee7-4c6c-b8b4-53265074fda3
+all_r_eq = alleqs()
+
+# ╔═╡ 60717847-047c-4e83-85d1-ee9c66aa1e0c
+function eqmplot(k_vals,r_vals,demand)
+	labels =  ["demand for capital" "supply of capital"]
+	plot(k_vals, [demand r_vals], label = labels, lw = 2, alpha = 0.6)
+	plot!(xlabel = "capital", ylabel = "interest rate", xlim = (2, 14), ylim = (0.0, 0.1))
+end
+
+# ╔═╡ b77599a0-c289-41bf-971e-22aeed4dd4e8
+visualeq = eqmplot(all_r_eq...)
+
+# ╔═╡ 4a0792a3-a6f6-4e21-8fae-80247a7984cc
+md"""
+Cool! 😎 Now let's find the equilibrium $r$ numerically. Let's just define the *excess supply function as the red minus the blue curve in this picture. A root solver will find the point where excess supply is zero!
+
+Let's reformulate equation (1) to get $K$ from $r$:
+
+$$K_t = N \left(\frac{A\alpha}{r_t + \delta}\right)^{1/(1-\alpha)}$$
+"""
+
+# ╔═╡ a8115315-953c-44f9-87d1-f288e7ccf8ee
+# capital demand
+function Kd(r,fp)
+	@unpack A, α, δ, N = fp
+	return N * ((A * α) / (r + δ))^(1/(1-α))
+end
+
+# ╔═╡ 805799b6-1b7e-464a-ab10-f57d496833a5
+function eqmfind(;A = 1,N = 1, α = 0.33, β = 0.96, δ = 0.05)
+
+	# create a firm parameter
+	fp = @with_kw (A = A, N = N, α = α, δ = δ)
+
+ 	# Create an instance of Household
+	am = Household(β = β, a_max = 20.0)
+
+	# Create a grid of r values at which to compute demand and supply of capital
+	r_vals = range(0.005, 0.04, length = 20)
+
+	ex_supply(r) = next_K_stock(am, r, fp ) - Kd(r,fp)
+
+	res = fzero(ex_supply, 0.005,0.04)
+	(res, Kd(res,fp))
+
+end
+
+# ╔═╡ dbaff1a5-3f7f-48df-b16b-28f23fbbb14c
+rstar, kstar = eqmfind()
+
+# ╔═╡ 7828918d-7833-4cad-b183-81385c6cd6f9
+let
+	title!(visualeq, "GE at r = $(round(rstar,digits=3)), K = $(round(kstar,digits=3))")
+	vline!(visualeq, [kstar], color = :black, label = "")
+	hline!(visualeq, [rstar], color = :black, label = "")
+end
+
+# ╔═╡ 4672052c-649a-47c2-9697-f187fde69fe1
+info(text) = Markdown.MD(Markdown.Admonition("info", "Info", [text]));
+
+# ╔═╡ fa733fea-fe6f-4487-a660-7123a6b2843c
+info(md"The $r$-specific policy function $\sigma_r(a,z)$ encodes optimal behaviour when the current interest rate is equal to $r$.")
+
+# ╔═╡ 9db0d69f-866d-4da3-9e96-72331d6640da
+question(qhead,text) = Markdown.MD(Markdown.Admonition("tip", qhead, [text]));
+
+# ╔═╡ 351b5bec-54a5-4c32-9956-1c013cbb42f3
+question("What does that mean?",md"How would a world look like, where people **can** perfectly insure against income fluctuations?")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -376,6 +573,7 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 QuantEcon = "fcd29c91-0bd7-5a09-975d-7ac3f643a60c"
+Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
@@ -383,6 +581,7 @@ LaTeXStrings = "~1.3.0"
 Parameters = "~0.12.3"
 Plots = "~1.23.6"
 QuantEcon = "~0.16.3"
+Roots = "~1.3.11"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -482,6 +681,11 @@ git-tree-sha1 = "417b0ed7b8b838aa6ca0a87aadf1bb9eb111ce40"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.8"
 
+[[CommonSolve]]
+git-tree-sha1 = "68a0743f578349ada8bc911a5cbd5a2ef6ed6d1f"
+uuid = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
+version = "0.2.0"
+
 [[CommonSubexpressions]]
 deps = ["MacroTools", "Test"]
 git-tree-sha1 = "7b8a93dba8af7e3b42fecabf646260105ac373f7"
@@ -497,6 +701,12 @@ version = "3.40.0"
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+
+[[ConstructionBase]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "f74e9d5388b8620b4cee35d4c5a618dd4dc547f4"
+uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+version = "1.3.0"
 
 [[Contour]]
 deps = ["StaticArrays"]
@@ -660,6 +870,10 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "aa31987c2ba8704e23c6c8ba8a4f769d5d7e4f91"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.10+0"
+
+[[Future]]
+deps = ["Random"]
+uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
@@ -1191,6 +1405,12 @@ git-tree-sha1 = "68db32dff12bb6127bac73c209881191bf0efbb7"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
 version = "0.3.0+0"
 
+[[Roots]]
+deps = ["CommonSolve", "Printf", "Setfield"]
+git-tree-sha1 = "51ee572776905ee34c0568f5efe035d44bf59f74"
+uuid = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
+version = "1.3.11"
+
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
@@ -1202,6 +1422,12 @@ version = "1.1.0"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[[Setfield]]
+deps = ["ConstructionBase", "Future", "MacroTools", "Requires"]
+git-tree-sha1 = "def0718ddbabeb5476e51e5a43609bee889f285d"
+uuid = "efcf1570-3423-57d1-acb7-fd33fddbac46"
+version = "0.8.0"
 
 [[SharedArrays]]
 deps = ["Distributed", "Mmap", "Random", "Serialization"]
@@ -1552,11 +1778,12 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
+# ╟─305d8ffd-8e96-4463-b4d3-f4a5a770d3a2
+# ╟─351b5bec-54a5-4c32-9956-1c013cbb42f3
 # ╟─c1388e32-4a26-11ec-3def-9d7f551edcca
 # ╟─bfbc42d2-c7bb-4a13-8c5d-95512940ceee
 # ╟─20ef10f8-8a61-492e-9496-3bdd10aaadef
 # ╠═07e68196-1f07-41f2-9849-685d1748a3d7
-# ╟─46a3710c-64c6-4af3-8c6f-099ef2ac8e0f
 # ╠═4b805387-b7a3-432a-883c-7c4230842451
 # ╟─1a1ffd28-2f8a-415c-b188-7a51c18733b7
 # ╠═6e6ccee2-2006-4794-a1b8-16ec70513923
@@ -1570,22 +1797,41 @@ version = "0.9.1+5"
 # ╠═2559490c-66e6-42a5-b4bd-285fe5f417c7
 # ╟─5eb6f22e-1080-48b9-b271-b64a05a4feb9
 # ╠═25f75bf9-a55a-459d-8ecb-3b07c7dda94c
-# ╠═888c8f09-2a23-4b84-9c3e-f9b04ae7b2de
+# ╟─888c8f09-2a23-4b84-9c3e-f9b04ae7b2de
 # ╠═0f70d187-a378-46af-8bbe-b9a61b087e41
-# ╠═49b24328-c000-49bd-be92-418a993f7e8f
+# ╟─49b24328-c000-49bd-be92-418a993f7e8f
 # ╠═b3f376ae-a00a-493c-9c6a-b4816300ba4f
-# ╠═5d8c9e42-d110-49ea-b6cc-de965f21a3a7
-# ╠═1a929222-a197-4585-abb2-b4d362b323ce
+# ╟─5d8c9e42-d110-49ea-b6cc-de965f21a3a7
+# ╟─1a929222-a197-4585-abb2-b4d362b323ce
 # ╠═92a82ecc-1421-4ca2-9698-96449c1b03c6
 # ╟─3883bd18-c2a3-43d0-977e-d966db842257
 # ╠═6fc89260-4d01-4103-8d20-97eef0cf1d55
+# ╟─76b08cb1-d121-471e-a268-59e79933ce40
 # ╟─1ac0515a-de55-4b9a-9323-ea5e19f4621b
 # ╟─ef4cfd16-4a02-4bc6-b65b-b7abf656bf59
 # ╠═c3e404c0-dd90-44a7-aaaa-4c726dd49a77
 # ╟─9a82365e-d6ac-4e79-a23d-6792d00c9d94
+# ╟─43d1b826-9f01-4dc4-99f4-af53b49b1b6c
+# ╟─214c2f3b-cefc-4ffc-8158-bdf295b719f4
 # ╠═7c5332a7-814e-43fd-bcd1-372ff0406a38
 # ╠═137f1aac-0121-45af-aa73-bc48dfd5bd6d
-# ╠═cbf78d45-604b-4447-93bd-dc7bd3a2a18a
-# ╠═a8b1395d-4c19-4b8e-abf4-95ca7f37b650
+# ╠═7cc1e183-f1ad-451e-b2a9-0b8e385f2b8f
+# ╟─cbf78d45-604b-4447-93bd-dc7bd3a2a18a
+# ╟─a8b1395d-4c19-4b8e-abf4-95ca7f37b650
+# ╟─fa733fea-fe6f-4487-a660-7123a6b2843c
+# ╟─62a52d7a-842a-47c3-8565-e02e89b49516
+# ╠═116834f6-907f-4cfc-be0f-84784d0e3c7a
+# ╠═c7cbcc04-836c-483b-9523-1d84489b12e0
+# ╠═2ae833d2-52de-4701-a619-8a33cf1df820
+# ╠═5ca1933b-6ee7-4c6c-b8b4-53265074fda3
+# ╠═60717847-047c-4e83-85d1-ee9c66aa1e0c
+# ╠═b77599a0-c289-41bf-971e-22aeed4dd4e8
+# ╟─4a0792a3-a6f6-4e21-8fae-80247a7984cc
+# ╠═a8115315-953c-44f9-87d1-f288e7ccf8ee
+# ╠═805799b6-1b7e-464a-ab10-f57d496833a5
+# ╠═dbaff1a5-3f7f-48df-b16b-28f23fbbb14c
+# ╠═7828918d-7833-4cad-b183-81385c6cd6f9
+# ╟─4672052c-649a-47c2-9697-f187fde69fe1
+# ╟─9db0d69f-866d-4da3-9e96-72331d6640da
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
