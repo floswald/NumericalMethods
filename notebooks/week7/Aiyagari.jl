@@ -72,7 +72,7 @@ subject to
 $$a_{t+1} + c_t = w_t z_t + (1+r_t)a_t, c_t\geq 0 , a_t \geq -B$$
 
 Here:
-* There is an exogenously evolving productivity shock $z_t$ with transition matrix $\mathbb{P}$
+* There is an exogenously evolving productivity shock $z_t$ with transition matrix $\mathbf{P}$
 * Prices $w_t,r_t$ are as above
 
 ## Equilibrium
@@ -150,7 +150,7 @@ Now we can take a stab at setting up the required objects for this toolbox:
 The key input from the user is going to be set up both arrays `Q` and `R`. Again, indexing with $i$ states and with $j$ actions, the contents of both arrays are
 
 $$R[i,j] = \begin{cases}u( w z(i) + (1 + r)a(i) - a_j) & \text{if }w z(i) + (1 + r)a(i) - a_j >0 \\
-\infty & \text{else.}\end{cases}$$
+-\infty & \text{else.}\end{cases}$$
 
 So here, $i$ runs over both state variables, and I have written $a(i),z(i)$ as our way of computing the corresponding values from it. $a_j$, on the other hand, is just the $j$-th index in array $a$. 
 
