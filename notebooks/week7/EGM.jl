@@ -470,7 +470,8 @@ function EGM_inf(;n = 100, M = 10, tol = 1e-6,y = 1.0)
 	iters = 0
 	while err > tol
 		m, c = det_EGM(m0, c0,n,y,agrid)
-		err = maximum(abs.(c .- c0))
+		err = max( maximum(abs.(c .- c0)), maximum(abs.(m .- m0)) )
+		# update from current to new functions
 		m0[:] = m
 		c0[:] = c
 		iters += 1
@@ -598,7 +599,7 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-FastGaussQuadrature = "~0.4.7"
+FastGaussQuadrature = "~0.4.8"
 Interpolations = "~0.13.4"
 Plots = "~1.23.6"
 PlutoUI = "~0.7.20"
@@ -757,9 +758,9 @@ version = "4.4.0+0"
 
 [[FastGaussQuadrature]]
 deps = ["LinearAlgebra", "SpecialFunctions", "StaticArrays"]
-git-tree-sha1 = "5829b25887e53fb6730a9df2ff89ed24baa6abf6"
+git-tree-sha1 = "5ccd8547615457402a499af9603d55876423eea8"
 uuid = "442a2c76-b920-505d-bb47-c5924d526838"
-version = "0.4.7"
+version = "0.4.8"
 
 [[FixedPointNumbers]]
 deps = ["Statistics"]
@@ -1186,9 +1187,9 @@ uuid = "c84ed2f1-dad5-54f0-aa8e-dbefe2724439"
 version = "0.4.2"
 
 [[RecipesBase]]
-git-tree-sha1 = "44a75aa7a527910ee3d1751d1f0e4148698add9e"
+git-tree-sha1 = "a4425fe1cde746e278fa895cc69e3113cb2614f6"
 uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
-version = "1.1.2"
+version = "1.2.0"
 
 [[RecipesPipeline]]
 deps = ["Dates", "NaNMath", "PlotUtils", "RecipesBase"]
@@ -1244,9 +1245,9 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[SpecialFunctions]]
 deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "f0bccf98e16759818ffc5d97ac3ebf87eb950150"
+git-tree-sha1 = "e08890d19787ec25029113e88c34ec20cac1c91e"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "1.8.1"
+version = "2.0.0"
 
 [[StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
@@ -1544,14 +1545,14 @@ version = "0.9.1+5"
 # ╟─bf784923-f460-4816-87d6-5890f959e015
 # ╟─2dd54158-d62f-4b12-9c18-486e0a52596a
 # ╟─51b82e35-fba3-4100-b313-254ece33449d
-# ╠═eb1b201c-1598-4740-b7e9-5108f017f4e3
+# ╟─eb1b201c-1598-4740-b7e9-5108f017f4e3
 # ╟─2333dde1-68cc-4155-82e7-d8727ef596f0
-# ╠═590b81d4-26bc-46c8-82ed-2998fcffe706
+# ╟─590b81d4-26bc-46c8-82ed-2998fcffe706
 # ╠═e6376b86-56ee-4ace-9e9a-5ceb87bed7db
 # ╠═8292ee9b-e13a-4921-888f-4f898cebc6c4
 # ╠═d257d214-0e18-444d-aad9-5f37ec978cf5
 # ╟─0eb5052b-7d30-48d4-926e-15a43c3ee7de
-# ╠═48b0b0dd-9487-4fbd-8ec7-bf61272d4ba6
+# ╟─48b0b0dd-9487-4fbd-8ec7-bf61272d4ba6
 # ╟─3317d300-0e2d-481b-ab0c-7c1fcd319162
 # ╠═5ddaef03-bbdf-4374-82e7-fc9eb3d8fd12
 # ╟─fa84b929-6088-4bba-bb29-d0cc4d8f9b9d
@@ -1576,7 +1577,7 @@ version = "0.9.1+5"
 # ╟─3dbb96da-0caa-4c16-b9cb-44e447a96b22
 # ╟─845f261e-9865-4cb3-a772-a46f0251f67e
 # ╟─1fefbafe-8fa9-4be3-a219-922dcf758e0e
-# ╟─abf95185-5948-496f-9058-369587c19a1b
+# ╠═abf95185-5948-496f-9058-369587c19a1b
 # ╟─00a5a487-4bf4-44bc-938a-e794c7d7ac6d
 # ╟─089d57dd-fdbf-454f-9263-3e2ca155346e
 # ╠═e80e1f7c-aa7f-48c3-a151-57ceea02286b

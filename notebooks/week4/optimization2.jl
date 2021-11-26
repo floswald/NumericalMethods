@@ -344,7 +344,7 @@ The steepest descent is *opposite the gradient*.
 """
 
 # ╔═╡ 1117da28-0103-4264-95b2-07562c98103b
-res_gd = optimize(ro, [-4,3.], GradientDescent(), Optim.Options(store_trace=true, extended_trace=true, iterations = 5000))
+res_gd = optimize(ro, g!,[-4,3.], GradientDescent(), Optim.Options(store_trace=true, extended_trace=true, iterations = 5000))
 
 # ╔═╡ 45468faf-d2c1-4a68-997f-41f9879ede0f
 llevels() = exp.(range(log(0.5), stop = log(175.0), length = 20))
@@ -554,8 +554,8 @@ function generalized_pattern_search(f, x, α, D, ε, γ=0.5)
             α *= γ
         end 
     end
-    println("$evals evaluations")
-    return x 
+    # println("$evals evaluations")
+    return (x,evals) 
 end
 
 # ╔═╡ 496a4d17-0a31-4b6c-bae0-1461603b92e9
@@ -1774,15 +1774,15 @@ version = "0.9.1+5"
 # ╟─1df4c4f2-6856-4431-afbb-df16541d22f7
 # ╟─fc015791-cd9e-4a1c-b6ea-4c70284bef64
 # ╟─32898baf-25d3-44cf-b92a-92e8ee320935
-# ╟─20664b8a-59d7-4d80-9926-7a982f72b276
+# ╠═20664b8a-59d7-4d80-9926-7a982f72b276
 # ╟─625e38ee-04c1-4792-bf3e-8689bdb4df3b
 # ╠═4a0dc0c1-ce50-425b-84ca-657c93b10966
 # ╟─7a8a9f51-49bc-4b6d-b68d-20f06dd7e350
 # ╟─a6f1e909-9b87-42c7-b47a-d7190ba245bf
 # ╠═2f970459-c1b1-418a-bab2-615aeba2e6c4
-# ╠═962e1fef-5ea1-4037-9e59-6b56c3f60909
+# ╟─962e1fef-5ea1-4037-9e59-6b56c3f60909
 # ╟─c031fe39-0f8c-4f6a-b851-266deb8f5b55
-# ╟─3dab6ba2-7dd7-4f41-b1f3-e34d52211afb
+# ╠═3dab6ba2-7dd7-4f41-b1f3-e34d52211afb
 # ╟─794092bf-cd6b-4cb8-aa11-c647157a0037
 # ╟─712a650d-4ada-4548-81ad-6c10b14d1a89
 # ╠═1117da28-0103-4264-95b2-07562c98103b
@@ -1821,7 +1821,7 @@ version = "0.9.1+5"
 # ╟─2f6abe0f-43f5-40af-af51-561b76fcb29c
 # ╠═7ff00636-cb5d-45a5-b3d3-011054902f8e
 # ╠═3cc0c7d6-0bd7-435c-abde-2c70f51d437e
-# ╟─e3ba1d6c-e781-4447-948c-51b4b6bc7813
+# ╠═e3ba1d6c-e781-4447-948c-51b4b6bc7813
 # ╠═fcbf2bf1-f037-4fb1-8f71-c512699173a9
 # ╠═fb98ac86-bb03-49a5-a1a9-0eae38889823
 # ╟─f13056dc-3f17-438c-8b77-d8e1dc613c98

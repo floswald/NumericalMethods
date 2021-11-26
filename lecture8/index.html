@@ -55,7 +55,7 @@
       <a class="sidebar-nav-item " href="/NumericalMethods/hw4/"><b>Homework 4</b></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture6/"><b>Lecture 6</b> - <em>Function Approximation</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture7/"><b>Lecture 7</b> - <em>Dynamic Programming</em></a>
-      <a class="sidebar-nav-item active" href="/NumericalMethods/lecture8/"><b>Lecture 8</b> - <em>Dynamic Programming 2</em></a>
+      <a class="sidebar-nav-item active" href="/NumericalMethods/lecture8/"><b>Lecture 8</b> - <em>Discrete + Continuous</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/hw5/"><b>Homework 5</b></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture9/"><b>Lecture 9</b> - <em>Dynamic Programming 3</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/hw6/"><b>Homework 6</b></a>
@@ -73,25 +73,23 @@
 
 <!-- Content appended here -->
 <div class="franklin-content">
-<h1>Lecture 8</h1>
+<h1>Lecture 8: Continuous and Discrete Choice</h1>
 
-<ul>
-<li><p>We continue with dynamic programming 2 &#40;<code>dp2.jl</code>&#41; in the <a href="https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week7">this</a> folder</p>
+<p>This week we will look at the situation when we have both continuous and discrete choices in dynamic models. We will use several resources:</p>
+<ol>
+<li><p>We will focus our discussion on <a href="https://onlinelibrary.wiley.com/doi/abs/10.3982/QE643">Iskhakov, Jørgensen, Rust, Schjerning, QE 2017 <em>The Endogenous Grid Method for Discrete-Continuous Dynamic Choice Models with &#40;or without&#41; Taste Shocks</em></a>.</p>
 </li>
-<li><p>We&#39;ll do a group exercise where we work on a problem set together.</p>
+<li><p>We discussed standard methods VFI and Euler Equation solver and simple EGM in <a href="../lecture7">lecture 7</a>, so make sure to go back there and check out those notebooks again.</p>
 </li>
-</ul>
-<h3 id="static_notebooks"><a href="#static_notebooks">Static Notebooks</a></h3>
-<ul>
-<li><p><a href="https://raw.githack.com/floswald/NumericalMethods/master/lecture_notebooks/week7/dp.jl.html">DP1</a></p>
+<li><p>We will use <a href="https://fedor.iskh.me/">Fedor Iskhakov</a>&#39;s <a href="../assets/tex/dcegm_DSE2019.pdf">slides</a> from the 2019 DSE summer school. I am using those with Fedor&#39;s permission - they are much better than would I could ever come up with, so standing on the shoulder of giants&#33; 🙏🏻 Thanks Fedor&#33;</p>
 </li>
-<li><p><a href="https://raw.githack.com/floswald/NumericalMethods/master/lecture_notebooks/week7/dp2.jl.html">DP2</a></p>
+<li><p>We will have a look at <a href="https://github.com/floswald/DCEGM.jl">my julia implementation</a> of their matlab code.</p>
 </li>
-</ul>
+</ol>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/ScPoEcon/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
-    Last modified: November 23, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    Last modified: November 26, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

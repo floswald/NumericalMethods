@@ -139,6 +139,9 @@ md"If we evaluate this expression, it gives an error, since there is no variable
 # ╔═╡ 906e3234-f637-11ea-1f77-679dc897ec69
 eval(expr3)
 
+# ╔═╡ 2ee4e1c5-4b07-45e3-95ba-688c4dcfa9d9
+eval(expr2)
+
 # ╔═╡ 940f888c-f637-11ea-20a0-1ddda8fb7908
 md"
 
@@ -297,6 +300,7 @@ version = "0.2.0"
 # ╠═cbce40ee-f1ee-11ea-2e05-1d523acbf8b9
 # ╟─7f1cad88-f637-11ea-1cf2-4d5b9a4fb50f
 # ╠═906e3234-f637-11ea-1f77-679dc897ec69
+# ╠═2ee4e1c5-4b07-45e3-95ba-688c4dcfa9d9
 # ╟─940f888c-f637-11ea-20a0-1ddda8fb7908
 # ╠═77437eaa-f639-11ea-0c4d-3756cbd589da
 # ╟─8dab58d4-f639-11ea-1b0b-536927639c6c
