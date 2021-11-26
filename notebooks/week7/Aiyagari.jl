@@ -100,6 +100,11 @@ Let us start by loading the required packages and by defining a named tuple for 
 
 """
 
+# ╔═╡ 8db93197-27b2-4420-9f22-83b1975c4b2a
+md"""
+Next, let's create a `Household` data type represented by a `NamedTuple` on which we can set elements with a keyword constructor from the `Parameters.jl` package:
+"""
+
 # ╔═╡ 1a1ffd28-2f8a-415c-b188-7a51c18733b7
 md"""
 ## Setting up the State Space
@@ -384,9 +389,6 @@ end
 # ╔═╡ 137f1aac-0121-45af-aa73-bc48dfd5bd6d
 plotc(am)
 
-# ╔═╡ 7cc1e183-f1ad-451e-b2a9-0b8e385f2b8f
-stationary_distributions(results.mc)[1]
-
 # ╔═╡ cbf78d45-604b-4447-93bd-dc7bd3a2a18a
 md"""
 ## Question: change slope of that?
@@ -510,7 +512,7 @@ visualeq = eqmplot(all_r_eq...)
 
 # ╔═╡ 4a0792a3-a6f6-4e21-8fae-80247a7984cc
 md"""
-Cool! 😎 Now let's find the equilibrium $r$ numerically. Let's just define the *excess supply function as the red minus the blue curve in this picture. A root solver will find the point where excess supply is zero!
+Cool! 😎 Now let's find the equilibrium $r$ numerically. Let's just define the *excess supply function* as the red minus the blue curve in this picture. A root solver will find the point where excess supply is zero!
 
 Let's reformulate equation (1) to get $K$ from $r$:
 
@@ -523,6 +525,11 @@ function Kd(r,fp)
 	@unpack A, α, δ, N = fp
 	return N * ((A * α) / (r + δ))^(1/(1-α))
 end
+
+# ╔═╡ c0386481-4e1e-4107-b6ac-48cecab668bf
+md"""
+... and we are good to go! 
+"""
 
 # ╔═╡ 805799b6-1b7e-464a-ab10-f57d496833a5
 function eqmfind(;A = 1,N = 1, α = 0.33, β = 0.96, δ = 0.05)
@@ -1784,6 +1791,7 @@ version = "0.9.1+5"
 # ╟─bfbc42d2-c7bb-4a13-8c5d-95512940ceee
 # ╟─20ef10f8-8a61-492e-9496-3bdd10aaadef
 # ╠═07e68196-1f07-41f2-9849-685d1748a3d7
+# ╟─8db93197-27b2-4420-9f22-83b1975c4b2a
 # ╠═4b805387-b7a3-432a-883c-7c4230842451
 # ╟─1a1ffd28-2f8a-415c-b188-7a51c18733b7
 # ╠═6e6ccee2-2006-4794-a1b8-16ec70513923
@@ -1813,9 +1821,8 @@ version = "0.9.1+5"
 # ╟─9a82365e-d6ac-4e79-a23d-6792d00c9d94
 # ╟─43d1b826-9f01-4dc4-99f4-af53b49b1b6c
 # ╟─214c2f3b-cefc-4ffc-8158-bdf295b719f4
-# ╠═7c5332a7-814e-43fd-bcd1-372ff0406a38
+# ╟─7c5332a7-814e-43fd-bcd1-372ff0406a38
 # ╠═137f1aac-0121-45af-aa73-bc48dfd5bd6d
-# ╠═7cc1e183-f1ad-451e-b2a9-0b8e385f2b8f
 # ╟─cbf78d45-604b-4447-93bd-dc7bd3a2a18a
 # ╟─a8b1395d-4c19-4b8e-abf4-95ca7f37b650
 # ╟─fa733fea-fe6f-4487-a660-7123a6b2843c
@@ -1824,13 +1831,14 @@ version = "0.9.1+5"
 # ╠═c7cbcc04-836c-483b-9523-1d84489b12e0
 # ╠═2ae833d2-52de-4701-a619-8a33cf1df820
 # ╠═5ca1933b-6ee7-4c6c-b8b4-53265074fda3
-# ╠═60717847-047c-4e83-85d1-ee9c66aa1e0c
+# ╟─60717847-047c-4e83-85d1-ee9c66aa1e0c
 # ╠═b77599a0-c289-41bf-971e-22aeed4dd4e8
 # ╟─4a0792a3-a6f6-4e21-8fae-80247a7984cc
 # ╠═a8115315-953c-44f9-87d1-f288e7ccf8ee
+# ╟─c0386481-4e1e-4107-b6ac-48cecab668bf
 # ╠═805799b6-1b7e-464a-ab10-f57d496833a5
 # ╠═dbaff1a5-3f7f-48df-b16b-28f23fbbb14c
-# ╠═7828918d-7833-4cad-b183-81385c6cd6f9
+# ╟─7828918d-7833-4cad-b183-81385c6cd6f9
 # ╟─4672052c-649a-47c2-9697-f187fde69fe1
 # ╟─9db0d69f-866d-4da3-9e96-72331d6640da
 # ╟─00000000-0000-0000-0000-000000000001

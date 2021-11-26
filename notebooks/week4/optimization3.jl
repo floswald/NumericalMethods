@@ -103,7 +103,7 @@ let
 	p1 = surface(x,x,(x,y)->f(x,y),xlab = L"x_1", ylab = L"x_2")
 	scatter3d!(p1,[1.358],[1.165],[f(1.358,1.165)],markercolor=:red,leg=false)
 	p2 = contour(x,x,(x,y)->f(x,y),lw=1.5,levels=[collect(0:-0.1:-0.85)...,-0.887,-0.95,-1],xlab = L"x_1", ylab = L"x_2")
-	plot!(p2,c,0.01,3.5,label="",lw=2,color=:black,fill=(0,0.5,:blue))
+	plot!(p2,c,0.01,3.5,label="",lw=2,color=:black)
 	scatter!(p2,[1.358],[1.165],markersize=5,markercolor=:red,label="Constr. Optimum")
 	plot(p1,p2,size=(900,300))
 end
@@ -447,11 +447,10 @@ let
     @variable(m, y)
 
     @NLobjective(m, Min, (1-x)^2 + 100(y-x^2)^2)
+	@constraint(m, x + y <= 1.5)
 
     JuMP.optimize!(m)
-    @show value(x)
-    @show value(y)
-    @show termination_status(m)
+    (termination_status(m),value(x),value(y))
 end
 
 # ╔═╡ 3ba47370-c4df-4d22-8bda-0b7264927ae6
@@ -476,11 +475,6 @@ L(\mu,\sigma^2) = \Pi_{i=1}^N f(x_i|\mu,\sigma^2) =& \frac{1}{(\sigma \sqrt{2\pi
 * log-likelihood: 
 
 $$\log L = l = -\frac{n}{2} \log \left( 2\pi \sigma^2 \right) - \frac{1}{2\sigma^2} \sum_{i=1}^N (x_i-\mu)^2$$
-"""
-
-# ╔═╡ 18f84adf-6447-4109-bda9-3e5bc0d144c2
-md"""
-## 📣 Action!
 """
 
 # ╔═╡ 84b81d87-d015-4cc2-8649-c94ba7770bd9
@@ -1956,7 +1950,6 @@ version = "0.9.1+5"
 # ╠═fc75bc7b-0fe0-4f90-a425-6ed6e63acb4a
 # ╠═2d7bdf41-85fc-4d0c-a387-60f9c9b36fcb
 # ╟─3ba47370-c4df-4d22-8bda-0b7264927ae6
-# ╟─18f84adf-6447-4109-bda9-3e5bc0d144c2
 # ╠═84b81d87-d015-4cc2-8649-c94ba7770bd9
 # ╟─061de138-b6fe-4437-aa26-0afaec2e66f0
 # ╠═febc5df1-4ddd-48a7-94f8-251d316c72d0
