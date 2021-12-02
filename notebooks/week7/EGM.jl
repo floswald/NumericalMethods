@@ -498,7 +498,7 @@ md"
 "
 
 # ╔═╡ e80e1f7c-aa7f-48c3-a151-57ceea02286b
-function minimal_EGM(;ny=5,na=100,nT=25,M=10,σ=0.25,μ=0.0,R=1.05,β=0.95)
+function minimal_EGM(;ny=5,na=100,nT=25,M=10,σ=0.25,μ=0.0,R=1.05,β=0.95,cbar = 0.0)
     nodes,weights = gausshermite(ny)  # from FastGaussQuadrature
     yvec          = sqrt(2.0) * σ .* nodes .+ μ  # gauss-hermite nodes
     ywgt          = weights .* π^(-0.5)
@@ -506,7 +506,7 @@ function minimal_EGM(;ny=5,na=100,nT=25,M=10,σ=0.25,μ=0.0,R=1.05,β=0.95)
     m             = Vector{Float64}[Float64[] for i in 1:nT]   # endogenous grid
     c             = Vector{Float64}[Float64[] for i in 1:nT]   # consumption function on m
     m[nT]       = [0.0,M]    
-    c[nT]       = [0.0,M]
+    c[nT]       = [cbar,M]
 
     cg = cgrad(:viridis)
     cols = cg[range(0.0,stop=1.0,length=nT)]
@@ -522,14 +522,14 @@ function minimal_EGM(;ny=5,na=100,nT=25,M=10,σ=0.25,μ=0.0,R=1.05,β=0.95)
 		policy = interpolate((m[it+1],),c[it+1],Gridded(Linear()))
 		policy = extrapolate(policy,Line())
         c1 = reshape(policy(w1[:]),ny,na)
-        c1[c1 .< 0] .= 0.001     # don't allow negative consumption
+        c1[c1 .< cbar] .= 0.001     # don't allow negative consumption
         Emu   = ywgt' * (1 ./ c1)   # Expected marginal utility (na,1)
         rhs   = β * R * Emu[:]   # RHS of euler equation
         c[it] = 1.0 ./ rhs   # imu(u) -> c
         m[it] = avec .+ c[it]   # c -> M
 
         # add credit constraint region
-        c[it] = vcat(0.0, c[it])   # prepend with 0
+        c[it] = vcat(cbar, c[it])   # prepend with 0
         m[it] = vcat(0.0, m[it])   #
 
         plot!(pl,m[it],c[it],label= it == 1 ? "$it" : "", color = cols[it])
@@ -547,8 +547,11 @@ end
 # ╔═╡ 2203856e-87fe-4a29-90c7-e0b4a065c4a1
 @bind r Slider(1.0:0.01:1.1,show_value = true)
 
+# ╔═╡ 8cd2061e-dd49-4521-94bf-de6e732af151
+@bind cbar Slider(0.0:0.01:1.1,show_value = true)
+
 # ╔═╡ b9c90c2c-4c1c-40d4-974b-e148191f67ee
-minimal_EGM(σ=σ, μ = μ, R=r)
+minimal_EGM(σ=σ, μ = μ, R=r, cbar = cbar)
 
 # ╔═╡ 6c7e3163-06e4-4ad6-8d55-53f8b596bde8
 md"
@@ -1585,6 +1588,7 @@ version = "0.9.1+5"
 # ╠═c7dde73c-e626-404d-9177-f58fc1df3972
 # ╠═b03ff849-715d-47ee-9299-782c14636c01
 # ╠═2203856e-87fe-4a29-90c7-e0b4a065c4a1
+# ╠═8cd2061e-dd49-4521-94bf-de6e732af151
 # ╠═b9c90c2c-4c1c-40d4-974b-e148191f67ee
 # ╟─6c7e3163-06e4-4ad6-8d55-53f8b596bde8
 # ╟─b62d9921-157b-4143-8246-ddd8163e6e4a
