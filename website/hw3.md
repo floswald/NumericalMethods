@@ -16,4 +16,4 @@ Get the notebook here as usual. [right click and save this notebook, or copy the
 1. When: You have 7 days.
 2. Who: teams of max 2
 3. What: one rendered HTML output of your notebook. make sure all cells (code?) that you want me to see are *visible* in your notebook, or they won't  be visible in the HTML either.
-4. How: dropbox link (here)
+4. How: dropbox link on slack
