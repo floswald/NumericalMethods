@@ -1,0 +1,108 @@
+
+
+% my default preamble
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{mathpazo}
+% font setup
+\usepackage[sfdefault,lf]{carlito}
+\usefonttheme[onlymath]{serif}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage[round]{natbib}
+\usepackage{adjustbox}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{dcolumn}
+\renewcommand{\arraystretch}{1.2} 
+
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+
+% \newcommand{\newblock}{}
+
+% \usepackage{enumitem}
+
+% \usepackage{heuristica}
+% \usepackage[heuristica,vvarbb,bigdelims]{newtxmath}
+% \usepackage[T1]{fontenc}
+% \renewcommand*\oldstylenums[1]{\textosf{#1}}
+
+% \usepackage{lmodern}
+% \usepackage[T1]{fontenc}
+
+% \usepackage[bitstream-charter]{mathdesign}
+% \usepackage[T1]{fontenc}
+
+% \usepackage{cmbright}
+% \usepackage[T1]{fontenc}
+% \usetheme{Singapore}
+% \setbeamertemplate{frametitle}[default][center]
+
+% set some beamer templates
+\setbeamertemplate{footline}[frame number] 
+% \setbeamertemplate{caption}[numbered]
+% \setbeamertemplate{footline}[frame number]{}
+% \setbeamertemplate{navigation symbols}{}
+% \setbeamertemplate{footline}{}
+% different enumerates
+\setbeamercolor{item projected}{bg=blue!80!black,fg=white}
+\setbeamertemplate{enumerate items}[circle]
+\setbeamertemplate{itemize items}[circle]
+% define new commands
+\newcommand{\red}[1]{{\color{red}{#1}}}
+\newcommand{\blue}[1]{{\color{blue}{#1}}}
+\newcommand{\bred}[1]{\textbf{\color{red}{#1}}}
+\newcommand{\bblue}[1]{\textbf{\color{blue}{#1}}}
+
+\newtcbox{\cyanbox}{on line, arc=1pt,left=1pt,right=1pt,top=1pt,bottom=1pt, colback=cyan!35!white, colframe=cyan!75!black,boxrule=1pt}
+\newtcbox{\bluebox}{on line, arc=1pt,left=1pt,right=1pt,top=1pt,bottom=1pt, colback=blue!15!white, colframe=blue!80!black,boxrule=1pt}
+\newtcbox{\redbox}{on line, arc=1pt,left=1pt,right=1pt,top=1pt,bottom=1pt, colback=red!5!white, colframe=red!75!black,boxrule=1pt}
+\newtcbox{\greybox}{on line, arc=1pt,left=0.2pt,right=0.2pt,top=0.2pt,bottom=0.2pt, colback=black!5!white, colframe=white!75!black,boxrule=0.5pt}
+\newcommand{\link}[2]{\greybox{\hyperlink{#1}{\texttt{#2}}}}
+\newcommand{\slink}[2]{\greybox{\hyperlink{#1}{{\small\texttt{#2}}}}}
+
+% \renewcommand<>{\item}{\beameroriginal\item\vspace{\stretch{.25}}}
+
+% new variable linewidth environments
+\newenvironment{smalli}
+{ \begin{itemize}
+    \setlength{\itemsep}{1pt}
+    \setlength{\parskip}{1pt}
+    \setlength{\parsep}{1pt}     }
+{ \end{itemize}                  } 
+\newenvironment{widei}
+{ \begin{itemize}
+    \setlength{\itemsep}{10pt}
+    \setlength{\parskip}{10pt}
+    \setlength{\parsep}{10pt}     }
+{ \end{itemize}                  } 
+\newenvironment{smalle}
+{ \begin{enumerate}
+    \setlength{\itemsep}{1pt}
+    \setlength{\parskip}{1pt}
+    \setlength{\parsep}{1pt}     }
+{ \end{enumerate}                  } 
+\newenvironment{widee}
+{ \begin{enumerate}
+    \setlength{\itemsep}{10pt}
+    \setlength{\parskip}{10pt}
+    \setlength{\parsep}{10pt}     }
+{ \end{enumerate}                  } 
+\newenvironment{mide}
+{ \begin{enumerate}
+    \setlength{\itemsep}{5pt}
+    \setlength{\parskip}{5pt}
+    \setlength{\parsep}{5pt}     }
+{ \end{enumerate}                  } 
+\newenvironment{midi}
+{ \begin{itemize}
+    \setlength{\itemsep}{5pt}
+    \setlength{\parskip}{5pt}
+    \setlength{\parsep}{5pt}     }
+{ \end{itemize}                  } 
