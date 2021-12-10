@@ -48,7 +48,8 @@ jobs:
           using Franklin;
           optimize(;minify=false);
           "== Place rendered notebooks in the website folder ==";
-          cp("../notebooks", "__site/notebooks");'
+          cp("../notebooks", "__site/notebooks");
+          cp("../homework", "__site/homework");'
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
