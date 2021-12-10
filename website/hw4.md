@@ -1,4 +1,4 @@
-# Homework 6 - Harold Zurcher
+# Homework 4 - Harold Zurcher
 
 > How could we **not** talk about Harold Zurcher in this course!
 
