@@ -1,1 +1,1 @@
-{{ plutonotebookpage  ../homeworks/homework7/zurcherdata.jl }}
+{{ plutonotebookpage  ../notebooks/homework7/zurcherdata.jl }}

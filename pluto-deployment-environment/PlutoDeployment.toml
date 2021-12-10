@@ -13,11 +13,11 @@ exclude=[
     "notebooks/week10/zurcherdata.jl",
 
     # don't run homeworks
-    "homework/homework0/hw0.jl",
-    "homework/homework0/pizza.jl",
-    "homework/homework1/discrete_lockdown.jl",
-    "homework/homework2/epidemic.jl",
-    "homework/homework5/TimeManage.jl"
+    "notebooks/homework0/hw0.jl",
+    "notebooks/homework0/pizza.jl",
+    "notebooks/homework1/discrete_lockdown.jl",
+    "notebooks/homework2/epidemic.jl",
+    "notebooks/homework5/TimeManage.jl"
 ]
 baked_state = false
 offer_binder = true
@@ -43,9 +43,9 @@ exclude=[
     "notebooks/week10/zurcherdata.jl",
 
     # don't run homeworks
-    "homework/homework0/hw0.jl",
-    "homework/homework0/pizza.jl",
-    "homework/homework1/discrete_lockdown.jl",
-    "homework/homework2/epidemic.jl",
-    "homework/homework5/TimeManage.jl"
+    "notebooks/homework0/hw0.jl",
+    "notebooks/homework0/pizza.jl",
+    "notebooks/homework1/discrete_lockdown.jl",
+    "notebooks/homework2/epidemic.jl",
+    "notebooks/homework5/TimeManage.jl"
 ]

@@ -1,1 +1,1 @@
-{{ plutonotebookpage  ../homework/homework3/Probit.jl }}
+{{ plutonotebookpage  ../notebooks/homework3/Probit.jl }}
