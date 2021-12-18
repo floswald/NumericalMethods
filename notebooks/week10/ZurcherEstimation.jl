@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.1
+# v0.17.3
 
 using Markdown
 using InteractiveUtils
@@ -15,6 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ a0829c7b-3843-436b-b52a-3db8b46d3cea
+# Let's load all required packages
 begin
 	using PlutoUI
     using LinearAlgebra  # for norm()
@@ -25,6 +26,8 @@ begin
     using StatsBase  # counts
     using Optim
     using NLopt
+	using JuMP
+	using Ipopt
 end
 
 # ╔═╡ 79dee14b-5c6c-4358-ba09-1490d23575bc
@@ -33,22 +36,37 @@ html"<button onclick='present()'>present</button>"
 # ╔═╡ 43e3f61c-9bb0-11eb-35bc-ade31ecafbe8
 md"
 
-# Numerical Methods 2021
+# Estimating the Rust Bus Model
 
-**Estimating the Rust Bus Model**
+*Compuational Economics 2021*
 
-Florian Oswald
+>Florian Oswald
 
 "
 
-# ╔═╡ 48b5b838-c5b7-4992-b020-e653f0a8451b
-md"
+# ╔═╡ 9825a678-af24-42c9-a3ad-c22715946d92
+PlutoUI.TableOfContents()
 
+# ╔═╡ a40f7be1-9af9-421e-a616-2353fc1a1dc5
+md"""
 * in this notebook we continue with the Bus Engine Replacement model.
 * We heard in class last week about the NFXP and MPEC methods.
 * Both require us to formulate the likelihood function in this model class. (other models could be estimated with a GMM setup, all depends on what the model outputs).
 
-## Model Recap
+"""
+
+# ╔═╡ 7572c64b-1f86-45dc-8e41-a1f378622d72
+md"""
+## Credits
+"""
+
+# ╔═╡ c0f2b80c-7e73-4c3a-836d-ee0b976c3424
+Markdown.MD(Markdown.Admonition("tip","Info",[md"""The code in this notebook is partially based on what I learned from looking at [Bertel Schjerning's](https://bschjerning.com/) MATLAB [code](https://github.com/dseconf/DSE2021/tree/master/02_NFXP_Schjerning/code/zurcher_matlab) for the Dynamic Structural Econometrics Workshop 2021. In particular, I copied their data setup almost one for one. My contribution, if any, is to show how one can achieve reasonably good performance with automatic differentiation via JuMP. Notice, however, that the original method of Rust (and the one used in Bertel's Matlab code) takes fully advantage of the mathematical properties of the model, deriving analytic gradients for the likelihood function *as well as* the expected value function (!), via a so-called *Newton-Kantorovich* value function iteration technique and thus achieves very good performance indeed. More info on this is in their [Econometrica comment](https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA12605), and (maybe more suited as a starting point) the [slides of Bertel for that workshop](https://github.com/dseconf/DSE2021/tree/master/02_NFXP_Schjerning/slides). My presentation of the model is very close to what [Fedor Iskhakov](https://fedor.iskh.me) shows in [his great course (lession 28)](https://fedor.iskh.me/compecon)"""]))
+
+# ╔═╡ 48b5b838-c5b7-4992-b020-e653f0a8451b
+md"
+
+# Model Recap
 
 $$\begin{eqnarray}
 T^*(EV)(x,d) &\equiv& \sum_{x' \in X} \log \big( \exp[v(x',0)] + \exp[v(x',1)] \big) \pi(x'|x,d) \\
@@ -60,6 +78,14 @@ $$P(d|x) = \frac{\exp[v(x,d)]}{\sum_{d'\in \{0,1\}} \exp[v(x,d')]}$$
 
 
 So, object $P$ (the ccp) depends on the solution of the structural model, since $v$ depends on $EV$. To make this clear, we will index $P(d|x, EV_\theta)$ from here on.
+"
+
+
+# ╔═╡ 4698df16-21ee-4b40-a36e-899532caa0c8
+Markdown.MD(Markdown.Admonition("info","Info",[md"""Notice that $\theta$ will stand for all parameters of the utility function, and that the components of $\pi$ are a subset of those."""]))
+
+# ╔═╡ 10a47b0e-bea3-43f6-9235-ca5034ef3bf3
+md"""
 
 ## Likelihood Function
 
@@ -89,37 +115,64 @@ $$\max_{\theta} \ell_n(\theta, EV_\theta)$$
 * This is an *unconstrained* problem.
 * In practice, we again maximise the *average* log likelihood function, i.e. divide by $n$.
 
-## Double Loop
+# NFXP: Double Loop
 
 
-* We heard last tiem that the nested fixed point (NFXP) approach has an inner (find $EV = T(EV)$, given \theta) and an outer loop (find $\theta = \arg \max \ell_n$)
+* We heard last time that the nested fixed point (NFXP) approach has an inner (find $EV = T(EV)$, given $\theta$) and an outer loop (find $\theta = \arg \max \ell_n$)
 * We set up all the code to compute $EV = T(EV)$ and the CCP function. So now we can proceed to build the data-interface for the estimation!
 
-#### Components
+## Components
 
 1. log likelihood function: evaluates $\ell$ above.
-1. *nested* log likelihood function: takes a candidate $\theta^(k)$, updates `Harold`, computes model solution, and evaluates log likelihood
+1. *nested* log likelihood function: takes a candidate $\theta^{(k)}$, updates `Harold`, computes model solution, and evaluates log likelihood
 1. `nfxp` a function that loads data, sets starting values, and calls a nonlinear optimizer on the nested likelihood function.
 
-## Likelihood
 
-* We will set this up such that we can estimate the parameters for the milage transition in $\pi$ inside or outside the structural model.
 
-"
+## Model Solving 
+
+Remember that we developed the solution to the model [in a separate notebook](https://floswald.github.io/NumericalMethods/lecture10-zurcher/) last week in class.
+* I copied the required functions at the bottom of this notebook into the **Function Library**
+
+Remember the main components we needed were:
+
+1. A Data type `Harold` to represent Mr Zurcher
+1. A Bellman Operator
+1. A Value function iterator
+1. A function to compute the probability of Replacing
+
+
+"""
+
+# ╔═╡ 34e52272-5b28-4c9a-9a27-7b13df589870
+md"""
+
+## Likelihood Function
+
+* We will set this up such that we can estimate the parameters for the milage transition in $\pi$ inside or outside the structural model. We will call those approaches *partial* or *full* Maximum likelihood.
+* Let us start from the innermost component: the likelihood function.
+* So, for a certain solution of the model, represented by $P$, or here, an array that tells us how the model predicts the replacement probability at each *observed* state (in `p_model`), and what the actual decision of Mr Zurcher was (in `replace_data`)
+"""
 
 # ╔═╡ 387d9de3-9dc1-4e3c-8b9b-cbb7cc9cb85c
 md"
-#
+## Nested Likelihood Function
+
+* For a given choice of $\theta$ parameters, solve the model, and evaluate the likelihood function, given that solution.
 "
 
 # ╔═╡ d3221610-1791-4d87-acdd-4a5bd9a2b37a
 md"
-#
+## NXFP: Full Monty!
+
+* Sets up the data
+* gives `nested_likelihood` to a numerical solver and runs the `BFGS` algorithm
+* returns solution
 "
 
 # ╔═╡ 62893e3f-195f-4581-aa07-7a8b9115560b
 md"
-#
+# Quick Look at Data
 
 * We run `nfxp` for a certain setup of model parameters. `n` for example is the number of grid points.
 * Let's quickly look at the data do see what those choices imply.
@@ -138,7 +191,7 @@ end
 # ╔═╡ c6ed299c-b9a7-47e7-ab3a-959031aa7d0a
 md"""
 
-## Time to Roll!
+# Time to Roll!
 
 * Time to run this now.
 * We looked at the code to solve for the model last time, so that should be ok.
@@ -161,17 +214,131 @@ md"
 (running with β=0.9999 as in Rust would get even closer but it takes too long!)
 "
 
-# ╔═╡ 57a1df74-f19f-41f2-b242-42d3b35a2971
-md"
-#
+# ╔═╡ f83be35c-b0d9-430a-a7a9-e5a09fd392b2
+md"""
+# MPEC
 
-* What about MPEC?
-* That's too much code to show in the notebook. let's go over it [on the repository](https://github.com/floswald/Zurcher.jl)!
-"
+In the MPEC formulation we try to solve this problem instead: 
+
+$$\max_{\theta , EV} \ell_n(\theta, EV; X)\quad \text{s.t. }EV = T(EV)$$
+
+* The first thing to note here is that we have 2 sets of choice variables: structural parameters (the ``\theta``s) *and* things that represent the model ($EV$)
+* Suppose we have a `JuMP` model `m`
+* depending on whether or not we want to estimate the mileage progression process via full MLE, we need to add variables (and a corresponding contraint for the probabilities to sum to one) for this or not. 
+* We use the same dataframe `d` as before as built by `busdata`
+* `N` is the number of mileage states, `J` is the number of bins that the state can at most move up
+"""
+
+# ╔═╡ 0f3c4e0d-6a60-44b0-99cf-6251e5ad7b9a
+md"""
+* next, we have to build some expressions that will be needed to define the constraints, hence all the components needed to compute `EV`
+* Notice that we can reference objects stored on `m` with a dict-like accessor `m[:x]`
+"""
+
+# ╔═╡ 6f778c42-6beb-40e4-8956-65bf046c9489
+md"""
+* Then we set up the objective function. Looking at the above expression, that is the likelihood function at the parameter choices ``\theta``. 
+* Notice that we need to add a time index to our data frame first.
+* We group by `busid` and add a column for each observation (i.e. each *period*)
+* Again, we setup the likelihood function for full MLE of transition probabilities or not
+"""
+
+# ╔═╡ e4209b2e-0a59-4162-8d93-23ff2f819af1
+function add_obj!(m::JuMP.Model,doθ,d; θlast = nothing)
+
+	# add time period index to each bus 
+    gd = groupby(d, :id)
+    dd = transform(gd, :id => (x -> 1:length(x)) => :it)
+    icounter = combine(gd, nrow)  # now many rows for each bus: Tᵢ
+    I = nrow(icounter)  # number of unique buses
+
+	if isnothing(θlast)
+		θlast = m[:θlast]
+	end
+	
+	# objective function
+    # This is the likelihood function 
+    if doθ
+        @NLobjective(m, Max, 
+        sum( log( (gd[i][it,:d]==false) * m[:pkeep][ gd[i][it,:x] ] + (gd[i][it,:d]==true) * (1 - m[:pkeep][ gd[i][it,:x] ]) )
+             + log(θlast[gd[i][it,:dx1] + 1]) 
+        for i in 1:I, it in 1:icounter[i,:nrow] )  )
+
+    else
+        @NLobjective(m, Max, 
+        sum( log( (gd[i][it,:d]==false) * m[:pkeep][ gd[i][it,:x] ] + (gd[i][it,:d]==true) * (1 - m[:pkeep][ gd[i][it,:x] ]) )
+             for i in 1:I, it in 1:icounter[i,:nrow] )  )
+    end
+end
+
+
+# ╔═╡ d6962b11-99b2-449c-bbd5-17cc096bf2ef
+md"""
+* Finally, the constraints on this optimization problem: the structure of the model.
+* In our case, this is the requirement that the expected value function has the correct form. In particular, we want that at mileage state $x_i$,
+
+$$EV(x_i) = \sum_{j=0}^J \log \big( \exp[v(x_{i+j},0)] + \exp[v(x_{i+j},1)] \big) \pi(x_{i+j}|x_{i})$$
+
+* So, the optimizer *chooses* the value on the LHS of this equality, and the constraint is that this choice *needs to coincide with the RHS*, i.e. the definition of the Expected Value function as per our model.
+* The only slight issue is that at the upper bound of th state space, the transitions in $\pi$ are no longer unrestricted, hence we need to take care of indexing a little bit. 
+* Basically we add three different types of constraint, depending on how many slots $x_i$ can move up 
+
+"""
+
+# ╔═╡ 50269188-a202-410d-bd0e-53f35cc44b49
+function add_constraints!(m::JuMP.Model,J,N; θlast = nothing)
+	# if we did not give this argument, grab it from the model
+	if isnothing(θlast)
+		θlast = m[:θlast]
+	end
+	# 1. when state can move up any number of slots: easy
+    @NLconstraint(m, evcon[i = 1:(N-J+1)], 
+    m[:EV][i] == sum( log(exp(m[:VK][i + j]) + exp(m[:VR])) * θlast[j+1] for j in 0:(J-1)  ))
+
+    # 2. not all state progressions are possible: need to sum last bins      
+    @NLconstraint(m, evconJ[i = (N-J+2):(N-1)], 
+    m[:EV][i] == sum(
+		log(exp(m[:VK][i+j]) + exp(m[:VR])) * θlast[j+1] for j in 0:(N-i-1)
+	    ) + 
+		log(exp(m[:VK][N]) + exp(m[:VR])) * (1-sum( θlast[k+1] for k in 0:(N-i-1))) 
+        )
+    
+    # 3. bellman equation at the final state
+    @NLconstraint(m, evconN,
+        m[:EV][N] == log(exp(m[:VK][N]) + exp(m[:VR]))
+    )
+		end
+
+# ╔═╡ 651e2a7a-1ffd-4cab-aef8-c51fb4582533
+md"""
+### Running MPEC via `JuMP`
+
+Ok, time to put it all together and run the JuMP model!
+"""
+
+# ╔═╡ a89f585a-165e-42a2-b426-574b4b57cc59
+md"""
+🎉
+"""
+
+# ╔═╡ 4b1c7427-ecf1-4275-a592-ce620be8969d
+md"""
+🎉🎉
+"""
+
+# ╔═╡ b95bea83-1ed8-412f-aecb-34b12bfcf1e9
+md"""
+* So, in the partial MLE case, we seem to get reasonably close results with either method, which is good. 
+* In the full MLE case, we get exactly the same results in both methods as well (which is also good).
+* The higher we make $\beta$, the closer we get to John Rust's table above. 
+* There is an issue with convergence for MPEC however at very high values (it does not converge to a valid solution) - the NXFP solution takes forever.
+* I suspect the slight difference in solutions (and possibly the failure to converge at very high $\beta$ ) in the full MLE case comes from the way I handle the residual probability to move up the last mileage bin: you can see that the NFXP method estimates only 2 probabilities (the third is given as their complement), while in MPEC I estimate all three. For some reason I was not able to fix that, so that's a loose end.
+* More details, also timings [at the dedicated repo](https://github.com/floswald/Zurcher.jl)
+"""
 
 # ╔═╡ efd9b30b-8dd9-4656-b95b-13a999a58111
 md"""
-## Larger State Space
+# Larger State Space
 
 * Rust then increase `n` to 175.
 * The estimates slightly change, particularly for 
@@ -187,7 +354,7 @@ md"
 
 # ╔═╡ 1848a939-7c2b-436f-ac45-03f5371e6ce5
 md"
-library
+# Function Library
 "
 
 # ╔═╡ c5edc6f2-380c-47a8-8eaa-e44868f83eb6
@@ -279,6 +446,37 @@ function loglikelihood(h::Harold,p_model,
 	mean((-1) * logL)
 end
 
+# ╔═╡ 2f7d6cd1-70e4-4d67-8285-9f6d513e6903
+function add_vars(m::JuMP.Model,N, h::Harold, doθ,d)
+	@variable(m, θc >= 0 , start = 0.0)
+    @variable(m, RC >= 0 , start = 0.0)
+	@variable(m, -50.0 <= EV[1:N] <= 50.0)  # need to help solver here!
+
+    if doθ
+        p_0 = partialMLE(d.dx1)  # get a starting value for mileage
+        J = length(p_0) + 1 # the partialMLE function discards the smallest bin, but later on sums up all probs 
+        @variable(m, θlast[1:(J)] >= 0)
+        set_start_value.(θlast[1:(J-1)], p_0)
+        set_start_value(θlast[J], 0.0)
+        @constraint(m, sum(θlast) == 1)
+		return J
+
+    else
+        J = length(h.θ) + 1
+        θlast = [h.θ; 1 - sum(h.θ)]
+		return J, θlast
+    end
+end
+
+# ╔═╡ f265b96a-ac85-4785-b4c3-83f85ed2ceca
+function add_expressions!(m,N,h::Harold)
+    @NLexpression(m, opcost[i = 1:N], -0.001 * h.mileage[i] * m[:θc])
+    @NLexpression(m, VK[i = 1:N], opcost[i] + h.β * m[:EV][i])  # value of keep
+    @NLexpression(m, VR         , -m[:RC] + opcost[1] + h.β * m[:EV][1])  # replace
+    @NLexpression(m, diffV[i = 1:N], VR - VK[i] )  # payoff difference
+    @NLexpression(m, pkeep[i = 1:N], 1 / (1 + exp(diffV[i])))
+end
+
 # ╔═╡ 2bd5b2d5-7bc1-4986-89b0-88dea6d8bf74
 function busdata(z::Harold; bustype = 4) 
 	d = CSV.read(joinpath("buses.csv"), DataFrame, header = false)
@@ -307,6 +505,45 @@ end
 
 # ╔═╡ fe4345fd-3eb2-471a-9be6-0e7d39cb2d1a
 bd = busdata(Harold())
+
+# ╔═╡ d77e1c95-9ecb-4678-978f-436dfbde916b
+function mpec(; β = 0.9, is_silent = false, doθ = false,n = 175, θ = [0.107, 0.5152 ,0.3622, 0.0143,0.0009])
+
+    h = Harold(β = β, n = n, θ = θ)
+    N = h.n # number of mileage states
+	d = busdata(h)
+
+    # create Jump model
+    m = Model(Ipopt.Optimizer)
+    set_optimizer_attribute(m, MOI.Silent(), is_silent)
+
+	if doθ
+		J = add_vars(m,N, h, doθ,d)  
+	else
+		J,θlast = add_vars(m,N, h, doθ,d)
+	end
+	add_expressions!(m,N,h)
+	add_obj!(m,doθ,d, θlast = doθ ? nothing : θlast)
+	add_constraints!(m,J,N, θlast = doθ ? nothing : θlast)
+
+    JuMP.optimize!(m)
+
+    if doθ
+        (RC = value(m[:RC]), θc = value(m[:θc]), θp = value.(m[:θlast]))
+    else
+        (RC = value(m[:RC]), θc = value(m[:θc]))
+    end
+
+end
+
+# ╔═╡ 5b7051fd-a0ac-49db-b2a6-e037e523e0ca
+mpec()
+
+# ╔═╡ 4eacd72d-0b94-41cf-8762-65b9e1b6120b
+mpec(β = 0.99, n = 90)
+
+# ╔═╡ 7889081f-a2db-4032-b8bd-a54ae78344f2
+mpec(β = 0.99, n = 90, doθ = true)
 
 # ╔═╡ 91b85c93-a2d4-45bc-b181-b51695bf6178
 function dplots(n)
@@ -412,6 +649,15 @@ nfxp(n = 90,β = 0.999)
 # ╔═╡ ed23d7fd-80ac-4cff-a791-4535c9450db1
 nfxp(n = 90,β = 0.999, doθ = true)
 
+# ╔═╡ 107fbf54-be6b-4177-a821-6cb9697abe5f
+nfxp()
+
+# ╔═╡ 5997ef6d-a83d-4bd2-93cf-ab8ee79acae5
+nfxp(β = 0.99, n = 90)
+
+# ╔═╡ b75dc6ef-f0f6-49ba-866f-1dd8aeacb622
+nfxp(β = 0.99, n = 90, doθ = true)
+
 # ╔═╡ ca35cfb9-344a-4345-a560-76393364b863
 nfxp(n = 175,β = 0.99, doθ = true)
 
@@ -420,6 +666,8 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Ipopt = "b6b21f68-93f8-5de0-b562-5493be1d77c9"
+JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 NLopt = "76087f3c-5699-56af-9a33-bf431cd00edd"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
@@ -431,6 +679,8 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 [compat]
 CSV = "~0.9.10"
 DataFrames = "~1.2.2"
+Ipopt = "~0.9.1"
+JuMP = "~0.22.1"
 NLopt = "~0.6.4"
 Optim = "~1.5.0"
 Plots = "~1.23.6"
@@ -442,6 +692,12 @@ StatsPlots = "~0.14.28"
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
+
+[[ASL_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "6252039f98492252f9e47c312c8ffda0e3b9e78d"
+uuid = "ae81ac8f-d209-56e5-92de-9978fef736f9"
+version = "0.1.3+0"
 
 [[AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -500,6 +756,12 @@ git-tree-sha1 = "61adeb0823084487000600ef8b1c00cc2474cd47"
 uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 version = "1.2.0"
 
+[[BinaryProvider]]
+deps = ["Libdl", "Logging", "SHA"]
+git-tree-sha1 = "ecdec412a9abc8db54c0efc5548c64dfce072058"
+uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
+version = "0.5.10"
+
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "19a35467a82e236ff51bc17a3a44b69ef35185a2"
@@ -517,6 +779,12 @@ deps = ["Artifacts", "Bzip2_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll",
 git-tree-sha1 = "f2202b55d816427cd385a9a4f3ffb226bee80f99"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+0"
+
+[[Calculus]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
+uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
+version = "0.5.1"
 
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
@@ -799,9 +1067,9 @@ version = "0.21.0+0"
 
 [[Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "7bf67e9a481712b3dbe9cb3dac852dc4b1162e02"
+git-tree-sha1 = "74ef6288d071f58033d54fd6708d4bc23a8b8972"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
-version = "2.68.3+0"
+version = "2.68.3+1"
 
 [[Graphite2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -822,9 +1090,9 @@ version = "0.9.16"
 
 [[HarfBuzz_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
-git-tree-sha1 = "8a954fed8ac097d5be04921d595f741115c1b2ad"
+git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
-version = "2.8.1+0"
+version = "2.8.1+1"
 
 [[Hyperscript]]
 deps = ["Test"]
@@ -887,6 +1155,18 @@ git-tree-sha1 = "bee5f1ef5bf65df56bdd2e40447590b272a5471f"
 uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
 version = "1.1.0"
 
+[[Ipopt]]
+deps = ["BinaryProvider", "Ipopt_jll", "Libdl", "MathOptInterface"]
+git-tree-sha1 = "68ba332ff458f3c1f40182016ff9b1bda276fa9e"
+uuid = "b6b21f68-93f8-5de0-b562-5493be1d77c9"
+version = "0.9.1"
+
+[[Ipopt_jll]]
+deps = ["ASL_jll", "Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "MUMPS_seq_jll", "OpenBLAS32_jll", "Pkg"]
+git-tree-sha1 = "e3e202237d93f18856b6ff1016166b0f172a49a8"
+uuid = "9cc047cb-c261-5740-88fc-0cf96f7bdcc7"
+version = "300.1400.400+0"
+
 [[IrrationalConstants]]
 git-tree-sha1 = "7fd44fd4ff43fc60815f8e764c0f352b83c49151"
 uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
@@ -919,6 +1199,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "d735490ac75c5cb9f1b00d8b5509c11984dc6943"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "2.1.0+0"
+
+[[JuMP]]
+deps = ["Calculus", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MathOptInterface", "MutableArithmetics", "NaNMath", "Printf", "Random", "SparseArrays", "SpecialFunctions", "Statistics"]
+git-tree-sha1 = "de9c69c0862be0e11afe5d4aa3426af1d7ecac2c"
+uuid = "4076af6c-e467-56ae-b986-b466b2749572"
+version = "0.22.1"
 
 [[KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
@@ -974,9 +1260,9 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[Libffi_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "761a393aeccd6aa92ec3515e428c26bf99575b3b"
+git-tree-sha1 = "0b4a5d71f3e5200a7dff793393e09dfc2d874290"
 uuid = "e9f186c6-92d2-5b65-8a66-fee21dc1b490"
-version = "3.2.2+0"
+version = "3.2.2+1"
 
 [[Libgcrypt_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgpg_error_jll", "Pkg"]
@@ -1039,11 +1325,23 @@ version = "0.3.5"
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
+[[METIS_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "1d31872bb9c5e7ec1f618e8c4a56c8b0d9bddc7e"
+uuid = "d00139f3-1899-568f-a2f0-47f597d42d70"
+version = "5.1.1+0"
+
 [[MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
 git-tree-sha1 = "5455aef09b40e5020e1520f551fa3135040d4ed0"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
 version = "2021.1.1+2"
+
+[[MUMPS_seq_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "METIS_jll", "OpenBLAS32_jll", "Pkg"]
+git-tree-sha1 = "29de2841fa5aefe615dea179fcde48bb87b58f57"
+uuid = "d7ed1dd3-d0ae-5e8e-bfb4-87a502085b8d"
+version = "5.4.1+0"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
@@ -1154,6 +1452,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "7937eda4681660b4d6aeeecc2f7e1c81c8ee4e2f"
 uuid = "e7412a2a-1a6e-54c0-be00-318e2571c051"
 version = "1.3.5+0"
+
+[[OpenBLAS32_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "ba4a8f683303c9082e84afba96f25af3c7fb2436"
+uuid = "656ef2d0-ae68-5445-9ca0-591084a874a2"
+version = "0.3.12+1"
 
 [[OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
@@ -1729,8 +2033,15 @@ version = "0.9.1+5"
 # ╔═╡ Cell order:
 # ╟─79dee14b-5c6c-4358-ba09-1490d23575bc
 # ╟─43e3f61c-9bb0-11eb-35bc-ade31ecafbe8
+# ╟─9825a678-af24-42c9-a3ad-c22715946d92
+# ╟─a40f7be1-9af9-421e-a616-2353fc1a1dc5
+# ╟─7572c64b-1f86-45dc-8e41-a1f378622d72
+# ╟─c0f2b80c-7e73-4c3a-836d-ee0b976c3424
 # ╟─48b5b838-c5b7-4992-b020-e653f0a8451b
+# ╟─4698df16-21ee-4b40-a36e-899532caa0c8
+# ╟─10a47b0e-bea3-43f6-9235-ca5034ef3bf3
 # ╠═a0829c7b-3843-436b-b52a-3db8b46d3cea
+# ╟─34e52272-5b28-4c9a-9a27-7b13df589870
 # ╠═daf361e3-9e68-4f64-8e33-a51ce443d3fa
 # ╟─387d9de3-9dc1-4e3c-8b9b-cbb7cc9cb85c
 # ╠═ec467235-26c1-45c7-886d-d3c5a572a784
@@ -1747,7 +2058,25 @@ version = "0.9.1+5"
 # ╠═31c0c8b6-3630-432a-97c6-f59842b7185c
 # ╠═ed23d7fd-80ac-4cff-a791-4535c9450db1
 # ╟─165022ec-6952-4844-bfc4-c6cac6a501b1
-# ╟─57a1df74-f19f-41f2-b242-42d3b35a2971
+# ╟─f83be35c-b0d9-430a-a7a9-e5a09fd392b2
+# ╠═2f7d6cd1-70e4-4d67-8285-9f6d513e6903
+# ╟─0f3c4e0d-6a60-44b0-99cf-6251e5ad7b9a
+# ╠═f265b96a-ac85-4785-b4c3-83f85ed2ceca
+# ╟─6f778c42-6beb-40e4-8956-65bf046c9489
+# ╠═e4209b2e-0a59-4162-8d93-23ff2f819af1
+# ╟─d6962b11-99b2-449c-bbd5-17cc096bf2ef
+# ╠═50269188-a202-410d-bd0e-53f35cc44b49
+# ╟─651e2a7a-1ffd-4cab-aef8-c51fb4582533
+# ╠═d77e1c95-9ecb-4678-978f-436dfbde916b
+# ╠═5b7051fd-a0ac-49db-b2a6-e037e523e0ca
+# ╠═107fbf54-be6b-4177-a821-6cb9697abe5f
+# ╟─a89f585a-165e-42a2-b426-574b4b57cc59
+# ╠═4eacd72d-0b94-41cf-8762-65b9e1b6120b
+# ╠═5997ef6d-a83d-4bd2-93cf-ab8ee79acae5
+# ╟─4b1c7427-ecf1-4275-a592-ce620be8969d
+# ╠═b75dc6ef-f0f6-49ba-866f-1dd8aeacb622
+# ╠═7889081f-a2db-4032-b8bd-a54ae78344f2
+# ╟─b95bea83-1ed8-412f-aecb-34b12bfcf1e9
 # ╟─efd9b30b-8dd9-4656-b95b-13a999a58111
 # ╟─0ea31a68-74ea-4cbd-a920-9ac384cfc67a
 # ╠═ca35cfb9-344a-4345-a560-76393364b863
