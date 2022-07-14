@@ -6,6 +6,11 @@
 <p align="center"><a href="https://floswald.github.io/NumericalMethods/"> <b>Go to course website</b> :balloon:</a></p>
 
 
+
+[![DOI](https://zenodo.org/badge/331698903.svg)](https://zenodo.org/badge/latestdoi/331698903)
+
+
+
 ## Course Description
 
 This is a course for PhD students in Computational Economics. 
