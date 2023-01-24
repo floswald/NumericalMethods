@@ -38,5 +38,5 @@ In this section we want to understand why julia is a good choice for computation
 
 * [Aruoba and Fernandez-Villaverde](https://www.sas.upenn.edu/~jesusfv/comparison_languages.pdf)
 * [Jesus' Julia Tutorial](https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf)
-
+* [Chapter 1 of Julia for Data Analysis](https://www.manning.com/books/julia-for-data-analysis)
 

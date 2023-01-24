@@ -24,7 +24,7 @@
 
 ## Course Overview
 
-This is a course for PhD students at SciencesPo Paris in Computational Economics. You will learn about some commonly used methods in Computational Economics. These methods are being used in *all* fields of Economics, despite it being offered as part of the Macro Sequence. The course has a clear focus on applying what you learn. We will cover the theoretical concepts that underlie each topic, but you should expect a fair amount of *hands on* action required on your behalf. In the words of the great [Che-Lin Su](https://scholar.google.com/citations?user=6AZSMiwAAAAJ&hl=en):
+This is a course for PhD students at SciencesPo Paris in Computational Economics. You will learn about some commonly used methods in Computational Economics. These methods are being used in *all* fields of Economics. The course has a clear focus on applying what you learn. We will cover the theoretical concepts that underlie each topic, but you should expect a fair amount of *hands on* action required on your behalf. In the words of the great [Che-Lin Su](https://scholar.google.com/citations?user=6AZSMiwAAAAJ&hl=en):
 
 > Doing Computation is the only way to learn Computation. Doing Computation is the only way to learn Computation. Doing Computation is the only way to learn Computation.
 
@@ -112,9 +112,10 @@ There are some excellent references for computational methods out there. This co
 
 ### Newcomers
 
-* [**Kochenderfer and Wheeler**](https://mitpress.mit.edu/books/algorithms-optimization) (2019), Algorithms for Optimization, MIT Press
+* [**Julia for Data Analysis**](https://www.manning.com/books/julia-for-data-analysis) (2023), Bogumił Kamiński, Manning Publications.
+* [**Algorithms for Optimization**](https://mitpress.mit.edu/books/algorithms-optimization) (2019), Mykel J. Kochenderfer and Tim A. Wheeler, Algorithms for Optimization, MIT Press.
 * [**A Gentle Introduction to Effective Computing in Quantitative Research**](https://mitpress.mit.edu/books/gentle-introduction-effective-computing-quantitative-research) - What Every Research Assistant Should Know, Harry J. Paarsch and Konstantin Golyaev
-* [**Statistics with Julia**](https://statisticswithjulia.org)
+* [**Statistics with Julia**](https://statisticswithjulia.org) (2021), Yoni Nazarathy and Hayden Klok, Springer.
 * [**Quantitative Economics with Julia**](https://julia.quantecon.org/intro.html) by Perla, Sargent and Stachurski is a wonderful resource and we use it a lot in this course. 
 
 

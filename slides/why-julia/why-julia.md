@@ -1,7 +1,7 @@
 title: Computational Economics
 class: animation-fade
 layout: true
-author: Florian Oswald, SciencesPo 2021
+author: Florian Oswald, SciencesPo 2023
 
 <!-- This slide will serve as the base layout for all your slides -->
 .bottom-bar[
@@ -13,7 +13,7 @@ author: Florian Oswald, SciencesPo 2021
 class: impact
 
 # {{title}}
-## SciencesPo 2021
+## SciencesPo 2023
 ### Florian Oswald
 
 ---
@@ -36,8 +36,16 @@ class: impact
 
 .col-6[
 
+.center[![:scale 60%](https://media.giphy.com/media/Q7LP0tm86sBWIqjFCL/giphy.gif)
+]
+]
+
+--
+
+.col-6[
+
 ### Research
-- Assistant Prof at the Department of Economics at ScPo in Paris
+- Assistant Prof at the Department of Economics at ScPo Paris
 
 - Housing, Macro, Labor and Urban
 
@@ -47,13 +55,9 @@ class: impact
 
 ]
 
---
 
-.col-6[
 
-.center[![:scale 60%](https://media.giphy.com/media/Q7LP0tm86sBWIqjFCL/giphy.gif)
-]
-]
+
 
 
 
@@ -61,7 +65,7 @@ class: impact
 
 ## Logistics and Course Structure
 
-* Meetings: Every Friday except 26 Feb
+* Meetings: Every Tuesday except 28 Feb
 
 --
 
@@ -74,14 +78,14 @@ class: impact
 --
 
 * Grades: 60% homeworks, 40% term project
-    * Will specify explicitly whether teamwork or single submission!
+    * You should do all homeworks in teams of 2 or 3.
     * Term project in teams of 2.
 
 --
 
 * Term Project: Replicate a published paper with computational content.
     * More info [on syllabus](https://floswald.github.io/NumericalMethods/#term_project)
-    * Deadline for your proposal: March 5.
+    * Deadline for your proposal: April 1 2023 (no joke!)
     * Deadline for hand in: end of term.
 
 
@@ -133,7 +137,7 @@ Computation has become an important tool in Economics:
 
 --
 
-3. You (will) read and evaluate papers that use computational methods
+3. You (will) read and evaluate papers that use computational methods.
 
 --
 
@@ -166,13 +170,15 @@ Computation has become an important tool in Economics:
 
 ---
 background-image: url(fortranmanual.png)
-background-size: 300px 180px
-background-position: 60% 25%
+background-size: 500px 300px
+background-position: 85% 25%
 
 # Aim of This Course
 
 * Take the *fear* out of computation.
 
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -183,10 +189,6 @@ background-position: 60% 25%
 --
 
 * Teach you some best practices from Open Source Software (OSS)
-
---
-
-* Provide an opportunity to create links across institutions! 🤝 🇪🇺
 
 --
 
@@ -310,7 +312,7 @@ g++ sumvec.cpp -o sum.x
 .col-6[
 ### Pros
 * Very versatile.
-* Continuously Evolving. C++ 2019 standard is current.
+* Continuously Evolving. C++ 2020 standard is current.
 * Very performant.
 * Excellent open source compilers.
 * Very stable and widely used.
