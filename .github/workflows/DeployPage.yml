@@ -37,7 +37,7 @@ jobs:
 
           run(`$(npm_cmd()) install highlight.js`);
           using Franklin;
-          optimize(;minify=false);
+          optimize(;minify=false);'
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v4
       with:
