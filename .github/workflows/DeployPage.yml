@@ -1,15 +1,9 @@
-name: Export Pluto notebooks
+name: build site
 on:
     push:
         branches:
             - main
             - master
-    workflow_dispatch:
-
-# When two jobs run in parallel, cancel the older ones, to make sure that the website is generated from the most recent commit.
-concurrency:
-    group: pluto-export
-    cancel-in-progress: true
 
 jobs:
   build-and-deploy:
@@ -27,12 +21,6 @@ jobs:
       uses: julia-actions/cache@v1
       with:
         cache-registries: "true"
-
-
-    - name: Install Julia
-      uses: julia-actions/setup-julia@v1
-      with:
-        version: 1
 
     - name: Franklin
       run: julia -e '
