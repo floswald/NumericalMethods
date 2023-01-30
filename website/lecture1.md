@@ -22,9 +22,10 @@ We used several Pluto.jl notebooks in this lecture. Here are three rendered ones
 
 Topic | Notebook
 :-----: | :--------:
-Arrays | [click for notebook](../lecture1-arrays)
+Variables | [click for notebook](https://floswald.github.io/julia-bootcamp/01-variables.html)
+Functions | [click for notebook](https://floswald.github.io/julia-bootcamp/02-functions.html)
+Functions | [click for notebook](https://floswald.github.io/julia-bootcamp/02-functions.html)
 SIR Model | [click for notebook](../lecture1-SIR)
-Data as Images | [click for notebook](../lecture1-images)
 
 Please run the [01-fast.jl](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/01-fast.jl) notebook on your own computer for the benchmarks! 🏎️
 

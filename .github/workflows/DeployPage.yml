@@ -5,7 +5,6 @@ on:
       - master
 jobs:
   build-and-deploy:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -13,24 +12,11 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Set up notebook state cache
-      uses: actions/cache@v2
-      with:
-        path: pluto_state_cache
-        key: ${{ runner.os }}-pluto_state_cache-v2-${{ hashFiles('**/Project.toml', '**/Manifest.toml') }}-${{ hashFiles('**/*.jl') }}
-        restore-keys: |
-             ${{ runner.os }}-pluto_state_cache-v2-${{ hashFiles('**/Project.toml', '**/Manifest.toml') }}
-
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
-        version: 1.6
-    - name: Run Pluto notebooks
-      run: julia --project=pluto-deployment-environment -e '
-          import Pkg;
-          Pkg.instantiate();
-          using PlutoSliderServer;
-          github_action("."; Export_cache_dir="pluto_state_cache");'
+        version: 1
+
     - name: Franklin
       run: julia -e '
           using Pkg;
@@ -47,8 +33,6 @@ jobs:
           run(`$(npm_cmd()) install highlight.js`);
           using Franklin;
           optimize(;minify=false);
-          "== Place rendered notebooks in the website folder ==";
-          cp("../notebooks", "__site/notebooks");'
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:

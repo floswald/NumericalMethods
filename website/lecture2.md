@@ -7,9 +7,9 @@ In this lecture we will start talking `julia`! We will go through a series of no
 
 Topic | Notebook
 :-----: | :--------:
-Julia By Example | [click for notebook](../lecture2-example)
-Defining Data Types | [click for notebook](../lecture2-types)
-Intro do Differential Equations | [click for notebook](../lecture2-diffeq)
+Arrays | [click for notebook](https://floswald.github.io/julia-bootcamp/03-arrays.html)
+Defining Data Types | [click for notebook](https://floswald.github.io/julia-bootcamp/04-defining-types.html)
+Intro do Differential Equations | [click for notebook]([../lecture2-diffeq](https://floswald.github.io/julia-bootcamp/08-popgrowth.html))
 
 **Table of Contents**
 

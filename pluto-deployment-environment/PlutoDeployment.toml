@@ -1,23 +1,22 @@
 [Export]
 exclude=[
     # these are in the repo but not used on the website
-    "notebooks/introspection.jl",
-    "notebooks/04-probability.jl",
-    "notebooks/basic_syntax.jl",
-    "notebooks/week1/01-fast.jl",
-    "notebooks/week3/01-abstraction.jl",
-    "notebooks/week3/02-vatiations_fixedpoint.jl",
-    "notebooks/week4/03-functions-are-objects.jl",
-    "notebooks/week8/FE_CUDA.jl",
-    "notebooks/week8/data_stats.jl",
-    "notebooks/week10/zurcherdata.jl",
+    "introspection.jl",
+    "04-probability.jl",
+    "basic_syntax.jl",
+    "week1/04-images.jl",
+    "week3/01-abstraction.jl",
+    "week3/02-vatiations_fixedpoint.jl",
+    "week4/03-functions-are-objects.jl",
+    "week8/FE_CUDA.jl",
+    "week8/data_stats.jl",
 
     # don't run homeworks
-    "notebooks/homework0/hw0.jl",
-    "notebooks/homework0/pizza.jl",
-    "notebooks/homework1/discrete_lockdown.jl",
-    "notebooks/homework2/epidemic.jl",
-    "notebooks/homework5/TimeManage.jl"
+    "homework0/hw0.jl",
+    "homework0/pizza.jl",
+    "homework1/discrete_lockdown.jl",
+    "homework2/epidemic.jl",
+    "homework5/TimeManage.jl"
 ]
 baked_state = false
 offer_binder = true
