@@ -1,16 +1,33 @@
-name: Build and Deploy
+name: Export Pluto notebooks
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - main
+            - master
+    workflow_dispatch:
+
+# When two jobs run in parallel, cancel the older ones, to make sure that the website is generated from the most recent commit.
+concurrency:
+    group: pluto-export
+    cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
       with:
-        persist-credentials: false
+        version: 1
+
+    - name: Cache Julia artifacts & such
+      uses: julia-actions/cache@v1
+      with:
+        cache-registries: "true"
+
 
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
@@ -34,7 +51,7 @@ jobs:
           using Franklin;
           optimize(;minify=false);
     - name: Build and Deploy
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: JamesIves/github-pages-deploy-action@releases/v4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
