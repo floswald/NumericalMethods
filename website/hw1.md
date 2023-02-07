@@ -2,7 +2,7 @@
 
 In this homework you will implement a *lockdown policy* in a standard SIR model. 
 
-Get the notebook here. [right click and save this notebook, or copy the link directly into a running Pluto session to open!](https://github.com/floswald/NumericalMethods/blob/master/homework/homework1/discrete_lockdown.jl)
+Get the notebook here. [right click and save this notebook, or copy the link directly into a running Pluto session to open!](https://github.com/floswald/NumericalMethods/blob/master/notebooks/homework1/discrete_lockdown.jl)
 
 
 ## Homework Submission
