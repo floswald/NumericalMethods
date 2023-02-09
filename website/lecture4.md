@@ -10,5 +10,5 @@
 
 Topic | Notebook
 :-----: | :--------:
-Unconstrained Optimization Algorithms | [click for notebook](../lecture4-optim2)
-Constraints and Linear Programming | [click for notebook](../lecture4-optim3)
+Unconstrained Optimization Algorithms | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week4/optimization2.jl)
+Constraints and Linear Programming | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week4/optimization3.jl)
