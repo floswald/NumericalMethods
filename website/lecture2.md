@@ -7,9 +7,8 @@ In this lecture we will start talking `julia`! We will go through a series of no
 
 Topic | Notebook
 :-----: | :--------:
-Arrays | [click for notebook](https://floswald.github.io/julia-bootcamp/03-arrays.html)
 Defining Data Types | [click for notebook](https://floswald.github.io/julia-bootcamp/04-defining-types.html)
-Intro do Differential Equations | [click for notebook]([../lecture2-diffeq](https://floswald.github.io/julia-bootcamp/08-popgrowth.html))
+Intro do Differential Equations | [click for notebook](https://floswald.github.io/julia-bootcamp/08-popgrowth.html)
 
 **Table of Contents**
 
@@ -28,9 +27,25 @@ I asked you to install the [julia-vscode](https://www.julia-vscode.org) extentio
 1. Package environments
 1. More advanced features (already couple of months back, but still) are explained in this [video by one of the package authors](https://youtu.be/IdhnP00Y1Ks).
 
-## Julia Packages, `Pkg.jl` and Environments
+## Julia Modules, Packages, `Pkg.jl` and Environments
 
-1. What's a **package**?
+1. What is a `module`?
+    * A separate name space.
+    * We can group together functions from different files using the `include`.
+    * Notice there is no relationship between function names and file names, like for instance in matlab or python.
+    * you decide what is `export`ed from the package, if anything, with the `export` keyword.
+
+```julia
+module MyExampleModule
+using Statistics   # if any imports
+include("files1.jl")
+include("functions2.jl")
+include("data.jl")
+export xyz_fun   # if any exports
+end # module
+```
+
+2. What's a **package**?
     * Basically, a `module`. 
     * Why do we need packages?
     * Here an [Example](https://github.com/JuliaLang/Example.jl)
