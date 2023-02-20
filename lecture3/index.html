@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  
+   <link rel="stylesheet" href="/NumericalMethods/libs/highlight/github.min.css">
+   
   <link rel="stylesheet" href="/NumericalMethods/css/franklin.css">
 <link rel="stylesheet" href="/NumericalMethods/css/poole_hyde.css">
 <link rel="stylesheet" href="/NumericalMethods/css/custom.css">
@@ -72,7 +73,173 @@
 <div class="franklin-content">
 <h1>Lecture 3 : Optimization 1</h1>
 
-<h2 id="some_julia-bootcamp_stuff_first"><a href="#some_julia-bootcamp_stuff_first">Some Julia-Bootcamp stuff first</a></h2>
+<h2 id="some_julia_package_stuff"><a href="#some_julia_package_stuff">Some Julia Package Stuff</a></h2>
+<blockquote>
+<p>Let&#39;s create a julia package&#33;</p>
+</blockquote>
+<pre><code class="language-julia">&#93;
+&#40;@v1.8&#41; pkg&gt; add PkgTemplates
+
+julia&gt; using PkgTemplates
+
+help?&gt; Template
+
+julia&gt; t &#61; Template&#40;user &#61; &quot;floswald&quot;, interactive &#61; true&#41;
+Template keywords to customize:
+&#91;press: d&#61;done, a&#61;all, n&#61;none&#93;
+   &#91; &#93; authors
+   &#91; &#93; dir
+   &#91; &#93; host
+   &#91; &#93; julia
+ &gt; &#91; &#93; plugins
+
+julia&gt; t&#40;&quot;MyNewPackage&quot;&#41;
+&#91; Info: Running prehooks
+&#91; Info: Running hooks
+  Activating project at &#96;~/.julia/dev/MyNewPackage&#96;
+    Updating registry at &#96;~/.julia/registries/General&#96;
+    Updating git-repo &#96;https://github.com/JuliaRegistries/General.git&#96;
+┌ Warning: The active manifest file at &#96;/Users/74097/.julia/dev/MyNewPackage/Manifest.toml&#96; has an old format that is being maintained.
+│ To update to the new format, which is supported by Julia versions ≥ 1.6.2, run &#96;Pkg.upgrade_manifest&#40;&#41;&#96; which will upgrade the format without re-resolving.
+│ To then record the julia version re-resolve with &#96;Pkg.resolve&#40;&#41;&#96; and if there are resolve conflicts consider &#96;Pkg.update&#40;&#41;&#96;.
+└ @ Pkg.Types /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-macmini-x64-5.0/build/default-macmini-x64-5-0/julialang/julia-release-1-dot-8/usr/share/julia/stdlib/v1.8/Pkg/src/manifest.jl:287
+  No Changes to &#96;~/.julia/dev/MyNewPackage/Project.toml&#96;
+  No Changes to &#96;~/.julia/dev/MyNewPackage/Manifest.toml&#96;
+Precompiling project...
+  1 dependency successfully precompiled in 1 seconds
+&#91; Info: We haven&#39;t cleaned this depot up for a bit, running Pkg.gc&#40;&#41;...
+      Active manifest files: 113 found
+      Active artifact files: 303 found
+      Active scratchspaces: 48 found
+     Deleted 40 package installations &#40;186.329 MiB&#41;
+  Activating project at &#96;~/.julia/environments/v1.8&#96;
+&#91; Info: Running posthooks
+&#91; Info: New package is at /Users/74097/.julia/dev/MyNewPackage</code></pre>
+<ul>
+<li><p>Great&#33; Now let&#39;s open VSCode in that location and make some changes.</p>
+</li>
+</ul>
+<pre><code class="language-julia">module MyNewPackage
+
+mutable struct MPoint
+    x::Number
+    y::Number
+end
+
+import Base.:&#43;
+
+&#43;&#40;a::MPoint,b::MPoint&#41; &#61; MPoint&#40;a.x &#43; b.x, a.y &#43; b.y&#41;
+
+end   # module</code></pre>
+<ul>
+<li><p>Now, we could just <code>execute active file in REPL</code> in VSCode, or indeed, type in the REPL <code>include&#40;&quot;src/MyNewPackage.jl&quot;&#41;</code>:</p>
+</li>
+</ul>
+<pre><code class="language-julia">julia&gt; include&#40;&quot;src/MyNewPackage.jl&quot;&#41;
+Main.MyNewPackage</code></pre>
+<ul>
+<li><p>Now we can test the code in the REPL. </p>
+</li>
+<li><p>Notice, <strong>importantly</strong>, each time you want to see the effects of changing your code, you have to <strong>replace the module</strong> via <code>include&#40;&quot;src/MyNewPackage.jl&quot;&#41;</code>.</p>
+</li>
+</ul>
+<pre><code class="language-julia">julia&gt; include&#40;&quot;src/MyNewPackage.jl&quot;&#41;
+WARNING: replacing module MyNewPackage.</code></pre>
+<ul>
+<li><p>Let&#39;s add a test for our <code>&#43;</code> method in the <code>test</code> folder:</p>
+</li>
+</ul>
+<pre><code class="language-julia">@testset &quot;MyNewPackage.jl&quot; begin
+    a &#61; MyNewPackage.MPoint&#40;3,5&#41;
+    b &#61; MyNewPackage.MPoint&#40;1,2&#41;
+    @test a &#43; b isa MyNewPackage.MPoint
+    p &#61; a &#43; b
+    @test p.x &#61;&#61; a.x &#43; b.x
+    @test p.y &#61;&#61; a.y &#43; b.y
+end</code></pre>
+<ul>
+<li><p>Run the tests from REPL in Pkg mode: <code>&#93;; test</code></p>
+</li>
+<li><p>This <em>works</em>, but it involves one extra step that we need to do manually. Small steps add up&#33; So let&#39;s try to improve on that.</p>
+</li>
+<li><p>Let&#39;s tell the package to add <code>Revise.jl</code>: <code>&#93;; add Revise</code>. </p>
+</li>
+<li><p>Shut down and restart VScode in same folder.</p>
+</li>
+<li><p><strong>Before</strong> anything else, type <code>using Revise</code>. Then type <code>using MyNewPackage</code>.</p>
+</li>
+<li><p>Let&#39;s add a new function now. </p>
+</li>
+</ul>
+<pre><code class="language-julia">-&#40;a::MPoint,b::MPoint&#41; &#61; MPoint&#40;a.x - b.x, a.y - b.y&#41;</code></pre>
+<ul>
+<li><p><em>Don&#39;t</em> replace the module via <code>include&#40;&quot;src/MyNewPackage.jl&quot;&#41;</code>. Instead, just save the file and go back to REPL.</p>
+</li>
+</ul>
+<pre><code class="language-julia">julia&gt; a &#61; MyNewPackage.MPoint&#40;3,4&#41;
+MyNewPackage.MPoint&#40;3, 4&#41;
+
+julia&gt; b &#61; MyNewPackage.MPoint&#40;99,100&#41;
+MyNewPackage.MPoint&#40;99, 100&#41;
+
+julia&gt; a - b
+MyNewPackage.MPoint&#40;-96, -96&#41;</code></pre>
+<ul>
+<li><p>🎉</p>
+</li>
+</ul>
+<h3 id="debugging_a_package"><a href="#debugging_a_package">Debugging A Package</a></h3>
+<ul>
+<li><p>Debugging simple scripts or packages is the same workflow. </p>
+</li>
+<li><p>Let&#39;s add another function. An <em>economic model</em> of sorts:</p>
+</li>
+</ul>
+<pre><code class="language-julia">function econ_model&#40;; startval &#61; 1.0&#41;
+    # make an Mpoint
+    x &#61; MPoint&#40;startval, startval-0.5&#41;
+    # ... and evaluate a utility function
+    MPoint&#40;log&#40;x.x&#41;,log&#40;x.y&#41;&#41;
+end</code></pre>
+<ul>
+<li><p>Make sure to try out that it works.</p>
+</li>
+</ul>
+<pre><code class="language-julia">julia&gt; MyNewPackage.econ_model&#40;&#41;
+MyNewPackage.MPoint&#40;0.0, -0.6931471805599453&#41;</code></pre>
+<ul>
+<li><p>Ok great. Now what about that? Try it out&#33;</p>
+</li>
+</ul>
+<pre><code class="language-julia">julia&gt; MyNewPackage.econ_model&#40;startval &#61; 0.3&#41;</code></pre>
+<ul>
+<li><p>Good. Let&#39;s pretend we don&#39;t know what&#39;s going on and we need to investigate this function.</p>
+</li>
+</ul>
+<ol>
+<li><p>Add <code>println</code> statements.</p>
+</li>
+<li><p>Add <code>@debug</code> statements. then attaching a logger with </p>
+</li>
+</ol>
+<pre><code class="language-julia">using Logging
+debug_logger &#61; ConsoleLogger&#40;stdout, Logging.Debug&#41;
+global_logger&#40;debug_logger&#41;  # turns on logging of @debug messages</code></pre>
+<ol start="3">
+<li><p>Use an actual debugger to step through our code.</p>
+<ol>
+<li><p><code>VSCode</code> exports by default the <code>@enter</code> macro. type: <code>@enter MyNewPackage.econ_model&#40;startval &#61; -0.3&#41;</code></p>
+</li>
+<li><p>click on teh play symbol. program hits an error. </p>
+</li>
+<li><p>set a break point just before</p>
+</li>
+<li><p>click on <code>replay</code>.</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="some_julia-bootcamp_stuff"><a href="#some_julia-bootcamp_stuff">Some Julia-Bootcamp stuff</a></h2>
 <table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Intro to Macros</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/10-intro-to-macros.html">click for notebook</a></td></tr><tr><td align="center">Intro to Differential Equations</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/08-popgrowth.html">click for notebook</a></td></tr><tr><td align="center">Plotting</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/06-plotting.html">click for notebook</a></td></tr><tr><td align="center">Interactive</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/07-interactive.html">click for notebook</a></td></tr></table>
 <h2 id="optimization_finally"><a href="#optimization_finally">Optimization, Finally&#33;</a></h2>
 <table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Review of Optimization Algorithms</td><td align="center"><a href="https://github.com/floswald/NumericalMethods/blob/master/notebooks/week3/optimization1.jl">right-click and save notebook</a></td></tr></table>
@@ -99,6 +266,10 @@
             }
         }
     </script>
+    
+        <script src="/NumericalMethods/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
     
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
