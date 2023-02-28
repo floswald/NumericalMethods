@@ -14,8 +14,7 @@
 
 ## Function Approximation
 
-You can find the notebooks for this lecture [here](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week6)
-
+You can find the *jupyter* notebook for this lecture [here](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week6/funcapprox.ipynb)
 
 * We introduced some basic concepts:
     * Basis Functions

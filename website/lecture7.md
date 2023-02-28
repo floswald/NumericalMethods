@@ -5,12 +5,12 @@
 
 ## Notebooks
 
-Topic | Notebook
-:-----: | :--------:
-Dynamic Programming 1 | [click for notebook](../lecture7-dp1)
-Dynamic Programming 2 | [click for notebook](../lecture7-dp2)
-The EGM Algorithm | [click for notebook](../lecture7-dp3)
-The Aiyagari Model | [click for notebook](../lecture7-dp4)
+Topic | Notebook | Rendered
+:-----: | :--------: | ----------
+Dynamic Programming 1 | [click for notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week7/dp.jl) | [rendered](https://raw.githack.com/floswald/NumericalMethods/master/notebooks/week7/dp.jl.html)
+Dynamic Programming 2 | [click for notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week7/dp2.jl)  | [rendered](https://raw.githack.com/floswald/NumericalMethods/master/notebooks/week7/dp2.jl.html)
+The EGM Algorithm | [click for notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week7/EGM.jl)  | [rendered](https://raw.githack.com/floswald/NumericalMethods/master/notebooks/week7/EGM.jl.html)
+The Aiyagari Model | [click for notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week7/Aiyagari.jl)  | [rendered](https://raw.githack.com/floswald/NumericalMethods/master/notebooks/week7/Aiyagari.jl.html)
 
 
 
