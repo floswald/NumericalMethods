@@ -19,6 +19,7 @@ begin
 	using Plots
 	using LaTeXStrings
 	using PlutoUI
+	using SymEngine
 end
 
 # ╔═╡ d4bb171d-3c1c-463a-9360-c78bdfc83363
@@ -26,13 +27,6 @@ begin
 	using Calculus
 	# also can compute gradients for multidim functions
 	Calculus.gradient(x->x[1]^2 * exp(3x[2]),ones(2)), Calculus.hessian( x->x[1]^2 * exp(3x[2]),ones(2))
-end
-
-# ╔═╡ 068dd98e-8507-4380-a4b2-f6fee80adaaa
-begin
-	using SymEngine
-	x = symbols("x");
-	f = x^2 + x/2 - sin(x)/x; diff(f, x)
 end
 
 # ╔═╡ 86440ba5-4b5f-440b-87e4-5446217dd073
@@ -346,7 +340,10 @@ $$f'(x) \equiv \lim_{h\to0}\frac{f(x+h)-f(x)}{h}$$
 """
 
 # ╔═╡ 3a40b68f-83cf-4db9-b301-492e5cedcd13
-u(c; σ = 2) = (c^(1-σ)) / (1-σ)
+u1(c₁, c₂; σ = 2) = ((c₁ + c₂)^(1-σ)) / (1-σ)
+
+# ╔═╡ edd64823-b054-4974-b817-853319a62bcd
+u(c₁; σ = 2) = ((c₁)^(1-σ)) / (1-σ)
 
 # ╔═╡ b901c4aa-38f8-476a-8c9e-7eb523f59438
 eps()
@@ -361,8 +358,11 @@ h = 10.0^ϵ
 
 # ╔═╡ 27d955de-8d97-43e4-9176-aad5456eb797
 let
-	c = 1.5
-	∂u∂c = (u(c + h) - u(c)) / h  # definition from above!
+	c1 = 1.5
+	c2 = 0.8
+	∂u∂c1 = (u(c1 + h, c2) - u(c1, c2)) / h  # definition from above!
+	∂u∂c2 = (u(c1 , c2+ h) - u(c1, c2)) / h  # definition from above!
+
 	Dict(:finite_diff => ∂u∂c, :truth_enrico => c^-2)
 end
 
@@ -407,6 +407,8 @@ md"""
 * We mentioned above the FOC and SOC conditions. 
 * We should be able to *prove* that the point (1,1) is an optimum, right?
 * Let's do it! Everybody derive the gradient *and* the hessian of the rosenbrock function $$f(x,y) = (1-x)^2  + 5(y-x^2)^2$$ to show that $(1,1)$ is a candidate optimum! As a homework! 😄
+
+$$\left(\frac{\partial f(x,y)}{\partial x}, \frac{\partial f(x,y)}{\partial y}\right) = (0,0)$$
 """
 
 # ╔═╡ ab589e93-a4ca-45be-882c-bc3da47e4d1c
@@ -434,6 +436,13 @@ md"""
 * Mathematica, python, and julia all have packages for that.
 """
 
+# ╔═╡ 068dd98e-8507-4380-a4b2-f6fee80adaaa
+begin
+	
+	x = symbols("x");
+	f = x^2 + x/2 - sin(x)/x; diff(f, x)
+end
+
 # ╔═╡ 4b3f4b1b-1b22-4e2e-be5b-d44d74d8da0e
 md"""
 ## Automatic Differentiation (AD)
@@ -448,6 +457,9 @@ $$\frac{d}{dx}f(g(x)) = \frac{df}{dg}\frac{dg}{dx}$$
 
 
 """
+
+# ╔═╡ 625ca61c-9b0c-422b-8a66-40b4ede145c7
+
 
 # ╔═╡ 3e480576-ed7d-4f2d-bcd1-d7d1cbbeccf9
 let
@@ -787,7 +799,7 @@ LaTeXStrings = "~1.3.0"
 Optim = "~1.5.0"
 Plots = "~1.23.5"
 PlutoUI = "~0.7.19"
-SymEngine = "~0.8.6"
+SymEngine = "~0.8.7"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -1564,15 +1576,15 @@ version = "0.6.3"
 
 [[SymEngine]]
 deps = ["Compat", "Libdl", "LinearAlgebra", "RecipesBase", "SpecialFunctions", "SymEngine_jll"]
-git-tree-sha1 = "126c86efe59030cae872d92fabfaa62dac67381d"
+git-tree-sha1 = "6cf88a0b98c758a36e6e978a41e8a12f6f5cdacc"
 uuid = "123dc426-2d89-5057-bbad-38513e3affd8"
-version = "0.8.6"
+version = "0.8.7"
 
 [[SymEngine_jll]]
-deps = ["GMP_jll", "Libdl", "MPC_jll", "MPFR_jll", "Pkg"]
-git-tree-sha1 = "4dacada8e05ac49eb768219f8d02bc6b608627fb"
+deps = ["Artifacts", "GMP_jll", "JLLWrappers", "Libdl", "MPC_jll", "MPFR_jll", "Pkg"]
+git-tree-sha1 = "3cd0f249ae20a0093f839738a2f2c1476d5581fe"
 uuid = "3428059b-622b-5399-b16f-d347a77089a4"
-version = "0.6.0+1"
+version = "0.8.1+0"
 
 [[TOML]]
 deps = ["Dates"]
@@ -1888,6 +1900,7 @@ version = "0.9.1+5"
 # ╠═b1c207b7-9d70-453c-b554-1c91f59ada0a
 # ╟─8300dbb5-0eb6-4f84-80c6-24c4443b1f29
 # ╠═3a40b68f-83cf-4db9-b301-492e5cedcd13
+# ╠═edd64823-b054-4974-b817-853319a62bcd
 # ╠═b901c4aa-38f8-476a-8c9e-7eb523f59438
 # ╟─d4af5141-422b-4941-8dc7-f2b4b09029c0
 # ╠═3fd2f03a-fc52-4009-b284-0def00be601f
@@ -1901,6 +1914,7 @@ version = "0.9.1+5"
 # ╠═068dd98e-8507-4380-a4b2-f6fee80adaaa
 # ╟─4b3f4b1b-1b22-4e2e-be5b-d44d74d8da0e
 # ╠═86440ba5-4b5f-440b-87e4-5446217dd073
+# ╠═625ca61c-9b0c-422b-8a66-40b4ede145c7
 # ╠═3e480576-ed7d-4f2d-bcd1-d7d1cbbeccf9
 # ╟─bc52bf0c-6cd1-488d-a9c1-7a91a582dda9
 # ╟─73fea39a-3ba6-4a37-9014-261a95acc084

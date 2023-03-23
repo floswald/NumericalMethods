@@ -1,25 +1,19 @@
 
 ~~~
-<h1>Lecture 6: Function Approximation</h1>
+<h1>Lecture 6: Julia and Data</h1>
 ~~~
 
+New users are adivsed to start with the [new users section](https://dataframes.juliadata.org/stable/man/basics/#First-Steps-with-DataFrames.jl) in the manual. I advise you to go through that.
 
-## Julia-stuff
+In class, instead, we will take the deep dive into the DataFrames.jl package with a showcase.
 
-* We looked at [https://github.com/JuliaLang/Example.jl](https://github.com/JuliaLang/Example.jl) to introduce package development.
-* We introduced two ways to develop packages: 
-    * plain vanilla in your terminal, editing code in an editor, and repeatedly doing `include("src/Example.jl")` to update the module
-    * using [Revise.jl](https://github.com/timholy/Revise.jl) from wihtin VScode to *automatically* update the code we modify in the running julia session.
-* We introduced _test driven development_ and the julia built-in testing framework.
+There is a notebook for you [here](https://github.com/floswald/DataFrames-Showcase)
 
-## Function Approximation
+## Further DataFrames.jl Resources
 
-You can find the *jupyter* notebook for this lecture [here](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week6/funcapprox.ipynb)
-
-* We introduced some basic concepts:
-    * Basis Functions
-    * Types of interpolations/approximations
-* We introduced _orthogonal polynomials_ like the Chebyshev polynomials and their basis functions
-* We looked at _splines_
-* We introduced finally some julia packages to do interpolation.
-
+1. [The Manual](https://dataframes.juliadata.org/stable/) is very well done, and lists a bunch of good resources on the landing page.
+2. [The ultimate database-ops benchmark](https://h2oai.github.io/db-benchmark/)
+3. [BBogumił's Blog](https://bkamins.github.io/)
+4. This tutorial series is _very_ good for the DataFrames.jl package: [https://github.com/bkamins/Julia-DataFrames-Tutorial](https://github.com/bkamins/Julia-DataFrames-Tutorial)
+5. The [julia academy data science tutorial](https://github.com/JuliaAcademy/DataScience) is full of excellent stuff
+6. The [Turing Institute's Data Sciences tutorials](https://alan-turing-institute.github.io/DataScienceTutorials.jl/) give a good intro to data structures and machine learning in julia.

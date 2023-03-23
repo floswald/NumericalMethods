@@ -1,6 +1,6 @@
 
 ~~~
-<h1>Lecture 5: Optimization 3</h1>
+<h1>Lecture 5: Function Approximation and Integration</h1>
 ~~~
 
 
@@ -8,4 +8,5 @@
 
 Topic | Notebook
 :-----: | :--------:
-Introduction to Macros | [click for notebook](../lecture5-macros)
+Function Approximation | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week5/funcapprox.ipynb)
+Integration | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week5/integration.ipynb)
