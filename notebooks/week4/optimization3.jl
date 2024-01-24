@@ -17,12 +17,11 @@ end
 # ╔═╡ 9c61c9d5-0d3d-47b7-8e7d-f929cfec3311
 begin
 	# 
-		using LaTeXStrings
+	using LaTeXStrings
 	using JuMP
 	using Plots
 	using Ipopt
 	using GLPK
-	using Cbc
 	using Distributions
 	using Statistics
 	using OrderedCollections
@@ -30,6 +29,7 @@ begin
 	using PlutoUI
 	using Test
 	using NLopt
+	using Cbc
 
 end
 
@@ -505,9 +505,6 @@ let
 	"""
 end
 
-# ╔═╡ c253b685-0dde-4103-8ea2-11fc92f8caa9
-distrib
-
 # ╔═╡ 061de138-b6fe-4437-aa26-0afaec2e66f0
 md"""
 # Linear Constrained Problems (LPs)
@@ -725,7 +722,7 @@ md"""
 # ╔═╡ b175638b-db07-41c5-a409-f7814d14dc42
 let
     # Maximization problem
-    m = Model(with_optimizer(Cbc.Optimizer))
+    m = Model(Cbc.Optimizer)
     set_optimizer_attribute(m, MOI.Silent(), true)
 
     @variable(m, x[1:5], Bin)
@@ -2059,7 +2056,6 @@ version = "1.4.1+0"
 # ╠═2d7bdf41-85fc-4d0c-a387-60f9c9b36fcb
 # ╟─3ba47370-c4df-4d22-8bda-0b7264927ae6
 # ╠═84b81d87-d015-4cc2-8649-c94ba7770bd9
-# ╠═c253b685-0dde-4103-8ea2-11fc92f8caa9
 # ╟─061de138-b6fe-4437-aa26-0afaec2e66f0
 # ╠═febc5df1-4ddd-48a7-94f8-251d316c72d0
 # ╠═1334fc66-23bb-4a9a-9534-6f4d7a88d235
