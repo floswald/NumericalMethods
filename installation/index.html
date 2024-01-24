@@ -31,7 +31,7 @@
       <br>
       <img src="/NumericalMethods/assets/ScPo-logo.png" style="width: 80px; height: auto; display: inline">
       <img src="/NumericalMethods/assets/julia-logo.svg" style="margin-left:1em; width: 80px; height: auto; display: inline">
-      <div style="opacity: 0.85; font-weight: bold; margin-bottom: 0.5em">SciencesPo Paris, École Doctorale, 2023</div>
+      <div style="opacity: 0.85; font-weight: bold; margin-bottom: 0.5em">SciencesPo Paris, École Doctorale, 2024</div>
       <h1 style="font-size:1em; opacity: 0.95;"><a href="/NumericalMethods/">Computational Economics for PhDs</a></h1>
       <div style="line-height:18px; font-size: 15px; opacity: 0.85">by <a href="https://floswald.github.io">Florian Oswald</a></div>
     </div>
@@ -70,19 +70,13 @@
 
 <!-- Content appended here -->
 <div class="franklin-content"><h1 id="first-time_setup_install_julia_pluto"><a href="#first-time_setup_install_julia_pluto">First-time setup: Install Julia &amp; Pluto</a></h1>
-<p><strong>Video version:</strong></p>
-<iframe id="installation" width="100%" height="360"
-src="https://www.youtube.com/embed/OOjKEgbt8AI"
-frameborder="0"
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-allowfullscreen></iframe>
-
-<p><br/> <br/> <br/> <strong>Text and pictures version:</strong></p>
-<h2 id="step_1_install_julia_163"><a href="#step_1_install_julia_163">Step 1: Install Julia 1.6.3</a></h2>
-<p>Go to <a href="https://julialang.org/downloads">https://julialang.org/downloads</a> and download the current stable release, Julia 1.6.3, using the correct version for your operating system &#40;Linux x86, Mac, Windows, etc&#41;.</p>
+<h2 id="step_1_install_julia"><a href="#step_1_install_julia">Step 1: Install Julia </a></h2>
+<h3 id="1a_via_juliaup"><a href="#1a_via_juliaup">1.a via <code>juliaup</code></a></h3>
+<p>The best way to install julia &#40;allows for multiple installed versions and will always alert to new releases&#41; is via the instructions at <a href="https://github.com/JuliaLang/juliaup">juliaup</a> - please follow those for your OS.</p>
+<h3 id="1b_via_direct_download"><a href="#1b_via_direct_download">1.b via direct download</a></h3>
+<p>you can equally well download the current release for your OS from <a href="https://julialang.org/downloads/">here</a></p>
 <h2 id="step_2_run_julia"><a href="#step_2_run_julia">Step 2: Run Julia</a></h2>
-<p>After installing, <strong>make sure that you can run Julia</strong>. On some systems, this means searching for the &quot;Julia 1.6.3&quot; program installed on your computer; in others, it means running the command <code>julia</code> in a terminal. Make sure that you can execute <code>1 &#43; 1</code>:</p>
-<p><img src="https://user-images.githubusercontent.com/6933510/91439734-c573c780-e86d-11ea-8169-0c97a7013e8d.png" alt="image" /></p>
+<p>After installing, <strong>make sure that you can run Julia</strong>. If you installed via <code>juliaup</code>, you should be able to start julia from your command line now by typing <code>julia</code> and hitting enter. Otherwise just launch the julia app from your Applications folder.</p>
 <p><em>Make sure that you are able to launch Julia and calculate <code>1&#43;1</code> before proceeding&#33;</em></p>
 <h2 id="step_3_install_a_hrefhttpsgithubcomfonspplutojlpluto"><a href="#step_3_install_a_hrefhttpsgithubcomfonspplutojlpluto">Step 3: Install <a href="https://github.com/fonsp/Pluto.jl"><code>Pluto</code></a></a></h2>
 <p>Next we will install the <a href="https://github.com/fonsp/Pluto.jl/blob/master/README.md"><strong>Pluto notebook</strong></a> that we will be using during the course. Pluto is a Julia <em>programming environment</em> designed for interactivity and quick experiments.</p>
@@ -91,10 +85,10 @@ allowfullscreen></iframe>
 <p>To install Pluto, we want to run a <em>package manager command</em>. To switch from <em>Julia</em> mode to <em>Pkg</em> mode, type <code>&#93;</code> &#40;closing square bracket&#41; at the <code>julia&gt;</code> prompt:</p>
 <pre><code class="language-julia">julia&gt; &#93;
 
-&#40;@v1.6&#41; pkg&gt;</code></pre>
+&#40;@v1.10&#41; pkg&gt;</code></pre>
 <p>The line turns blue and the prompt changes to <code>pkg&gt;</code>, telling you that you are now in <em>package manager mode</em>. This mode allows you to do operations on <strong>packages</strong> &#40;also called libraries&#41;.</p>
 <p>To install Pluto, run the following &#40;case sensitive&#41; command to <em>add</em> &#40;install&#41; the package to your system by downloading it from the internet. You should only need to do this <em>once</em> for each installation of Julia:</p>
-<pre><code class="language-julia">&#40;@v1.6&#41; pkg&gt; add Pluto</code></pre>
+<pre><code class="language-julia">&#40;@v1.10&#41; pkg&gt; add Pluto</code></pre>
 <p>This might take a couple of minutes, so you can go get yourself a cup of tea&#33;</p>
 <p><img src="https://user-images.githubusercontent.com/6933510/91440380-ceb16400-e86e-11ea-9352-d164911774cf.png" alt="image" /></p>
 <p>You can now close the terminal.</p>
@@ -145,7 +139,7 @@ julia&gt; Pluto.run&#40;&#41;</code></pre>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/floswald/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
-    Last modified: April 19, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    Last modified: January 24, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
