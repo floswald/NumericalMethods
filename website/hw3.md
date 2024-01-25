@@ -15,4 +15,4 @@ This homework asks you to think about a relatively simple case of nonlinear opti
 
 * As usual, teams of at least 2.
 * submit static html file.
-* [dropbox link](https://www.dropbox.com/request/y43E7FvF65BS6nD82CnL)
+* dropbox link via slack.

@@ -3,8 +3,8 @@
 
 
 * **Teacher:** Florian Oswald, [florian.oswald@sciencespo.fr](mailto:florian.oswald@sciencespo.fr)
-* **Class Times:** Tuesdays 17:00
-* **Class Location:** Paris 😄
+* **Class Times:** Mondays 17:00
+* **Class Location:** SciencesPo Paris
 * **Slack**: There will be a slack channel for all communication
 
 @def mintoclevel=2 

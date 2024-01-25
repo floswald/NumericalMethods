@@ -22,4 +22,4 @@ You have one week for this, i.e. submit by next Tuesday's class.
 **How and What to Submit?**
 
 * What? Two *static html* files of each of your notebooks (click top right on the triangle and circle symbols)
-* How? Upload your `.html` files in format `HW02-name1-name2.html` and `HW03-name1-name2.html` to [this dropbox folder](https://www.dropbox.com/request/WowIXslCy4a0YqnfmkWh).
+* How? Upload your `.html` files in format `HW02-name1-name2.html` and `HW03-name1-name2.html` the dropbox file request link which _will be shared with you via slack_.
