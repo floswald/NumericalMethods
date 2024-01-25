@@ -72,25 +72,27 @@
 <h1>Programming Languages and Why Julia?</h1>
 
 <p><strong>Table of Contents</strong></p>
-<div class="franklin-toc"><ol><li><a href="#prerequisites_installing_the_software_environment">Prerequisites: Installing the software environment</a></li><li><a href="#rendered_notebooks">&#40;Rendered&#41; Notebooks</a></li><li><a href="#introduction_and_why_julia">Introduction and: Why Julia?</a><ol><li><a href="#resources">Resources</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#prerequisites_installing_the_software_environment">Prerequisites: Installing the software environment</a></li><li><a href="#basics_repl_vscode_notebooks">Basics: REPL, VSCode, Notebooks</a></li><li><a href="#rendered_notebooks">&#40;Rendered&#41; Notebooks</a></li><li><a href="#introduction_and_why_julia">Introduction and: Why Julia?</a><ol><li><a href="#resources">Resources</a></li></ol></li></ol></div>
 <h2 id="prerequisites_installing_the_software_environment"><a href="#prerequisites_installing_the_software_environment">Prerequisites: Installing the software environment</a></h2>
-<p>Check out the <a href="/NumericalMethods/installation/">installation</a> page on this website which was copied from the MIT course <em>Computational Thinking</em>, or just watch the following video to learn how to set up Julia and Pluto – two pieces of software you will need to run the course materials on your own computer.</p>
-<br/>
-<iframe id="installation" width="100%" height="360"
-src="https://www.youtube.com/embed/OOjKEgbt8AI"
-frameborder="0"
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-allowfullscreen></iframe>
-
+<p>Check out the <a href="/NumericalMethods/installation/">installation</a> page on this website which was copied from the MIT course <em>Computational Thinking</em>.</p>
+<h2 id="basics_repl_vscode_notebooks"><a href="#basics_repl_vscode_notebooks">Basics: REPL, VSCode, Notebooks</a></h2>
+<p>We will repeat the basics of julia in a very condensed manner by going through steps 1-7 of <a href="https://modernjuliaworkflows.github.io/pages/writing/writing/">MoJuWo</a> live in class.</p>
+<p>julia REPL: <img src="/NumericalMethods/assets/REPL.png" alt="This is the julia REPL" /></p>
+<p>VScode: <img src="/NumericalMethods/assets/VSCode.png" alt="This is VSCode" /></p>
+<p>Notice how there is a julia REPL running <em>as part of</em> the VSCode editor. This is called an <em>integrated development environment</em> &#40;IDE&#41;. Very similar to an <code>R</code> session connected to <code>RStudio</code>, or the <code>python</code> interpreter being run through <code>PyCharm</code> etc.</p>
 <h2 id="rendered_notebooks"><a href="#rendered_notebooks">&#40;Rendered&#41; Notebooks</a></h2>
-<p>We used several Pluto.jl notebooks in this lecture. Here are three rendered ones:</p>
-<table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Variables</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/01-variables.html">click for notebook</a></td></tr><tr><td align="center">Functions</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/02-functions.html">click for notebook</a></td></tr><tr><td align="center">Arrays</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/03-arrays.html">click for notebook</a></td></tr><tr><td align="center">SIR Model</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/09-introsir.html">click for notebook</a></td></tr></table>
+<p>We used several Pluto.jl notebooks in this lecture. Here are four rendered ones:</p>
+<table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Variables</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/01-variables.html">click for notebook &#40;done in Intro to Programming&#41;</a></td></tr><tr><td align="center">Functions</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/02-functions.html">click for notebook &#40;done in Intro to Programming&#41;</a></td></tr><tr><td align="center">Arrays</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/03-arrays.html">click for notebook</a></td></tr><tr><td align="center">SIR Model</td><td align="center"><a href="https://floswald.github.io/julia-bootcamp/09-introsir.html">click for notebook</a></td></tr></table>
 <p>Please run the <a href="https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/01-fast.jl">01-fast.jl</a> notebook on your own computer for the benchmarks&#33; 🏎️</p>
 <h2 id="introduction_and_why_julia"><a href="#introduction_and_why_julia">Introduction and: Why Julia?</a></h2>
 <p>In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.</p>
 <p><a href="https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html">Slides for intro:</a> Why Julia? <strong>&#40;does not run in safari browser&#33; 🙁&#41;</strong></p>
 <h3 id="resources"><a href="#resources">Resources</a></h3>
 <ul>
+<li><p><a href="Modern Julia Workflow">https://modernjuliaworkflows.github.io</a></p>
+</li>
+<li><p><a href="StartHere.jl">https://github.com/JuliaCommunity/StartHere.jl</a></p>
+</li>
 <li><p><a href="https://www.sas.upenn.edu/~jesusfv/comparison_languages.pdf">Aruoba and Fernandez-Villaverde</a></p>
 </li>
 <li><p><a href="https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf">Jesus&#39; Julia Tutorial</a></p>
@@ -101,7 +103,7 @@ allowfullscreen></iframe>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/floswald/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
-    Last modified: January 24, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    Last modified: January 25, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
