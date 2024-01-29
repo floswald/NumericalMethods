@@ -45,9 +45,9 @@ class: impact
 .col-6[
 
 ### Research
-- Assistant Prof at the Department of Economics at ScPo Paris
+- Associate Prof at the Department of Economics at ScPo Paris
 
-- Housing, Macro, Labor and Urban
+- Urban, Macro, IO
 
 - Experience with HPC systems, AWS and google cloud
 
@@ -65,7 +65,7 @@ class: impact
 
 ## Logistics and Course Structure
 
-* Meetings: Every Tuesday except 28 Feb
+* Meetings: Every Monday
 
 --
 
@@ -85,7 +85,6 @@ class: impact
 
 * Term Project: Replicate a published paper with computational content.
     * More info [on syllabus](https://floswald.github.io/NumericalMethods/#term_project)
-    * Deadline for your proposal: April 1 2023 (no joke!)
     * Deadline for hand in: end of term.
 
 
@@ -548,7 +547,7 @@ class: impact
 
 * Non-trivial estimation exercise.
 
-* I had no code that to build upon. And only a vague idea of how to do this.
+* I had no code to build upon. And only a vague idea of how to do this.
     
 ]
 

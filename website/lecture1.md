@@ -47,7 +47,7 @@ Please run the [01-fast.jl](https://github.com/floswald/NumericalMethods/tree/ma
 
 In this section we want to understand why julia is a good choice for computational tasks - for Economists and others.
 
-[Slides for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia? **(does not run in safari browser! 🙁)**
+[Slides for intro:](https://raw.githack.com/floswald/NumericalMethods/master/slides/why-julia/dist/why-julia.html) Why Julia? **(does not run in my safari browser! 🤷🏻‍♂️)**
 
 ### Resources
 

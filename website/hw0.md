@@ -17,7 +17,7 @@ Pluto.run()
 
 ## Homework Submission
 
-You have one week for this, i.e. submit by next Tuesday's class. 
+You have one week for this, i.e. submit by next week's class. 
 
 **How and What to Submit?**
 
