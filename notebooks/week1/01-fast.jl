@@ -18,6 +18,15 @@ begin
 	using PlutoUI
 end
 
+# ╔═╡ c6800d07-ea75-4a16-8cad-e912fc1b627d
+let 
+	x = 10
+	y = 1
+end
+
+# ╔═╡ 0dcce357-1977-436c-a806-92fa311a8a45
+x
+
 # ╔═╡ df4b5232-1d80-4b01-b9a3-41a3b0b9244a
 PlutoUI.TableOfContents()
 
@@ -1629,6 +1638,8 @@ version = "1.4.1+1"
 
 # ╔═╡ Cell order:
 # ╠═fef98014-51fc-11eb-15ad-d17044bcab51
+# ╠═c6800d07-ea75-4a16-8cad-e912fc1b627d
+# ╠═0dcce357-1977-436c-a806-92fa311a8a45
 # ╠═df4b5232-1d80-4b01-b9a3-41a3b0b9244a
 # ╟─d0cb1cea-51fa-11eb-3097-f1b352770dbf
 # ╠═794c7764-51fc-11eb-2325-91421e8833e3
@@ -1660,7 +1671,7 @@ version = "1.4.1+1"
 # ╟─fa241eae-55e0-11eb-3bb4-f53733f79ac2
 # ╟─65ed46ec-55e1-11eb-31f7-89d53b044287
 # ╠═b067eda8-55e1-11eb-0f71-f9d8ae131d90
-# ╠═d672614a-55e1-11eb-078e-53c6eb9b4c30
+# ╟─d672614a-55e1-11eb-078e-53c6eb9b4c30
 # ╟─8a4e8d89-aa40-400f-ae19-6635198f0103
 # ╠═bc7080ca-55e5-11eb-0508-bf469f549365
 # ╟─b6238d99-83d6-4a3e-b8ed-49ba71437e43

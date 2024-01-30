@@ -51,8 +51,8 @@ In this section we want to understand why julia is a good choice for computation
 
 ### Resources
 
-* [https://modernjuliaworkflows.github.io](Modern Julia Workflow)
-* [https://github.com/JuliaCommunity/StartHere.jl](StartHere.jl)
+* [Modern Julia Workflow](https://modernjuliaworkflows.github.io)
+* [StartHere.jl](https://github.com/JuliaCommunity/StartHere.jl)
 * [Aruoba and Fernandez-Villaverde](https://www.sas.upenn.edu/~jesusfv/comparison_languages.pdf)
 * [Jesus' Julia Tutorial](https://www.sas.upenn.edu/~jesusfv/Chapter_HPC_8_Julia.pdf)
 * [Chapter 1 of Julia for Data Analysis](https://www.manning.com/books/julia-for-data-analysis)
