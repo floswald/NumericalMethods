@@ -36,30 +36,36 @@ md"""
 read the data. 
 """
 
+# ╔═╡ 8d8aa021-d93c-4e42-bf71-ace2e92c7c84
+d2 = CSV.read(joinpath(@__DIR__,"starts.csv"),DataFrame)
+
+
+# ╔═╡ 32cc6fca-4754-410f-b7b4-838dcbd5365b
+rd = load(joinpath(@__DIR__,"starts-vals.Rda"))
+
+# ╔═╡ 6f7fd889-cb79-4d48-9060-5c0100bbe1d9
+rd["gcap"]
+
 # ╔═╡ 8ad86c28-56f8-4441-bcae-e22a2250cfe3
 # import data from R datastructure
-function readdata(;censor_at = 200)
+function readdata()
     d = CSV.read(joinpath(@__DIR__,"starts.csv"),DataFrame)
     rd = load(joinpath(@__DIR__,"starts-vals.Rda"))
 
     @info """
-    
     👉 Reading data on drivetimes for all garages to all route start points. 
-    👉 will censor for each route at the $censor_at-th shortest drivetime.
         """
     ds = @chain d begin
         innerjoin(rd["gcap"], on = :gc => :garage_code)
         rename!(:gc => :garage_code)
 
-        sort([:duration, :Route])
-        groupby(:Route)
-        # 1,1,1,4,5, up to length censor_at
-        # and get rid of duplicate rows.
-        subset(:pvr_tenderroute => (x -> x .== maximum(x)),ungroup = false)
-        subset(:duration => (x -> sortperm(x) .<= censor_at))
-
-        sort([:Route,:garage_code])
-        unique()
+        # sort([:duration, :Route])
+        # groupby(:Route)
+        # # 1,1,1,4,5, up to length censor_at
+        # # and get rid of duplicate rows.
+        # subset(:pvr_tenderroute => (x -> x .== maximum(x)),ungroup = false)
+        # sort([:Route,:garage_code])
+        # unique()
     end
 
     pvrs = @chain ds begin
@@ -80,7 +86,7 @@ function readdata(;censor_at = 200)
 
 
     Dict(:d => d, :ds => ds, :cap => cap, :totalbuses => rd["totalBuses"],
-    :pvrs => pvrs, :censor_at => censor_at)
+    :pvrs => pvrs)
 end
 
 # ╔═╡ fb95d69c-701d-4182-a4f3-f7b546dcab3e
@@ -805,6 +811,9 @@ version = "17.4.0+2"
 # ╠═9d44de24-d722-40b3-a833-cfa960038f9d
 # ╟─7360b65c-dfb0-11ee-2ea1-ed41d39e6e3e
 # ╟─ddd104fa-efbb-4cfb-9950-421aa268adc9
+# ╠═8d8aa021-d93c-4e42-bf71-ace2e92c7c84
+# ╠═32cc6fca-4754-410f-b7b4-838dcbd5365b
+# ╠═6f7fd889-cb79-4d48-9060-5c0100bbe1d9
 # ╠═8ad86c28-56f8-4441-bcae-e22a2250cfe3
 # ╠═fb95d69c-701d-4182-a4f3-f7b546dcab3e
 # ╠═1f483be0-db3c-4783-bfb2-e67b1352dd51
