@@ -262,6 +262,7 @@ Figure(backgroundcolor = :green, size = (600,200))
 let  
 	f = Figure()
 	ax = Axis(f[1,1])  # create a plot object at this position in the f grid
+	ax = Axis(f[1,2])  # create a plot object at this position in the f grid
 	f
 end
 
