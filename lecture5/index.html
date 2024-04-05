@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  
+   <link rel="stylesheet" href="/NumericalMethods/libs/highlight/github.min.css">
+   
   <link rel="stylesheet" href="/NumericalMethods/css/franklin.css">
 <link rel="stylesheet" href="/NumericalMethods/css/poole_hyde.css">
 <link rel="stylesheet" href="/NumericalMethods/css/custom.css">
@@ -52,7 +53,7 @@
       <a class="sidebar-nav-item " href="/NumericalMethods/hw3/"><b>Homework 3</b></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture4/"><b>Lecture 4</b> - <em>Optimization 2+3</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/hw4/"><b>Homework 4</b></a>
-      <a class="sidebar-nav-item active" href="/NumericalMethods/lecture5/"><b>Lecture 5</b> - <em>Function Approximation</em></a>     
+      <a class="sidebar-nav-item active" href="/NumericalMethods/lecture5/"><b>Lecture 5</b> - <em>Parallel Computing</em></a>     
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture6/"><b>Lecture 6</b> - <em>Julia and Data</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture7/"><b>Lecture 7</b> - <em>Dynamic Programming</em></a>
       <a class="sidebar-nav-item " href="/NumericalMethods/lecture8/"><b>Lecture 8</b> - <em>Discrete + Continuous</em></a>
@@ -69,14 +70,373 @@
 
 <!-- Content appended here -->
 <div class="franklin-content">
-<h1>Lecture 5: Function Approximation and Integration</h1>
+<h1>Lecture 5: Parallel Programming</h1>
 
-<h2 id="notebooks"><a href="#notebooks">Notebooks</a></h2>
-<table><tr><th align="center">Topic</th><th align="center">Notebook</th></tr><tr><td align="center">Function Approximation</td><td align="center"><a href="https://github.com/floswald/NumericalMethods/blob/master/notebooks/week5/funcapprox.ipynb">right-click and save notebook</a></td></tr><tr><td align="center">Integration</td><td align="center"><a href="https://github.com/floswald/NumericalMethods/blob/master/notebooks/week5/integration.ipynb">right-click and save notebook</a></td></tr></table>
+<h2 id="general_points"><a href="#general_points">General Points</a></h2>
+<ul>
+<li><p>Parallel computation can be beneficial strategy to speed up long running computational tasks, like for instance computing the solution to your economic model.</p>
+</li>
+<li><p>The gains from parallel computation depend on how much communication &#40;data transfer&#41; a certain task involves: transferring large amounts of data to and from different compute units takes time.</p>
+</li>
+<li><p>The largest HPC systems in the world connect hundreds of thousands of computers into a compute <em>cluster</em></p>
+</li>
+<li><p>The smalles parallel computation unit lives on your CPU.</p>
+</li>
+<li><p>The basic idea is simple: If a computational task of duration <code>M</code> can split into <code>N</code> subtasks, which can be performed <em>concurrently</em> &#40;at the same time&#41;, without interfering with each other, then <em>in theory</em>, the duration of the task should fall to <code>M/N</code>. <em>In practice</em> we almost never achieve this theoretical bound, because of time spent communicating between computational units and other <em>system time</em>. </p>
+</li>
+</ul>
+<h2 id="resources"><a href="#resources">Resources:</a></h2>
+<ol>
+<li><p>Julia <a href="https://juliahub.com/assets/pdf/Parallel-Computing-Guide-for-Julia-byJuliaHub.pdf">whitepaper</a></p>
+</li>
+<li><p><a href="https://www.sas.upenn.edu/~jesusfv/Guide_Parallel.pdf">Guide</a> by Jesus Fernandez-Villaverde and David Zurrak-Valencia</p>
+</li>
+<li><p><a href="https://github.com/floswald/2021-03-17-parallelization-tutorial">Parallel Datascience</a> tutorial</p>
+</li>
+</ol>
+<h2 id="definitions"><a href="#definitions">Definitions</a></h2>
+<ul>
+<li><p><code>task</code>: a unit of work to be executed</p>
+</li>
+<li><p><code>thread</code>: sequences of instructions that can be excuted by a CPU core</p>
+</li>
+<li><p><code>core</code>: an individual processing unit within a CPU that can perform tasks independently</p>
+</li>
+<li><p><code>machine</code>: individual computer with own hardware</p>
+</li>
+</ul>
+<h2 id="parallel_paradigms_achievable_with_julia"><a href="#parallel_paradigms_achievable_with_julia">Parallel Paradigms achievable with <code>julia</code></a></h2>
+<ol>
+<li><p>Asyncronous Tasks or Coroutines</p>
+</li>
+<li><p>Multi-Threading</p>
+</li>
+<li><p>Distributed Computing</p>
+</li>
+<li><p>GPU Computing</p>
+</li>
+</ol>
+<p>Paradigms 1. and 2. live in a <em>shared memory</em> world, i.e. they operate within the same physical infrastructure: your computer has a CPU, and a block of RAM where data is stored for computation. You do <em>not</em> have to worry about your compute unit, one of your <em>thread</em>&#39;s for example, not being able to access information in RAM.</p>
+<p>Paradigms 3. and 4. are different, because they &#40;can&#41; rely on <strong>separate</strong> hardware. We can start a distributed julia process inside a single machine, but this will behave <em>like another computer</em> &#40;almost&#41;, so you will have to worry about making data and functions accessible to all worker processes.</p>
+<h2 id="asyncronous_tasks_or_coroutines"><a href="#asyncronous_tasks_or_coroutines"><ol>
+<li><p>Asyncronous Tasks or Coroutines</p>
+</li>
+</ol>
+</a></h2>
+<p>Even within a single thread there may be computational operations which can be performed next to each other. <em>Coroutines</em> split a single task into multiple chunks, and there is an efficient process which allows <em>non-blocking execution</em>. This may be beneficial in I/O operations or when we wait for something to arrive via a network. It is <em>not</em> beneficial if our operation involvs many CPU cycles &#40;i.e. if it&#39;s compute intensive&#41;. Let&#39;s see an example.</p>
+<pre><code class="language-julia"># make sure we only have a single thread
+# this is default startup behaviour
+julia&gt; Threads.nthreads&#40;&#41;
+1</code></pre>
+<p>Suppose we have this long running operation &#40;waiting for a server to respond, or something else to arrive&#41;:</p>
+<pre><code class="language-julia">function long_process&#40;&#41;
+    sleep&#40;3&#41;
+    return 42 # the answer to life, the universe, and everything
+end</code></pre>
+<p>Now let&#39;s run that function three times.</p>
+<pre><code class="language-julia">julia&gt; @elapsed begin
+           p1 &#61; long_process&#40;&#41;
+           p2 &#61; long_process&#40;&#41;
+           p3 &#61; long_process&#40;&#41;
+           &#40;p1, p2, p3&#41;
+       end
+
+9.005953083</code></pre>
+<p>So this takes roughly 9 seconds, as expected. </p>
+<p>Look at how we wrote the above program, pretty standard. We do one task after the other &#40;nevermind that here it&#39;s the same task three times - irrelevant&#41;. It&#39;s how you <em>think</em> a computer works, no? 🤔 You <em>think</em> it does one thing after the other. </p>
+<p>Well...that&#39;s not always accurate. Check this out from the <a href="https://docs.julialang.org/en/v1/manual/asynchronous-programming/">manual</a>. You can think of a Task as a handle to a unit of computational work to be performed. It has a <em>create-start-run-finish</em> lifecycle. Tasks are created by calling the Task constructor on a 0-argument function to run, or using the @task macro:</p>
+<pre><code class="language-julia">julia&gt; t &#61; @task begin; sleep&#40;5&#41;; println&#40;&quot;done&quot;&#41;; end
+Task &#40;runnable&#41; @0x000000029f3384c0</code></pre>
+<p>that thing will sleep for 5 seconds and then print done. but why is nothing happening?</p>
+<p>well, we just created the task, which is <em>runnable</em>. we havne&#39;t run it yet&#33; We run something by <em>scheduling</em> it to be run. Like this:</p>
+<pre><code class="language-julia">julia&gt; schedule&#40;t&#41;;
+
+julia&gt;</code></pre>
+<p>notice how the prompt returns so we can do other stuff in the meantime...and how we get a <code>done</code> after 5 seconds&#33;</p>
+<p>ok, back to our example:</p>
+<pre><code class="language-julia">julia&gt; t0 &#61; @elapsed begin
+           p1 &#61; long_process&#40;&#41;
+           p2 &#61; long_process&#40;&#41;
+           p3 &#61; long_process&#40;&#41;
+           &#40;p1, p2, p3&#41;
+       end
+
+julia&gt; t0
+9.006154334</code></pre>
+<p>Now, check this out. Let&#39;s write this as tasks that should get scheduled.</p>
+<pre><code class="language-julia">julia&gt; t1 &#61; @elapsed begin
+           t1 &#61; Task&#40;long_process&#41;; schedule&#40;t1&#41;
+           t2 &#61; Task&#40;long_process&#41;; schedule&#40;t2&#41;
+           t3 &#61; Task&#40;long_process&#41;; schedule&#40;t3&#41;
+           &#40;fetch&#40;t1&#41;, 
+            fetch&#40;t2&#41;, 
+            fetch&#40;t3&#41;&#41; # fetch triggers execution
+       end
+3.008685666</code></pre>
+<p>🤯 3 seconds?&#33; Keep in mind that</p>
+<pre><code class="language-julia">julia&gt; Threads.nthreads&#40;&#41;
+1</code></pre>
+<p>What happened?</p>
+<p>The <code>Task</code> means that each job <code>t1,t2,t3</code> was started as a separate unit of work. <em>Not</em> as we thought, that defining <code>t2</code> on the line below <code>t1</code> would <em>by definition</em> mean that one runs <strong>after</strong> the other. No, given those are <code>Tasks</code> means that the scheduler is free to allocate those chunks of work to whichever resources are currently free on your CPU. Here is a picture from the whitepaper:</p>
+<p><img src="/NumericalMethods/assets/tasks.png" alt="from julia whitepaper" /></p>
+<p>You can see that julia makes it extremely easy to run <em>concurrent</em> tasks. Check out more in the manual: https://docs.julialang.org/en/v1/manual/parallel-computing/</p>
+<h2 id="ol_start2_multi-threading"><a href="#ol_start2_multi-threading"><ol start="2">
+<li><p>Multi-Threading</p>
+</li>
+</ol>
+</a></h2>
+<ul>
+<li><p>What are threads again? <em>Threads are sequences of instructions given to the CPU</em> which can be executed concurrently. So, multithreading is something that happens on a <em>core</em> of CPU. Your CPU may have several <em>cores</em>. </p>
+</li>
+<li><p>The <a href="https://docs.julialang.org/en/v1/manual/multi-threading/#man-multithreading">manual</a> is the authorative source - very comprehensive.</p>
+</li>
+</ul>
+<p>First question you should ask: <em>how many cores does my computer have?</em> </p>
+<pre><code class="language-julia">julia&gt; length&#40;Sys.cpu_info&#40;&#41;&#41;
+10</code></pre>
+<p><img src="/NumericalMethods/assets/cores.png" alt="physical cores" /></p>
+<p>Ok, next question: how to start julia with multiple threads? </p>
+<pre><code class="language-julia"># starting julia on the command line with the --threads flag
+floswald@PTL11077 ~&gt; julia --threads&#61;4
+
+julia&gt; Threads.nthreads&#40;&#41;
+4
+
+julia&gt;</code></pre>
+<p>alternatively you could set the environment variable <code>JULIA_NUM_THREADS&#61;4</code> or use the <code>auto</code> function to choose the <em>best</em> number.</p>
+<pre><code class="language-julia">floswald@PTL11077 ~&gt; julia --threads&#61;auto
+
+julia&gt; Threads.nthreads&#40;&#41;
+8</code></pre>
+<p>Finally, in your VScode, you can edit the file <code>settings.json</code> &#40;command palette and type settings.json&#41; and add <code>&quot;julia.NumThreads&quot;: 4</code> - this will start the VSCode REPL with 4 threads each time, <code>&quot;julia.NumThreads&quot;: &quot;auto&quot;</code> will set the flag to <code>auto</code> etc.</p>
+<p>Alright, let&#39;s do it finally.</p>
+<pre><code class="language-julia">julia&gt; using Base.Threads
+
+julia&gt; for i &#61; 1:16
+           println&#40;&quot;Hello from thread &quot;, threadid&#40;&#41;&#41;
+       end
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1
+Hello from thread 1</code></pre>
+<p>So far, so good. Let&#39;s evaluate this loop now over our available threads. Easy with the <code>@threads</code> macro:</p>
+<pre><code class="language-julia">julia&gt; @threads for i &#61; 1:16
+           println&#40;&quot;Hello from thread &quot;, threadid&#40;&#41;&#41;
+       end
+Hello from thread 2
+Hello from thread 4
+Hello from thread 1
+Hello from thread 1
+Hello from thread 8
+Hello from thread 2
+Hello from thread 4
+Hello from thread 3
+Hello from thread 8
+Hello from thread 6
+Hello from thread 5
+Hello from thread 3
+Hello from thread 7
+Hello from thread 6
+Hello from thread 7
+Hello from thread 5</code></pre>
+<p>Or, to come back to the above example:</p>
+<pre><code class="language-julia">julia&gt; @elapsed begin
+           @threads for _ in 1:3
+               long_process&#40;&#41;
+           end
+       end
+3.030319708</code></pre>
+<p>🤔 How could we prove that are executing something on multiple threads? Let&#39;s use the <code>@spawn</code> macro to distribute a piece of code over available threads. Let&#39;s make the task an infinite loop that runs for as long as the variable <code>x</code> is equal to <code>1</code>. Check out how the prompt returns immediately.</p>
+<pre><code class="language-julia">julia&gt; x &#61; 1
+1
+
+julia&gt; @spawn begin
+           while x &#61;&#61; 1
+                # infinite loop 
+           end
+           println&#40;&quot;infinite loop done&quot;&#41;
+       end
+Task &#40;runnable&#41; @0x000000010dcdddc0
+
+julia&gt;</code></pre>
+<p>Well, why, that inifinite loop is running on one of my 4 threads now:</p>
+<p><img src="/NumericalMethods/assets/threadon.png" alt="physical cores" /></p>
+<p>until we kill it by saying</p>
+<pre><code class="language-julia">julia&gt; x &#61; 3
+infinite loop done
+3</code></pre>
+<p><img src="/NumericalMethods/assets/threadoff.png" alt="physical cores" /></p>
+<p>The difference between <code>@threads</code> and <code>@spawn</code> is that the former works well for balanced loops &#40;same amount of work load for each iteration&#41; while the latter works better for unbalanced workloads. Example, shamelessly stolen from <a href="https://juliahub.com/company/resources/webinar/multi-threading-using-julia/">Jeff Bezanon&#39;s multithreading webinar</a> - Let us compute the Mandelbrot set. The computations are very different at different iterations, hence the workload is super unbalanced. Some threads will have a ton of work, others, very little. </p>
+<pre><code class="language-julia">julia&gt; &quot;&quot;&quot;
+           mandelbrot set escape time algorithm
+
+           https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set
+
+       &quot;&quot;&quot;
+       function escapetime&#40;z; maxiter &#61; 80&#41;
+           c &#61; z
+           for n &#61; 1:maxiter
+               if abs&#40;z&#41; &gt; 2
+                   return n-1
+               end
+               z &#61; z^2 &#43; c
+           end
+           return maxiter
+       end
+escapetime</code></pre>
+<p>and here is a function that computes the whole set by using this function:</p>
+<pre><code class="language-julia">julia&gt; function mandel&#40;; width &#61; 1600, height &#61; 1200, maxiter &#61; 500&#41;
+           out &#61; zeros&#40;Int,height, width&#41;
+           real &#61; range&#40;-2.0,0.5,length&#61;width&#41;
+           imag &#61; range&#40;-1.0,1.0, length&#61;height&#41;
+           for x in 1:width
+               for y in 1:height
+                   z &#61; real&#91;x&#93; &#43; imag&#91;y&#93;*im 
+                   out&#91;y,x&#93; &#61; escapetime&#40;z,maxiter &#61; maxiter&#41;
+               end
+           end
+           return out
+       end
+mandel &#40;generic function with 1 method&#41;</code></pre>
+<p>Let&#39;s run it in serial model, i.e. no multi-threading at all:</p>
+<pre><code class="language-julia">julia&gt; # time it
+       m_serial &#61; @elapsed m &#61; mandel&#40;&#41;
+1.565549583
+
+
+# plot it
+img &#61; Gray.&#40;&#40;m .&#37; 500&#41; ./ 100&#41;</code></pre>
+<p><img src="/NumericalMethods/assets/mandel.png" alt="" /></p>
+<p>alright, time to parallelize this over our threads.</p>
+<p>let&#39;s try and parallelize this now.</p>
+<pre><code class="language-julia">julia&gt; function mandel_outer_thread&#40;; width &#61; 1600, height &#61; 1200, maxiter &#61; 500&#41;
+           out &#61; zeros&#40;Int,height, width&#41;
+           real &#61; range&#40;-2.0,0.5,length&#61;width&#41;
+           imag &#61; range&#40;-1.0,1.0, length&#61;height&#41;
+           # we parellize over the x direction
+           @threads for x in 1:width     
+               for y in 1:height
+                   z &#61; real&#91;x&#93; &#43; imag&#91;y&#93;*im 
+                   out&#91;y,x&#93; &#61; escapetime&#40;z,maxiter &#61; maxiter&#41;
+               end
+           end
+           return out
+       end
+mandel_outer_thread &#40;generic function with 1 method&#41;
+
+julia&gt; m_thread &#61; @elapsed mandel_outer_thread&#40;&#41;;
+
+julia&gt; m_serial / m_thread
+3.3293004734319482</code></pre>
+<p>ok, about a 3x speedup. For 8 threads&#33; That&#39;s far from linear scaling.  problem here is how the julia scheduler assigns jobs to threads in this loop. by default it gives the same number of jobs to each thread. But in this example you see that some iterations are much more labor intensive than others. So that&#39;s not great.</p>
+<p>Let&#39;s split the work along the columns of the <code>out</code> matrix and lets use <code>@spawn</code>, which will assign tasks to threads as they become available</p>
+<pre><code class="language-julia">julia&gt; function mandel_spawn&#40;; width &#61; 1600, height &#61; 1200, maxiter &#61; 500&#41;
+           out &#61; zeros&#40;Int,height, width&#41;
+           real &#61; range&#40;-2.0,0.5,length&#61;width&#41;
+           imag &#61; range&#40;-1.0,1.0, length&#61;height&#41;
+           # we want to wait in the end for all threads to finish
+           @sync for x in 1:width 
+                # here we say &#39;distribute columns to free threads&#39; 
+                @spawn for y in 1:height  
+                    z &#61; real&#91;x&#93; &#43; imag&#91;y&#93;*im 
+                    out&#91;y,x&#93; &#61; escapetime&#40;z,maxiter &#61; maxiter&#41;
+               end
+           end
+           return out
+       end
+mandel_spawn &#40;generic function with 1 method&#41;
+
+julia&gt; m_spawn &#61; @elapsed mandel_spawn&#40;&#41;;
+
+julia&gt; m_serial / m_spawn
+6.243123492042317</code></pre>
+<p>Ok, that&#39;s better&#33;</p>
+<p>In general, I have found multithreading to work well at a level of a workload of a few seconds. I.e. if you can choose at which level of a nested loop to put the <code>@threads</code> macro, the tradeoff between sending data across threads and taking advantage of parallelization for me seemed optimal if the that task takes a few seconds. That said, any such statements are <em>very</em> context specific, and getting good performance out of threaded models takes a good amount of experimentation, in my experience.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">Although Julia&#39;s threads can communicate through shared memory, it is notoriously difficult to write correct and data-race free multi-threaded code. Julia&#39;s Channels are thread-safe and may be used to communicate safely. You are entirely responsible for ensuring that your program is data-race free, and nothing promised here can be assumed if you do not observe that requirement. The observed results may be highly unintuitive. The best way to ensure this is to acquire a lock around any access to data that can be observed from multiple threads. For example, in most cases you should use the following code pattern:</div></div>
+<pre><code class="language-julia">x &#61; &#91;1,2,3&#93;
+lck &#61; Threads.SpinLock&#40;&#41;
+
+Threads.@threads for i in 1:100
+    position &#61; i &#37; 3 &#43; 1
+    lock&#40;lck&#41; do
+        x&#91;position&#93; &#43;&#61; 1
+    end
+end</code></pre>
+<h4 id="data_race_conditions"><a href="#data_race_conditions">Data Race Conditions</a></h4>
+<pre><code class="language-julia">julia&gt; function sum_single&#40;a&#41;
+           s &#61; 0
+           for i in a
+               s &#43;&#61; i
+           end
+           s
+       end
+sum_single &#40;generic function with 1 method&#41;
+
+julia&gt; sum_single&#40;1:1_000_000&#41;
+500000500000
+
+julia&gt; function sum_multi_bad&#40;a&#41;
+           s &#61; 0
+           Threads.@threads for i in a
+               s &#43;&#61; i
+           end
+           s
+       end
+sum_multi_bad &#40;generic function with 1 method&#41;
+
+julia&gt; sum_multi_bad&#40;1:1_000_000&#41;
+70140554652</code></pre>
+<p>That&#39;s clearly wrong, and worse yet, it will be wrong in a different way each time you run it &#40;because thread availability changes&#41;. We could instead assign chunks of work to each thread and the collect in the end:</p>
+<pre><code class="language-julia">julia&gt; function sum_multi_good&#40;a&#41;
+           chunks &#61; Iterators.partition&#40;a, length&#40;a&#41; ÷ Threads.nthreads&#40;&#41;&#41;
+           tasks &#61; map&#40;chunks&#41; do chunk
+               Threads.@spawn sum_single&#40;chunk&#41;
+           end
+           chunk_sums &#61; fetch.&#40;tasks&#41;
+           return sum_single&#40;chunk_sums&#41;
+       end
+sum_multi_good &#40;generic function with 1 method&#41;
+
+julia&gt; sum_multi_good&#40;1:1_000_000&#41;
+500000500000</code></pre>
+<h2 id="ol_start3_distributed_computing"><a href="#ol_start3_distributed_computing"><ol start="3">
+<li><p>Distributed Computing</p>
+</li>
+</ol>
+</a></h2>
+<p>The <a href="https://docs.julialang.org/en/v1/manual/distributed-computing/">manual</a> is again very helpful here.</p>
+<p>Let&#39;s start a new julia session now, without multithreading, but with multiple <em>processes</em>.</p>
+<pre><code class="language-julia">floswald@PTL11077 ~&gt; julia -p 2                                                                                                                                                 &#40;base&#41; 
+
+# -p implicitly loads the &#96;Distributed&#96; module
+
+julia&gt; nprocs&#40;&#41;
+3
+
+julia&gt; workers&#40;&#41;
+2-element Vector&#123;Int64&#125;:
+ 2
+ 3</code></pre>
+<p>So, by default we have process number 1 &#40;which is the one where we type stuff into the REPL, i.e. where we interact&#41;. Then, we said <code>-p 2</code> meaning <em>add 2 processes</em>, that is why <code>workers&#40;&#41;</code> shows ids 2 and 3.</p>
+<p>Distributed programming in Julia is built on two primitives: remote references and remote calls. A remote reference is an object that can be used from any process to refer to an object stored on a particular process. A remote call is a request by one process to call a certain function on certain arguments on another &#40;possibly the same&#41; process.</p>
+<p>Remote references come in two flavors: Future and RemoteChannel.</p>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/floswald/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
-    Last modified: March 28, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    Last modified: April 05, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
@@ -96,6 +456,10 @@
             }
         }
     </script>
+    
+        <script src="/NumericalMethods/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
     
 
     <!-- Global site tag (gtag.js) - Google Analytics -->

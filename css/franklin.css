@@ -254,3 +254,30 @@ code {
     margin-bottom: 5px;
     border-radius: 0 10px 10px 0;
     border-left: 5px solid #4C9CF1; }
+
+
+.note {
+    margin-top: 1.5em;
+    width: 95%;
+    margin-left:5px;
+    margin-right:5px;
+    background-color:  aliceblue;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    }
+    .note .content {
+    padding: 1px;
+    padding-left: 1px;
+    margin-left:10px;
+    margin-right:5px;
+    }
+    .note .title{
+    font-size: 105%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-left: 7px;
+    padding-top: 2px;
+    color: white;
+    background: cornflowerblue;
+    }
+
