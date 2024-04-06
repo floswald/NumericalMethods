@@ -72,6 +72,17 @@
 <div class="franklin-content">
 <h1>Lecture 5: Parallel Programming</h1>
 
+<h2 id="caveats_first"><a href="#caveats_first">Caveats First</a></h2>
+<ul>
+<li><p>You hear often: &quot;sure, that&#39;s a big problem you have there. But you can parallelize it&#33;&quot; Whether that will help in your case is strictly problem-specific. You need to <em>try it out</em> in order to know.</p>
+</li>
+<li><p>First, you want to make sure your application produces <em>correct</em> results. You <em>test</em> it.</p>
+</li>
+<li><p>Then you try to make it as efficient as possible on a single process, i.e. in <strong>serial mode</strong>. There are a <em>great, many</em> things to know about <a href="https://viralinstruction.com/posts/hardware/">how to write efficient code; starting with the hardware you dispose of</a></p>
+</li>
+<li><p>Finally, you can attempt to scale your application to more than one processes. That&#39;s what we&#39;ll talk about today.</p>
+</li>
+</ul>
 <h2 id="general_points"><a href="#general_points">General Points</a></h2>
 <ul>
 <li><p>Parallel computation can be beneficial strategy to speed up long running computational tasks, like for instance computing the solution to your economic model.</p>
@@ -80,7 +91,7 @@
 </li>
 <li><p>The largest HPC systems in the world connect hundreds of thousands of computers into a compute <em>cluster</em></p>
 </li>
-<li><p>The smalles parallel computation unit lives on your CPU.</p>
+<li><p>The smallest parallel computation unit lives on your CPU.</p>
 </li>
 <li><p>The basic idea is simple: If a computational task of duration <code>M</code> can split into <code>N</code> subtasks, which can be performed <em>concurrently</em> &#40;at the same time&#41;, without interfering with each other, then <em>in theory</em>, the duration of the task should fall to <code>M/N</code>. <em>In practice</em> we almost never achieve this theoretical bound, because of time spent communicating between computational units and other <em>system time</em>. </p>
 </li>
