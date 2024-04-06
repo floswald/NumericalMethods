@@ -412,6 +412,8 @@ sum_multi_good &#40;generic function with 1 method&#41;
 
 julia&gt; sum_multi_good&#40;1:1_000_000&#41;
 500000500000</code></pre>
+<h3 id="real_life_example_of_data_race"><a href="#real_life_example_of_data_race">Real Life Example of Data Race</a></h3>
+<p>In this <a href="https://github.com/floswald/FMig.jl/pull/17/commits/119b34bbf621374be187a023399d74a5e16c3934">research project - &#91;private repo&#93;</a> we encountered a situation very similar to the above.</p>
 <h2 id="ol_start3_distributed_computing"><a href="#ol_start3_distributed_computing"><ol start="3">
 <li><p>Distributed Computing</p>
 </li>
@@ -432,11 +434,154 @@ julia&gt; workers&#40;&#41;
  3</code></pre>
 <p>So, by default we have process number 1 &#40;which is the one where we type stuff into the REPL, i.e. where we interact&#41;. Then, we said <code>-p 2</code> meaning <em>add 2 processes</em>, that is why <code>workers&#40;&#41;</code> shows ids 2 and 3.</p>
 <p>Distributed programming in Julia is built on two primitives: remote references and remote calls. A remote reference is an object that can be used from any process to refer to an object stored on a particular process. A remote call is a request by one process to call a certain function on certain arguments on another &#40;possibly the same&#41; process.</p>
-<p>Remote references come in two flavors: Future and RemoteChannel.</p>
+<p>In the manual you can see a low level API which allows you to directly call a function on a remote worker, but that&#39;s most of the time not what you want. We&#39;ll concentrate on the higher-level API here. One big issue here is:</p>
+<h3 id="code_and_data_availability"><a href="#code_and_data_availability">Code and Data Availability</a></h3>
+<p>We must ensure that the code we want to execute is available on the process that runs the computation. That sounds fairly obvious. But now try to do this. First we define a new function on the REPL, and we call it on the master, as usual:</p>
+<pre><code class="language-julia">julia&gt; function new_rand&#40;dims...&#41;
+           return 3 * rand&#40;dims...&#41;
+       end
+new_rand &#40;generic function with 1 method&#41;
+
+julia&gt; new_rand&#40;2,2&#41;
+2×2 Matrix&#123;Float64&#125;:
+ 0.407347  2.23388
+ 1.29914   0.985813</code></pre>
+<p>Now, we want to <code>spawn</code> running of that function on <code>any</code> available process, and we immediately <code>fetch</code> it to trigger execution:</p>
+<pre><code class="language-julia">julia&gt; fetch&#40;@spawnat :any new_rand&#40;2,2&#41;&#41;
+ERROR: On worker 3:
+UndefVarError: &#96;#new_rand&#96; not defined
+Stacktrace:</code></pre>
+<p>It seems that worker 3, where the job was sent with <code>@spawnat</code>, does not know about our function <code>new_rand</code>. 🧐</p>
+<p>Probably the best approach to this is to define your functions inside a module, as we already discussed. This way, you will find it easy to share code and data across worker processes. Let&#39;s define this module in a file in the current directory. let&#39;s call it <code>DummyModule.jl</code>:</p>
+<pre><code class="language-julia">module DummyModule
+
+export MyType, new_rand
+
+mutable struct MyType
+    a::Int
+end
+
+function new_rand&#40;dims...&#41;
+    return 3 * rand&#40;dims...&#41;
+end
+
+println&#40;&quot;loaded&quot;&#41; # just to check
+
+end</code></pre>
+<p>Restart julia with <code>-p 2</code>. Now, to load this module an all processes, we use the <code>@everywhere</code> macro. In short, we have this situation:</p>
+<pre><code class="language-julia">floswald@PTL11077 ~/compecon&gt; ls                                 
+DummyModule.jl
+floswald@PTL11077 ~/compecon&gt; julia -p 2                                                                    
+
+julia&gt; @everywhere include&#40;&quot;DummyModule.jl&quot;&#41;
+loaded     # message from process 1
+      From worker 2:	loaded   # message from process 2
+      From worker 3:	loaded   # message from process 3
+
+julia&gt;</code></pre>
+<p>Now in order to use the code, we need to bring it into scope with <code>using</code>. Here is the master process:</p>
+<pre><code class="language-julia">julia&gt; using .DummyModule   # . for locally defined package
+
+julia&gt; MyType&#40;9&#41;
+MyType&#40;9&#41;
+
+julia&gt; fetch&#40;@spawnat 2 MyType&#40;9&#41;&#41;
+ERROR: On worker 2:
+UndefVarError: &#96;MyType&#96; not defined
+Stacktrace:
+
+julia&gt; fetch&#40;@spawnat 2 DummyModule.MyType&#40;7&#41;&#41;
+Main.DummyModule.MyType&#40;7&#41;</code></pre>
+<p>Also, we can execute a function on a worker. Notice, <code>remotecall_fetch</code> is like <code>fetch&#40;remotecall&#40;...&#41;&#41;</code>, but more efficient:</p>
+<pre><code class="language-julia"># calls function new_rand from the DummyModule
+# on worker 2
+# 3,3 are arguments passed to &#96;new_rand&#96;
+julia&gt; remotecall_fetch&#40;DummyModule.new_rand, 2, 3, 3&#41;
+3×3 Matrix&#123;Float64&#125;:
+ 0.097928  1.93653  1.16355
+ 1.58353   1.40099  0.511078
+ 2.11274   1.38712  1.71745</code></pre>
+<h3 id="data_movement"><a href="#data_movement">Data Movement</a></h3>
+<p>I would recommend </p>
+<ul>
+<li><p>to keep data movement to a minimum</p>
+</li>
+<li><p>avoid global variables</p>
+</li>
+<li><p>define all required data within the <code>module</code> you load on the workers, such that each of them has access to all required data. This may not be feasible if you require huge amounts of input data.</p>
+</li>
+<li><p>Example: &#91;private repo again&#93;</p>
+</li>
+</ul>
+<h3 id="example_setup_real_world_project"><a href="#example_setup_real_world_project">Example Setup Real World Project</a></h3>
+<p>Suppose we have the following structure on an HPC cluster.</p>
+<pre><code class="language-bash">floswald@PTL11077 ~/.j/d/LandUse &#40;rev2&#41;&gt; tree -L 1 
+.
+├── Manifest.toml
+├── Project.toml
+├── slurm_runner.run
+├── run.jl
+├── src
+├── test</code></pre>
+<p>with this content for the file <code>run.jl</code>:</p>
+<pre><code class="language-julia">using Distributed
+
+println&#40;&quot;some welcome message from master&quot;&#41;
+
+# add 10 processes from running master
+# notice that we start them in the same project environment&#33;
+addprocs&#40;10, exeflags &#61; &quot;--project&#61;.&quot;&#41;  
+
+# make sure all packages are available everywhere
+@everywhere using Pkg
+@everywhere Pkg.instantiate&#40;&#41;
+
+# load code for our application
+@everywhere using LandUse
+   
+   
+LandUse.bigtask&#40;some_arg1 &#61; 10, some_arg2 &#61; 4&#41;</code></pre>
+<p>The corresponding submit script for the HPC scheduler &#40;SLURM in this case&#41; would then just call this file:</p>
+<pre><code class="language-bash">#&#33;/bin/bash
+#SBATCH --job-name&#61;landuse
+#SBATCH --output&#61;est.out
+#SBATCH --error&#61;est.err
+#SBATCH --partition&#61;ncpulong
+#SBATCH --nodes&#61;1
+#SBATCH --cpus-per-task&#61;11 # same number as we addproc&#39;ed &#43; 1
+#SBATCH --mem-per-cpu&#61;4G   # memory per cpu-core
+
+julia --project&#61;. run.jl</code></pre>
+<h3 id="juliahub"><a href="#juliahub">JuliaHub</a></h3>
+<p>The best alternative out there IMHO is juliahub. Instead of <code>run.jl</code>, you&#39;d have this instead:</p>
+<pre><code class="language-julia">using Distributed
+using JSON3
+using CSV
+using DelimitedFiles
+
+@everywhere using bk
+
+results &#61; bk.bigjob&#40;&#41;  # runs a parallel map over workers with &#96;pmap&#96; or similar.
+
+# bigjob writes plots and other stuff to path_results
+
+# oputput path
+path_results &#61; &quot;&#36;&#40;@__DIR__&#41;/outputs&quot;
+mkpath&#40;path_results&#41;
+ENV&#91;&quot;RESULTS_FILE&quot;&#93; &#61; path_results
+
+# write text results to JSON &#40;numbers etc&#41;
+open&#40;&quot;results.json&quot;, &quot;w&quot;&#41; do io
+    JSON3.pretty&#40;io, results&#41;
+end
+
+ENV&#91;&quot;RESULTS&quot;&#93; &#61; JSON3.write&#40;results&#41;</code></pre>
+<h3 id="parallel_map_and_loops"><a href="#parallel_map_and_loops">Parallel Map and Loops</a></h3>
+<p>This is most relevant use case in most of our applications. </p>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/floswald/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
-    Last modified: April 05, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    Last modified: April 06, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
