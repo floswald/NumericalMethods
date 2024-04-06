@@ -3,6 +3,10 @@
 <h1>Lecture 5: Parallel Programming</h1>
 ~~~
 
+
+\toc 
+
+
 ## Caveats First
 
 * You hear often: "sure, that's a big problem you have there. But you can parallelize it!" Whether that will help in your case is strictly problem-specific. You need to _try it out_ in order to know.
@@ -18,7 +22,7 @@
 * The smallest parallel computation unit lives on your CPU.
 * The basic idea is simple: If a computational task of duration `M` can split into `N` subtasks, which can be performed _concurrently_ (at the same time), without interfering with each other, then _in theory_, the duration of the task should fall to `M/N`. _In practice_ we almost never achieve this theoretical bound, because of time spent communicating between computational units and other _system time_. 
 
-## Resources:
+## Resources
 
 1. Julia [whitepaper](https://juliahub.com/assets/pdf/Parallel-Computing-Guide-for-Julia-byJuliaHub.pdf)
 2. [Guide](https://www.sas.upenn.edu/~jesusfv/Guide_Parallel.pdf) by Jesus Fernandez-Villaverde and David Zurrak-Valencia
@@ -44,7 +48,7 @@ Paradigms 1. and 2. live in a _shared memory_ world, i.e. they operate within th
 
 Paradigms 3. and 4. are different, because they (can) rely on **separate** hardware. We can start a distributed julia process inside a single machine, but this will behave _like another computer_ (almost), so you will have to worry about making data and functions accessible to all worker processes.
 
-## 1. Asyncronous Tasks or Coroutines
+## Asyncronous Tasks or Coroutines
 
 Even within a single thread there may be computational operations which can be performed next to each other. *Coroutines* split a single task into multiple chunks, and there is an efficient process which allows *non-blocking execution*. This may be beneficial in I/O operations or when we wait for something to arrive via a network. It is *not* beneficial if our operation involvs many CPU cycles (i.e. if it's compute intensive). Let's see an example.
 
@@ -147,7 +151,7 @@ You can see that julia makes it extremely easy to run *concurrent* tasks.
 Check out more in the manual: https://docs.julialang.org/en/v1/manual/parallel-computing/
 
 
-## 2. Multi-Threading
+## Multi-Threading
 
 * What are threads again? _Threads are sequences of instructions given to the CPU_ which can be executed concurrently. So, multithreading is something that happens on a _core_ of CPU. Your CPU may have several _cores_. 
 * The [manual](https://docs.julialang.org/en/v1/manual/multi-threading/#man-multithreading) is the authorative source - very comprehensive.
@@ -406,7 +410,7 @@ Threads.@threads for i in 1:100
 end
 ```
 
-#### Data Race Conditions
+### Data Race Conditions
 
 ```julia
 julia> function sum_single(a)
@@ -457,7 +461,7 @@ julia> sum_multi_good(1:1_000_000)
 In this [research project - [private repo]](https://github.com/floswald/FMig.jl/pull/17/commits/119b34bbf621374be187a023399d74a5e16c3934) we encountered a situation very similar to the above.
 
 
-## 3. Distributed Computing
+## Distributed Computing
 
 The [manual](https://docs.julialang.org/en/v1/manual/distributed-computing/) is again very helpful here.
 
@@ -589,7 +593,7 @@ I would recommend
 * define all required data within the `module` you load on the workers, such that each of them has access to all required data. This may not be feasible if you require huge amounts of input data.
 * Example: [private repo again]
 
-### Example Setup Real World Project
+### Example Setup Real World HPC Project
 
 Suppose we have the following structure on an HPC cluster.
 
@@ -677,4 +681,4 @@ ENV["RESULTS"] = JSON3.write(results)
 
 ### Parallel Map and Loops
 
-This is most relevant use case in most of our applications. 
+This is most relevant use case in most of our applications. tbc.
