@@ -72,6 +72,7 @@
 <div class="franklin-content">
 <h1>Lecture 5: Parallel Programming</h1>
 
+<p><div class="franklin-toc"><ol><li><a href="#caveats_first">Caveats First</a></li><li><a href="#general_points">General Points</a></li><li><a href="#resources">Resources</a></li><li><a href="#definitions">Definitions</a></li><li><a href="#parallel_paradigms_achievable_with_julia">Parallel Paradigms achievable with <code>julia</code></a></li><li><a href="#asyncronous_tasks_or_coroutines">Asyncronous Tasks or Coroutines</a></li><li><a href="#multi-threading">Multi-Threading</a><ol><li><a href="#data_race_conditions">Data Race Conditions</a></li><li><a href="#real_life_example_of_data_race">Real Life Example of Data Race</a></li></ol></li><li><a href="#distributed_computing">Distributed Computing</a><ol><li><a href="#code_and_data_availability">Code and Data Availability</a></li><li><a href="#data_movement">Data Movement</a></li><li><a href="#example_setup_real_world_hpc_project">Example Setup Real World HPC Project</a></li><li><a href="#juliahub">JuliaHub</a></li><li><a href="#parallel_map_and_loops">Parallel Map and Loops</a></li></ol></li></ol></div> </p>
 <h2 id="caveats_first"><a href="#caveats_first">Caveats First</a></h2>
 <ul>
 <li><p>You hear often: &quot;sure, that&#39;s a big problem you have there. But you can parallelize it&#33;&quot; Whether that will help in your case is strictly problem-specific. You need to <em>try it out</em> in order to know.</p>
@@ -96,7 +97,7 @@
 <li><p>The basic idea is simple: If a computational task of duration <code>M</code> can split into <code>N</code> subtasks, which can be performed <em>concurrently</em> &#40;at the same time&#41;, without interfering with each other, then <em>in theory</em>, the duration of the task should fall to <code>M/N</code>. <em>In practice</em> we almost never achieve this theoretical bound, because of time spent communicating between computational units and other <em>system time</em>. </p>
 </li>
 </ul>
-<h2 id="resources"><a href="#resources">Resources:</a></h2>
+<h2 id="resources"><a href="#resources">Resources</a></h2>
 <ol>
 <li><p>Julia <a href="https://juliahub.com/assets/pdf/Parallel-Computing-Guide-for-Julia-byJuliaHub.pdf">whitepaper</a></p>
 </li>
@@ -129,11 +130,7 @@
 </ol>
 <p>Paradigms 1. and 2. live in a <em>shared memory</em> world, i.e. they operate within the same physical infrastructure: your computer has a CPU, and a block of RAM where data is stored for computation. You do <em>not</em> have to worry about your compute unit, one of your <em>thread</em>&#39;s for example, not being able to access information in RAM.</p>
 <p>Paradigms 3. and 4. are different, because they &#40;can&#41; rely on <strong>separate</strong> hardware. We can start a distributed julia process inside a single machine, but this will behave <em>like another computer</em> &#40;almost&#41;, so you will have to worry about making data and functions accessible to all worker processes.</p>
-<h2 id="asyncronous_tasks_or_coroutines"><a href="#asyncronous_tasks_or_coroutines"><ol>
-<li><p>Asyncronous Tasks or Coroutines</p>
-</li>
-</ol>
-</a></h2>
+<h2 id="asyncronous_tasks_or_coroutines"><a href="#asyncronous_tasks_or_coroutines">Asyncronous Tasks or Coroutines</a></h2>
 <p>Even within a single thread there may be computational operations which can be performed next to each other. <em>Coroutines</em> split a single task into multiple chunks, and there is an efficient process which allows <em>non-blocking execution</em>. This may be beneficial in I/O operations or when we wait for something to arrive via a network. It is <em>not</em> beneficial if our operation involvs many CPU cycles &#40;i.e. if it&#39;s compute intensive&#41;. Let&#39;s see an example.</p>
 <pre><code class="language-julia"># make sure we only have a single thread
 # this is default startup behaviour
@@ -191,11 +188,7 @@ julia&gt; t0
 <p>The <code>Task</code> means that each job <code>t1,t2,t3</code> was started as a separate unit of work. <em>Not</em> as we thought, that defining <code>t2</code> on the line below <code>t1</code> would <em>by definition</em> mean that one runs <strong>after</strong> the other. No, given those are <code>Tasks</code> means that the scheduler is free to allocate those chunks of work to whichever resources are currently free on your CPU. Here is a picture from the whitepaper:</p>
 <p><img src="/NumericalMethods/assets/tasks.png" alt="from julia whitepaper" /></p>
 <p>You can see that julia makes it extremely easy to run <em>concurrent</em> tasks. Check out more in the manual: https://docs.julialang.org/en/v1/manual/parallel-computing/</p>
-<h2 id="ol_start2_multi-threading"><a href="#ol_start2_multi-threading"><ol start="2">
-<li><p>Multi-Threading</p>
-</li>
-</ol>
-</a></h2>
+<h2 id="multi-threading"><a href="#multi-threading">Multi-Threading</a></h2>
 <ul>
 <li><p>What are threads again? <em>Threads are sequences of instructions given to the CPU</em> which can be executed concurrently. So, multithreading is something that happens on a <em>core</em> of CPU. Your CPU may have several <em>cores</em>. </p>
 </li>
@@ -386,7 +379,7 @@ Threads.@threads for i in 1:100
         x&#91;position&#93; &#43;&#61; 1
     end
 end</code></pre>
-<h4 id="data_race_conditions"><a href="#data_race_conditions">Data Race Conditions</a></h4>
+<h3 id="data_race_conditions"><a href="#data_race_conditions">Data Race Conditions</a></h3>
 <pre><code class="language-julia">julia&gt; function sum_single&#40;a&#41;
            s &#61; 0
            for i in a
@@ -425,11 +418,7 @@ julia&gt; sum_multi_good&#40;1:1_000_000&#41;
 500000500000</code></pre>
 <h3 id="real_life_example_of_data_race"><a href="#real_life_example_of_data_race">Real Life Example of Data Race</a></h3>
 <p>In this <a href="https://github.com/floswald/FMig.jl/pull/17/commits/119b34bbf621374be187a023399d74a5e16c3934">research project - &#91;private repo&#93;</a> we encountered a situation very similar to the above.</p>
-<h2 id="ol_start3_distributed_computing"><a href="#ol_start3_distributed_computing"><ol start="3">
-<li><p>Distributed Computing</p>
-</li>
-</ol>
-</a></h2>
+<h2 id="distributed_computing"><a href="#distributed_computing">Distributed Computing</a></h2>
 <p>The <a href="https://docs.julialang.org/en/v1/manual/distributed-computing/">manual</a> is again very helpful here.</p>
 <p>Let&#39;s start a new julia session now, without multithreading, but with multiple <em>processes</em>.</p>
 <pre><code class="language-julia">floswald@PTL11077 ~&gt; julia -p 2                                                                                                                                                 &#40;base&#41; 
@@ -524,7 +513,7 @@ julia&gt; remotecall_fetch&#40;DummyModule.new_rand, 2, 3, 3&#41;
 <li><p>Example: &#91;private repo again&#93;</p>
 </li>
 </ul>
-<h3 id="example_setup_real_world_project"><a href="#example_setup_real_world_project">Example Setup Real World Project</a></h3>
+<h3 id="example_setup_real_world_hpc_project"><a href="#example_setup_real_world_hpc_project">Example Setup Real World HPC Project</a></h3>
 <p>Suppose we have the following structure on an HPC cluster.</p>
 <pre><code class="language-bash">floswald@PTL11077 ~/.j/d/LandUse &#40;rev2&#41;&gt; tree -L 1 
 .
@@ -588,7 +577,7 @@ end
 
 ENV&#91;&quot;RESULTS&quot;&#93; &#61; JSON3.write&#40;results&#41;</code></pre>
 <h3 id="parallel_map_and_loops"><a href="#parallel_map_and_loops">Parallel Map and Loops</a></h3>
-<p>This is most relevant use case in most of our applications. </p>
+<p>This is most relevant use case in most of our applications. tbc.</p>
 <div class="page-foot">
   <div class="copyright">
     <a href="https://github.com/floswald/NumericalMethods/tree/master/website"><b>Edit this page on <img class="github-logo" src="https://unpkg.com/ionicons@5.1.2/dist/svg/logo-github.svg"></img></b></a></br>
