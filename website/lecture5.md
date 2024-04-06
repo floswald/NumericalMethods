@@ -445,6 +445,11 @@ julia> sum_multi_good(1:1_000_000)
 
 ```
 
+### Real Life Example of Data Race
+
+In this [research project - [private repo]](https://github.com/floswald/FMig.jl/pull/17/commits/119b34bbf621374be187a023399d74a5e16c3934) we encountered a situation very similar to the above.
+
+
 ## 3. Distributed Computing
 
 The [manual](https://docs.julialang.org/en/v1/manual/distributed-computing/) is again very helpful here.
@@ -470,5 +475,199 @@ So, by default we have process number 1 (which is the one where we type stuff in
 
 Distributed programming in Julia is built on two primitives: remote references and remote calls. A remote reference is an object that can be used from any process to refer to an object stored on a particular process. A remote call is a request by one process to call a certain function on certain arguments on another (possibly the same) process.
 
-Remote references come in two flavors: Future and RemoteChannel.
+In the manual you can see a low level API which allows you to directly call a function on a remote worker, but that's most of the time not what you want. We'll concentrate on the higher-level API here. One big issue here is:
 
+### Code and Data Availability
+
+We must ensure that the code we want to execute is available on the process that runs the computation. That sounds fairly obvious. But now try to do this. First we define a new function on the REPL, and we call it on the master, as usual:
+
+
+```julia
+julia> function new_rand(dims...)
+           return 3 * rand(dims...)
+       end
+new_rand (generic function with 1 method)
+
+julia> new_rand(2,2)
+2×2 Matrix{Float64}:
+ 0.407347  2.23388
+ 1.29914   0.985813
+```
+
+Now, we want to `spawn` running of that function on `any` available process, and we immediately `fetch` it to trigger execution:
+
+```
+julia> fetch(@spawnat :any new_rand(2,2))
+ERROR: On worker 3:
+UndefVarError: `#new_rand` not defined
+Stacktrace:
+```
+
+It seems that worker 3, where the job was sent with `@spawnat`, does not know about our function `new_rand`. 🧐
+
+Probably the best approach to this is to define your functions inside a module, as we already discussed. This way, you will find it easy to share code and data across worker processes. Let's define this module in a file in the current directory. let's call it `DummyModule.jl`:
+
+```julia
+module DummyModule
+
+export MyType, new_rand
+
+mutable struct MyType
+    a::Int
+end
+
+function new_rand(dims...)
+    return 3 * rand(dims...)
+end
+
+println("loaded") # just to check
+
+end
+```
+
+Restart julia with `-p 2`. Now, to load this module an all processes, we use the `@everywhere` macro. In short, we have this situation:
+
+
+
+```julia
+floswald@PTL11077 ~/compecon> ls                                 
+DummyModule.jl
+floswald@PTL11077 ~/compecon> julia -p 2                                                                    
+
+julia> @everywhere include("DummyModule.jl")
+loaded     # message from process 1
+      From worker 2:	loaded   # message from process 2
+      From worker 3:	loaded   # message from process 3
+
+julia> 
+
+```
+
+Now in order to use the code, we need to bring it into scope with `using`. Here is the master process:
+
+```julia
+julia> using .DummyModule   # . for locally defined package
+
+julia> MyType(9)
+MyType(9)
+
+julia> fetch(@spawnat 2 MyType(9))
+ERROR: On worker 2:
+UndefVarError: `MyType` not defined
+Stacktrace:
+
+julia> fetch(@spawnat 2 DummyModule.MyType(7))
+Main.DummyModule.MyType(7)
+```
+
+Also, we can execute a function on a worker. Notice, `remotecall_fetch` is like `fetch(remotecall(...))`, but more efficient:
+
+```julia
+# calls function new_rand from the DummyModule
+# on worker 2
+# 3,3 are arguments passed to `new_rand`
+julia> remotecall_fetch(DummyModule.new_rand, 2, 3, 3)
+3×3 Matrix{Float64}:
+ 0.097928  1.93653  1.16355
+ 1.58353   1.40099  0.511078
+ 2.11274   1.38712  1.71745
+ ```
+
+### Data Movement
+
+I would recommend 
+
+* to keep data movement to a minimum
+* avoid global variables
+* define all required data within the `module` you load on the workers, such that each of them has access to all required data. This may not be feasible if you require huge amounts of input data.
+* Example: [private repo again]
+
+### Example Setup Real World Project
+
+Suppose we have the following structure on an HPC cluster.
+
+
+```bash
+
+floswald@PTL11077 ~/.j/d/LandUse (rev2)> tree -L 1 
+.
+├── Manifest.toml
+├── Project.toml
+├── slurm_runner.run
+├── run.jl
+├── src
+├── test
+
+```
+
+with this content for the file `run.jl`:
+
+
+```julia
+using Distributed
+
+println("some welcome message from master")
+
+# add 10 processes from running master
+# notice that we start them in the same project environment!
+addprocs(10, exeflags = "--project=.")  
+
+# make sure all packages are available everywhere
+@everywhere using Pkg
+@everywhere Pkg.instantiate()
+
+# load code for our application
+@everywhere using LandUse
+   
+   
+LandUse.bigtask(some_arg1 = 10, some_arg2 = 4)
+```
+
+The corresponding submit script for the HPC scheduler (SLURM in this case) would then just call this file:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=landuse
+#SBATCH --output=est.out
+#SBATCH --error=est.err
+#SBATCH --partition=ncpulong
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=11 # same number as we addproc'ed + 1
+#SBATCH --mem-per-cpu=4G   # memory per cpu-core
+
+julia --project=. run.jl
+```
+
+
+### JuliaHub
+
+The best alternative out there IMHO is juliahub. Instead of `run.jl`, you'd have this instead:
+
+```julia
+using Distributed
+using JSON3
+using CSV
+using DelimitedFiles
+
+@everywhere using bk
+
+results = bk.bigjob()  # runs a parallel map over workers with `pmap` or similar.
+
+# bigjob writes plots and other stuff to path_results
+
+# oputput path
+path_results = "$(@__DIR__)/outputs"
+mkpath(path_results)
+ENV["RESULTS_FILE"] = path_results
+
+# write text results to JSON (numbers etc)
+open("results.json", "w") do io
+    JSON3.pretty(io, results)
+end
+
+ENV["RESULTS"] = JSON3.write(results)
+```
+
+### Parallel Map and Loops
+
+This is most relevant use case in most of our applications. 
