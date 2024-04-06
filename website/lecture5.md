@@ -3,12 +3,19 @@
 <h1>Lecture 5: Parallel Programming</h1>
 ~~~
 
+## Caveats First
+
+* You hear often: "sure, that's a big problem you have there. But you can parallelize it!" Whether that will help in your case is strictly problem-specific. You need to _try it out_ in order to know.
+* First, you want to make sure your application produces _correct_ results. You _test_ it.
+* Then you try to make it as efficient as possible on a single process, i.e. in **serial mode**. There are a _great, many_ things to know about [how to write efficient code; starting with the hardware you dispose of](https://viralinstruction.com/posts/hardware/)
+* Finally, you can attempt to scale your application to more than one processes. That's what we'll talk about today.
+
 ## General Points
 
 * Parallel computation can be beneficial strategy to speed up long running computational tasks, like for instance computing the solution to your economic model.
 * The gains from parallel computation depend on how much communication (data transfer) a certain task involves: transferring large amounts of data to and from different compute units takes time.
 * The largest HPC systems in the world connect hundreds of thousands of computers into a compute _cluster_
-* The smalles parallel computation unit lives on your CPU.
+* The smallest parallel computation unit lives on your CPU.
 * The basic idea is simple: If a computational task of duration `M` can split into `N` subtasks, which can be performed _concurrently_ (at the same time), without interfering with each other, then _in theory_, the duration of the task should fall to `M/N`. _In practice_ we almost never achieve this theoretical bound, because of time spent communicating between computational units and other _system time_. 
 
 ## Resources:
