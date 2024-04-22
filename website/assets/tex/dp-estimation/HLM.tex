@@ -1,0 +1,611 @@
+\documentclass{beamer}% http://ctan.org/pkg/beamer
+
+% insert my preamble
+\input{preamble.tex}
+
+
+
+
+\begin{document}
+
+\title{%
+\begin{tabular}{c}
+{\small Graduate Labor Economics}\\
+\\ 
+Sorting in the Labor Market (in Theory)
+ \\
+% {\footnotesize Based on \citet{mortensen2005wage} }
+{\small Florian Oswald, SciencesPo Paris}
+\\
+\end{tabular}%
+}
+
+
+
+
+% First Page
+\frame{\titlepage} 
+
+\frame{\frametitle{Table of contents}\tableofcontents} 
+
+\section{Frictionless Matching}
+
+\subsection{Introduction}
+
+\begin{frame}{Two-Sided Matching}
+How does matching differ from standard markets?\bigskip
+\begin{widee}
+\item There is no price signal (no walrasian auctioneer)
+\item Preferences are over agents not over goods.
+\item There are indivisibilities. (Cannot match 30\% with person A and 70\% with person B. in general.)
+\end{widee}
+\end{frame}
+
+\begin{frame}{Two-Sided Matching: Applications}
+\begin{midi}
+\item Online Dating
+\item Market design: doctor assignment to hospitals
+\item Kidney Exchange (google Al Roth Kidney Exchange)
+\item School Choice: Boston, New York (soon? SciencesPo)
+\item \cite{gale1962college}
+\begin{itemize}
+\item pose problem
+\item provide algorithm
+\item show existence
+\end{itemize}
+\end{midi}
+
+\end{frame}
+
+\subsection{Non-Transferrable Utility}
+\begin{frame}
+\tableofcontents[currentsubsection] 
+\end{frame}
+
+\begin{frame}{One-to-One Matching: A Marriage Market}
+\begin{midi}
+\item Take two disjoint sets $W=\{w_1,\dots,w_p\}$ and $M=\{m_1,\dots,m_n\}$
+\item We want to match in pairs $(w_i,m_j)$ and allow for singles.
+\item Agents have preferences over members of other sex.
+\item This is just an ordered list:
+\begin{equation*}
+P(m) = w_1,w_3,[m,w_p],\dots,w_2
+\end{equation*}
+and similar for women.
+\end{midi}
+\end{frame}
+
+\begin{frame}{One-to-One Matching}
+\begin{midi}
+\item We denote 
+\begin{equation*}
+\mathbf{P} = \{P(m_1),\dots,P(m_n), P(w_1),\dots,P(w_p)\}
+\end{equation*}
+as the preference profile. 
+\item The \bred{marriage market} is defined by $(W,M,\mathbf{P})$
+\end{midi}
+A particular men-to-women allocation is called a \redbox{matching} $\mu$: \bigskip
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Definition: Marriage Matching,fonttitle=\bfseries] 
+A marriage matching $\mu$ is a one to one correspondence from $W \cup M$ onto itself, i.e. $\mu(\mu(x)) = x$, such that if $\mu(m)\neq m$ then $\mu(m) \in W$ and if $\mu(w)\neq w$ then $\mu(w) \in M$.
+\end{tcolorbox}
+\end{frame}
+
+\begin{frame}{One-to-One Matching: Blocking $\mu$}
+\begin{midi}
+\item a matching $\mu$ is \bred{blocked by individual $k$} if $k$ prefers being single to being matched with $\mu(k)$
+\item We write $k \succ_k \mu(k)$.
+\item A matching $\mu$ is \bblue{individually rational} if each agent in $\mu$ is \emph{acceptable}, i.e. $\mu$ is not \bred{blocked} by any agent.
+\item A matching $\mu$ is blocked by a \bred{pair of agents} $(m,w)$ if 
+\begin{equation*}
+w\succ_m \mu(m) \text{ and } m\succ_w \mu(w)
+\end{equation*}
+\end{midi}
+\end{frame}
+
+\begin{frame}{One-to-One Matching: Stable Matching}
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Definition: Stable Matching,fonttitle=\bfseries] 
+A marriage matching $\mu$ is \textbf{stable} if it is not blocked by any individual or any pair of agents.
+\end{tcolorbox}
+\bigskip
+\bigskip
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Theorem: Gale and Shapley (1962),fonttitle=\bfseries]A stable matching exists for every marriage market. 
+\end{tcolorbox}
+\end{frame}
+
+
+\begin{frame}{One-to-One Matching: Proof}
+\begin{midi}
+\item Their proof uses the \cyanbox{Deferred Acceptance Algorithm} (DAA).
+\item Start with one side of the market (men, say):
+	\begin{enumerate}
+		\item[Iter 1] \hspace{1cm}
+		\begin{enumerate}
+			\item[i.] Each man proposes to his first choice (if any acceptable ones)
+			\item[ii.] Each women holds their most preferred proposer
+		\end{enumerate}
+		\item[Iter K] ...
+		\item[Iter K+L] STOP if no further proposals are made and match any woman to the man whose proposal she is currently holding.
+	\end{enumerate}
+\item Break ties arbitrarily
+\item With finite set of men and women, this algo is finite and always stops.
+\end{midi}
+\end{frame}
+
+\begin{frame}{One-to-One Matching: Proof}
+\begin{midi}
+\item Gives rise to a stable matching.
+\item Suppose not. Suppose $m$ can do better, i.e. $m$ prefers $w$ to current match $\mu(m)$:
+\begin{enumerate}
+\item $w\succ_m \mu(m)$
+\item $m$ must have proposed to $w$ before proposing to $\mu(m)$
+\item $m$ must have been \bred{rejected} by $w$
+\item that means that $\mu(w) \succ_w m$
+\item \bred{Not} a blocking pair.
+\item Match is stable.
+\end{enumerate}
+\end{midi}
+\end{frame}
+
+
+\begin{frame}{DAA Example}
+\begin{midi}
+\item Example: Consider market $(W,M,\mathbf{P})$ where
+\begin{equation*}
+\begin{array}{cc}
+P(m_1) = w_1,w_2,w_3,w_4 & P(w_1) = m_2,m_3,m_1,m_4,m_5 \\ 
+P(m_2) = w_4,w_2,w_3,w_1 & P(w_2) = m_3,m_1,m_2,m_4,m_5 \\ 
+P(m_3) = w_4,w_3,w_1,w_2 & P(w_3) = m_5,m_4,m_1,m_2,m_3 \\ 
+P(m_4) = w_1,w_4,w_3,w_2 & P(w_4) = m_1,m_4,m_5,m_2,m_3 \\ 
+P(m_5) = w_1,w_2,w_4,m_5 & 
+
+\end{array}
+\end{equation*}
+\item The DAA proceeds as follows:
+\begin{table}
+\renewcommand*{\arraystretch}{1}
+\begin{tabular}{D{.}{.}{1.5}@{} D{.}{.}{8.3}@{} D{.}{.}{4.4}@{} D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{} }
+  \toprule 
+   \multicolumn{1}{l}{Iterate}  &  w_1         & w_2   & w_3 & w_4      & (m_i) \\
+  \midrule 
+   1.                           &  m_1,m_4,m_5 &       &      & m_2,m_3 &  \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{midi}
+\end{frame}
+
+\begin{frame}{DAA Example}
+\begin{midi}
+\item Example: Consider market $(W,M,\mathbf{P})$ where
+\begin{equation*}
+\begin{array}{cc}
+P(m_1) = w_1,w_2,w_3,w_4 & P(w_1) = m_2,m_3,m_1,m_4,m_5 \\ 
+P(m_2) = w_4,w_2,w_3,w_1 & P(w_2) = m_3,m_1,m_2,m_4,m_5 \\ 
+P(m_3) = w_4,w_3,w_1,w_2 & P(w_3) = m_5,m_4,m_1,m_2,m_3 \\ 
+P(m_4) = w_1,w_4,w_3,w_2 & P(w_4) = m_1,m_4,m_5,m_2,m_3 \\ 
+P(m_5) = w_1,w_2,w_4,m_5 & 
+\end{array}
+\end{equation*}
+\item The DAA proceeds as follows:
+\begin{table}
+\renewcommand*{\arraystretch}{1}
+\begin{tabular}{D{.}{.}{1.5}@{} D{.}{.}{8.3}@{} D{.}{.}{4.4}@{} D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{} }
+  \toprule 
+   \multicolumn{1}{l}{Iterate}  &  w_1         & w_2   & w_3 & w_4      & (m_i) \\
+  \midrule 
+   1.                           &  m_1,m_4,m_5 &       &      & m_2,m_3 &  \\
+   2.                           &  m_1         &  m_5     &  m_3    & m_4,m_2 &  \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{midi}
+\end{frame}
+
+\begin{frame}{DAA Example}
+\begin{midi}
+\item Example: Consider market $(W,M,\mathbf{P})$ where
+\begin{equation*}
+\begin{array}{cc}
+P(m_1) = w_1,w_2,w_3,w_4 & P(w_1) = m_2,m_3,m_1,m_4,m_5 \\ 
+P(m_2) = w_4,w_2,w_3,w_1 & P(w_2) = m_3,m_1,m_2,m_4,m_5 \\ 
+P(m_3) = w_4,w_3,w_1,w_2 & P(w_3) = m_5,m_4,m_1,m_2,m_3 \\ 
+P(m_4) = w_1,w_4,w_3,w_2 & P(w_4) = m_1,m_4,m_5,m_2,m_3 \\ 
+P(m_5) = w_1,w_2,w_4,m_5 & 
+\end{array}
+\end{equation*}
+\item The DAA proceeds as follows:
+\begin{table}
+\renewcommand*{\arraystretch}{1}
+\begin{tabular}{D{.}{.}{1.5}@{} D{.}{.}{8.3}@{} D{.}{.}{4.4}@{} D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{} }
+  \toprule 
+   \multicolumn{1}{l}{Iterate}  &  w_1         & w_2   & w_3 & w_4      & (m_i) \\
+  \midrule 
+   1.                           &  m_1,m_4,m_5 &       &      & m_2,m_3 &  \\
+   2.                           &  m_1         &  m_5     &  m_3    & m_4,m_2 &  \\
+   3.                           &  m_1         &  m_2,m_5     &  m_3    & m_4 &  \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{midi}
+\end{frame}
+
+\begin{frame}{DAA Example}
+\begin{midi}
+\item Example: Consider market $(W,M,\mathbf{P})$ where
+\begin{equation*}
+\begin{array}{cc}
+P(m_1) = w_1,w_2,w_3,w_4 & P(w_1) = m_2,m_3,m_1,m_4,m_5 \\ 
+P(m_2) = w_4,w_2,w_3,w_1 & P(w_2) = m_3,m_1,m_2,m_4,m_5 \\ 
+P(m_3) = w_4,w_3,w_1,w_2 & P(w_3) = m_5,m_4,m_1,m_2,m_3 \\ 
+P(m_4) = w_1,w_4,w_3,w_2 & P(w_4) = m_1,m_4,m_5,m_2,m_3 \\ 
+P(m_5) = w_1,w_2,w_4,m_5 & 
+\end{array}
+\end{equation*}
+\item The DAA proceeds as follows:
+\begin{table}
+\renewcommand*{\arraystretch}{1}
+\begin{tabular}{D{.}{.}{1.5}@{} D{.}{.}{8.3}@{} D{.}{.}{4.4}@{} D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{}  D{.}{.}{4.4}@{} }
+  \toprule 
+   \multicolumn{1}{l}{Iterate}  &  w_1         & w_2   & w_3 & w_4      & (m_i) \\
+  \midrule 
+   1.                           &  m_1,m_4,m_5 &       &      & m_2,m_3 &  \\
+   2.                           &  m_1         &  m_5     &  m_3    & m_4,m_2 &  \\
+   3.                           &  m_1         &  m_2,m_5     &  m_3    & m_4 &  \\
+   4.                           &  m_1         &  m_2     &  m_3    & m_4 & m_5 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{midi}
+\end{frame}
+
+\begin{frame}{DAA Example - $M$ stable matching}
+\begin{midi}
+\item Example: Consider market $(W,M,\mathbf{P})$ where
+\begin{equation*}
+\begin{array}{cc}
+P(m_1) = w_1,w_2,w_3,w_4 & P(w_1) = m_2,m_3,m_1,m_4,m_5 \\ 
+P(m_2) = w_4,w_2,w_3,w_1 & P(w_2) = m_3,m_1,m_2,m_4,m_5 \\ 
+P(m_3) = w_4,w_3,w_1,w_2 & P(w_3) = m_5,m_4,m_1,m_2,m_3 \\ 
+P(m_4) = w_1,w_4,w_3,w_2 & P(w_4) = m_1,m_4,m_5,m_2,m_3 \\ 
+P(m_5) = w_1,w_2,w_4,m_5 & 
+\end{array}
+\end{equation*}
+\item Hence, the $M$-stable matching is:
+\begin{equation*}
+\mu_M = \begin{array}{ccccc}
+w_1 & w_2 & w_3 & w_4 & (m_5) \\
+m_1 & m_2 & m_3 & m_4 & (m_5) 
+\end{array}
+\end{equation*}
+\end{midi}
+\end{frame}
+
+\begin{frame}{DAA Example - $W$ stable matching}
+\begin{midi}
+\item Notice that if women were to make proposals, we'd get
+\item Hence, the stable matching is:
+\begin{equation*}
+\mu_W = \begin{array}{ccccc}
+w_1 & w_2 & w_3 & w_4 & (m_5) \\
+m_2 & m_3 & m_4 & m_1 & (m_5) 
+\end{array}
+\end{equation*}
+\item Implications:
+\begin{enumerate}
+\item In general, the set of stable matchings is not a singleton.
+\item All $m$ weakly prefer $\mu_M$, opposite for women.
+\item I.e. there is a conflict between both sides of the market as to who is to make the offer!
+\end{enumerate}
+\end{midi}
+\end{frame}
+
+\begin{frame}{One-to-one Matching Gale and Shapley}
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Theorem (Gale and Shapley),fonttitle=\bfseries] 
+When all men and women have strict preferences, there always exists an $M$-optimal stable matching, and a $W$-optimal stable matching. Furthermore, the matching $\mu_M$ produced by the DAA with men proposing is the $M$-optimal stable matching. The $W$-optimal stable matching is the matching $\mu_W$ produced by the DAA when women propose.
+\end{tcolorbox}
+
+\end{frame}
+
+\begin{frame}{DDA in practice}
+
+look at the example!
+
+\end{frame}
+
+\subsection{Transferrable Utility and Assortative Matching}
+\begin{frame}
+\tableofcontents[currentsubsection] 
+\end{frame}
+
+\begin{frame}{Two-sided Matching with Transferrable Utility}
+\begin{midi}
+\item Less attractive agents may compensate more attractive ones to form a match
+\item in the labor market: Wage.
+\item cleaning for roommates, child care in marriage
+\item We will now focus on \bred{assortative matching}
+\end{midi}
+\end{frame}
+
+\begin{frame}{Assortative Matching}
+\textbf{Environment:}
+\begin{midi}
+\item A fixed measure of workers indexed by $x \in \mathbb{X}$ (uniform)
+\item A fixed measure of jobs indexed by $y \in \mathbb{Y}$ (uniform)
+\item A production function $f(x,y)$
+\item Common ranking $f_x>0, f_y>0$
+\item The \bred{cross partial derivatives} of $f$ have a key function for monotone matching.
+\begin{itemize}
+\item Example 1: $f^+(x,y) = \alpha x^\theta y^\theta$
+\item Example 2: $f^-(x,y) = \alpha x^\theta (1-y)^\theta + g(y)$
+\end{itemize}
+\item We allow matched agents to transfer each other $w$ (the wage).
+\end{midi}
+\end{frame}
+
+
+\begin{frame}{Assortative Matching}
+
+\textbf{Preferences:}
+\begin{midi}
+\item Workers care about the wage
+\item Firm care about profits: $\pi(y) = f(x,y) - w$
+\end{midi}
+\medskip
+\textbf{Allocation is defined by a matching rule $(\mu,w)$:}
+\begin{midi}
+\item $\mu(x) = y$: Which worker matches to which firm. Pure matching.
+\item $w(x)$: a wage schedule.
+\end{midi}
+\end{frame}
+
+
+\begin{frame}{Assortative Matching: equlibrium}
+\textbf{Stable Matching Rule:}
+\begin{itemize}
+\item No pair $(x,y)$ can do better than in equlibrium:
+\begin{equation*}
+\forall x,y: \quad \underbrace{w(x)}_{x\text{ eqm payoff}} + \underbrace{\pi(\mu^{-1}(y),y)}_{y \text{ eqm payoff}} \geq \underbrace{f(x,y)}_\text{potential output}
+\end{equation*}
+\end{itemize}
+
+\textbf{Results:}
+\begin{midi}
+\item Existence: Yes. Shapley and Shubik 1971
+\item Eficiency: Yes. Maximizes joint utility
+\item Unique: Matching is generically unique, transfers are not
+\item Stable Matching and Competitive Eqm coincide (Gretsky, Ostroy and Zame 1999)
+\end{midi}
+\end{frame}
+
+
+\begin{frame}{Competitive Eqm and Assortative Matching}
+\begin{midi}
+\item Firm's problem:
+\begin{midi}
+\item Take the wage schedule given and choose $x$ to max profit:
+\begin{equation*}
+\max_x f(x,y) - w(x)
+\end{equation*}
+\item FOC: $f_x(x,y) - w_x(x) = 0$
+\item What is eqm allocation?
+\item follows from SOC: $f_{xx}(x,y) - \underbrace{w_{xx}(x)}_\text{?} < 0$
+\end{midi}
+\end{midi}
+\end{frame}
+
+\begin{frame}{Competitive Eqm and Assortative Matching}
+\begin{midi}
+\item What's the sign of $w_{xx}(x)$? Take derive of FOC at the Eqm condition $\mu(x) = y$:
+\begin{align*}
+\frac{d}{dx} \left( f_x(x,\mu(x)) - w_x(x) \right) &= 0 \\
+                f_{xx}(x,\mu(x)) + f_{xy}(x,\mu(x))\frac{d\mu(x)}{dx} - w_{xx}(x) &= 0 \\
+\end{align*}
+\item so, the SOC is satisfied provided:
+\begin{align*}
+f_{xx}(x,y) - w_{xx}(x) < 0 &\iff\\
+f_{xy}(x,\mu(x))\frac{d\mu(x)}{dx} > 0 &
+\end{align*}
+\item Notice that $f_{xy}(x,\mu(x))\frac{d\mu(x)}{dx}$ measures the \bred{assortative matching relationship}
+\end{midi}
+\end{frame}
+
+\begin{frame}{Production Function and Assortative Matching}
+\begin{midi}
+\item We have: 
+\begin{mide}
+\item \redbox{$+$ Assortative Matching (PAM):} $f_{xy}(x,\mu(x)) >0 \text{ if }\frac{d\mu(x)}{dx}>0$
+\item \bluebox{$-$ Assortative Matching (NAM):} $f_{xy}(x,\mu(x)) <0 \text{ if }\frac{d\mu(x)}{dx}<0$
+\end{mide}
+\pause
+\item $f_{xy}$ describes the \cyanbox{supermodularity} of $f$.
+\item A function $f: \mathbb{R}^k \to \mathbb{R}$ is \bblue{supermodular} if
+\begin{equation*}
+f(x \uparrow y) + f(x \downarrow y) \geq f(x ) + f(y)
+\end{equation*}
+where $\uparrow,\downarrow$ denote element-wise $\max,\min$ respectively.
+\item If $f$ is twice differentiable, the condition is equivalent to
+\begin{equation*}
+\frac{\partial^2 f}{\partial z_i\partial z_j} \geq 0,\forall i\neq j.
+\end{equation*}
+\end{midi}
+\end{frame}
+
+
+\begin{frame}{Production Function and Assortative Matching}
+\begin{midi}
+\item We have: 
+\begin{mide}
+\item \redbox{$+$ Assortative Matching (PAM):} $f_{xy}(x,\mu(x)) >0 \text{ if }\frac{d\mu(x)}{dx}>0$
+\item \bluebox{$-$ Assortative Matching (NAM):} $f_{xy}(x,\mu(x)) <0 \text{ if }\frac{d\mu(x)}{dx}<0$
+\end{mide}
+\item $f_{xy}$ describes the \cyanbox{supermodularity} of $f$.
+\begin{itemize}
+\item if $f$ is super-modular, better workers in better firms is more efficient
+\item Gives a clear rationale for why better workers should assortatively match with firms.
+\end{itemize}
+\item Supermodularity is about the rate of change in the change: Do better workers gain \emph{more} from moving to better firms.
+\item Note: With pure matching (like here), we cannot differentiate worker from firm effects.
+\end{midi}
+\end{frame}
+
+
+\section{Matching With Frictions}
+\begin{frame}
+\tableofcontents[currentsection] 
+\end{frame}
+
+\subsection{A simple Shimer and Smith Model}
+
+
+\begin{frame}{Matching with Frictions: Environment}
+\begin{midi}
+\item A fixed measure of workers indexed by $x \in \mathbb{X}$ (uniform)
+\item A fixed measure of jobs indexed by $y \in \mathbb{Y}$ (uniform)
+\item A production function $f(x,y)$
+\item Common ranking $f_x>0, f_y>0$
+\item We allow matched agents to transfer each other $w$ (the wage).
+\item unemployed get $b(x)$; vacancies cost $c(y)$
+\item workers and firms care about EPV (forward looking)
+\end{midi}
+\end{frame}
+
+\begin{frame}{Matching with Frictions: Allocations}
+\begin{midi}
+\item $u(x)$ is the mass of unemployed workers, $v(x)$ is the mass of vacancies
+\item $h(x,y)$ is the mass of matches (like $\mu$, but not pure anymore!)
+\item $w(x,y)$ is the wage and $M(x,y)$ the matching decision (yes/no)
+\end{midi}
+\end{frame}
+
+\begin{frame}{Matching Process}
+\begin{widei}
+\item Meeting technology is imperfect:
+\begin{itemize}
+\item unemployed find offers at rate $\lambda$
+\item vacancies find workers at rate $\mu$
+\item $\lambda$ and $\mu$ can be endogenized with a matching function:
+\begin{itemize}
+	\item the number of matches is $N=m(U,V)$
+	\item then $\lambda = \frac{N}{U}, \mu=\frac{N}{V}$
+	\item a classic matching function is $m(u,v)=\alpha u^{0.5} v^{0.5}$
+\end{itemize}
+\end{itemize}
+\item matching is random: workers draw from $v(y)$, firms draw from $u(x)$
+\end{widei}
+\end{frame}
+
+\begin{frame}{Matching Process: Timing}
+\begin{widee}
+\item production: matches produce output and pay wage
+\item meeting: U and V meet
+\item matching: newly matched pairs decide wether to start partnership
+\item separation: existing matches destroyed at rate $\delta$
+\end{widee}
+\end{frame}
+
+
+
+\begin{frame}{Match Surplus - Present Values}
+
+\begin{midi}
+\item $W_1(x,y,w)$ and $W_0(x)$ are EPV of employed and unemployed
+\item $\Pi_1(x,y,w)$ and $\Pi_0(y)$ are EPV of job and vacancy
+\item Surplus is defined as
+\begin{equation*}
+S(x,y) := W_1(x,y,w) + \Pi_1(x,y,w) - W_0(x) - \Pi_0(y)
+\end{equation*}
+\item Worker EPV: $rW_1(x,y,w) = w + \delta(W_0(x) -W_1(x,y,w)) $
+\item Job EPV:    $r\Pi_1(x,y,w) = f(x,y) -w  + \delta(\Pi_0(y) -\Pi_1(x,y,w)) $
+\end{midi}
+\end{frame}
+
+\begin{frame}{Value of Match Surplus}
+Some simple algebra gives us that:
+\begin{equation*}
+(r+\delta) S(x,y) = f(x,y) - rW_0(x) - r\Pi_0(y)
+\end{equation*}
+\begin{midi}
+\item Note that we don't need to know the wage to compute this!
+\item Under TU, the matching decision is $M(x,y) = \mathbf{1}[S(x,y)\geq0]$
+\item Surplus can be non-monotonic because of option value!
+\item Surplus inherits complementarity directly from $f$.
+\end{midi}
+\end{frame}
+
+\begin{frame}{Wages and Division of Surplus}
+\begin{midi}
+\item There an infinite number of ways to split the surplus
+\item S-S assume: nash bargaining with $\alpha$ the worker's bargaining power.
+\item then the optimal wage $w(x,y)$ solves
+\begin{equation*}
+(1-\alpha)\left(W_1(x,y,w) - W_0(y) \right) = \alpha\left(\Pi_1(x,y,w) - \Pi_0(y)\right)
+\end{equation*}
+\pause
+\item Therefore, upon meeting
+\begin{itemize}
+\item worker gets $W_0(x) + \alpha(S(x,y)$
+\item firm gets $\Pi_0(x) + (1-\alpha)(S(x,y)$
+\end{itemize}
+\end{midi}
+\end{frame}
+
+\begin{frame}{EPV of unemployed and vacancy}
+\begin{widei}
+\item EPV of the unemployed:
+\begin{equation*}
+rW_0(x) = (1+r)b(x) + \lambda \int \alpha M(x,y) S(x,y) \frac{v(y)}{V}dy
+\end{equation*}
+\item EPV of a vacancy:
+\begin{equation*}
+r\Pi_0(x) = -(1+r)c(y) + \mu \int (1-\alpha) M(x,y) S(x,y) \frac{u(x)}{U}dx
+\end{equation*}
+\item Matching Distribution
+\begin{equation*}
+\delta h(c,y) = \frac{\lambda}{V}M(x,y)u(x)v(y)
+\end{equation*}
+\end{widei}
+\end{frame}
+
+\begin{frame}{Equlibrium}
+Given the primitives $f(x,y),c(y),b(x),r,\delta,\alpha, \lambda,\mu$, a stationary search equilibrium is defined by
+\begin{midi}
+\item EPVs: $S(x,y),\Pi_0,W_0,\Pi_1,\Pi_0$
+\item Allocations: $h(x,y),u(x),v(y)$
+\item wage $w(x,y)$ and matching functions $M(x,y)$
+\end{midi}
+such that
+\begin{mide}
+\item the EPVs solve the Bellman Equations
+\item the wage is the Nash barginaing solution
+\item the distributions satisfy stationarity and adding up propoerties.
+\end{mide}
+\end{frame}
+
+\begin{frame}{Results}
+\begin{midi}
+\item Existence: Yes \cite{10.2307/2999430}
+\item Uniqueness: NO
+\item Efficiency: Not in general
+\begin{itemize}
+\item workers do not internalize how the affect others' search (search externality)
+\item romm for efficiency improving policies
+\end{itemize}
+\item Assortative Matching
+\begin{itemize}
+\item \cite{10.2307/2999430} introduce new definitions: monotonicity of matching set boundaries.
+\item log supermodular $f(x,y)\rightarrow $ PAM
+\item log submodular $f(x,y)\rightarrow $ NAM
+\item this requires stronger complementarities than in frictionless world.
+\end{itemize}
+\end{midi}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+        % \frametitle{References}
+		\bibliographystyle{unsrtnat}
+		\bibliography{labor2017.bib}
+\end{frame}
+
+
+\end{document}
