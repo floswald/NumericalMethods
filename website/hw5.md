@@ -22,7 +22,6 @@ In this very easy homework, I will outsource you to the phantastic video materia
 
 **So, what's to do?**
 
-* Watch the 45 minute video of Fedor [here](https://itempool.com/floswald/c/DjF2Xh6FaSg). It's full of relevant info beyond the Rust model at hand.
-* Watch out! The video is spiked with simple questions to make sure you get the main ideas.
+* Watch the 45 minute video of Fedor [here](https://youtu.be/Yo69tlKKplY). It's full of relevant info beyond the Rust model at hand.
 
 

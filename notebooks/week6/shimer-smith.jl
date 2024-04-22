@@ -27,12 +27,12 @@ end
 # ╔═╡ 8381a383-75bf-4995-9c62-44af118b9570
 html"""<style>
 main {
-	max-width: 50%;
+	max-width: 60%;
 }
 """
 
 # ╔═╡ 6b7eae7b-a5d3-4e90-849b-2496e4284cf6
-TableOfContents()
+# TableOfContents()
 
 # ╔═╡ 99ac0194-716f-4820-a854-cb36ec1d1a12
 md"""
@@ -129,7 +129,7 @@ $$\delta h(c,y) = \frac{\lambda}{V}M(x,y)u(x)v(y)$$
 
 Given the primitives $f(x,y),c(y),b(x),r,\delta,\alpha, \lambda,\mu$, a stationary search equilibrium is defined by
 
-* EPVs: $S(x,y),\Pi_0,W_0,\Pi_1,\Pi_0$
+* EPVs: $S(x,y),W_0,W_1,\Pi_1,\Pi_0$
 * Allocations: $h(x,y),u(x),v(y)$
 * wage $w(x,y)$ and matching functions $M(x,y)$
 
