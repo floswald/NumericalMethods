@@ -3,7 +3,7 @@
 
 
 * **Teacher:** Florian Oswald, [florian.oswald@sciencespo.fr](mailto:florian.oswald@sciencespo.fr)
-* **Class Times:** Mondays 17:00
+* **Class Times:** Bi-weekly Monday and Tuesday
 * **Class Location:** SciencesPo Paris
 * **Slack**: There will be a slack channel for all communication
 
@@ -125,7 +125,7 @@ There are some excellent references for computational methods out there. This co
 The copyright notice to be included in any copies and other derivative work of this material is:
 
 ```
-Copyright 2023 Florian Oswald, Sciences Po Paris, florian.oswald@gmail.com
+Copyright 2024 Florian Oswald, Sciences Po Paris, florian.oswald@gmail.com
 ```
 
 Thank you.
