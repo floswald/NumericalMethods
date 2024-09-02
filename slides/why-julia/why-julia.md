@@ -13,7 +13,7 @@ author: Florian Oswald, SciencesPo 2023
 class: impact
 
 # {{title}}
-## SciencesPo 2023
+## SciencesPo 2024
 ### Florian Oswald
 
 ---
@@ -662,7 +662,7 @@ class: full
 
 # Which problem does Julia want to solve?
 
-* Julia cofounder Stefan Karpinski [talks about **the 2 languages problem**](https://opendatascience.com/conferences/odsc-east-2016-stefan-karpinski-solving-the-two-language-problem/)
+* Julia cofounder Stefan Karpinski [talks about **the 2 languages problem**](https://youtu.be/QTbPtKxDquc?si=2RgbDGcvtA5yv5WP)
 
 --
 
@@ -670,6 +670,33 @@ class: full
 
 
 .center[![:scale 65%](stack.png)]
+
+
+---
+
+# Scientific Software Stacks
+
+.col-6[
+### Past: At least 4 langs!
+* Process messy data. String manipulation, plotting, data wrangling. `R` or `python`.
+* Prototype a numerical model. `matlab`
+* Work around speed bottlneck: rewrite (parts) in `C++`
+* Try to test (combo of `googletest` and `R`/`python`)
+* Analyse output data:  `R` or `python`
+* Tie it all together with `bash` scripts or `ruby` etc.
+]
+
+--
+
+.col-6[
+### Present: one lang only.
+* Process messy data. String manipulation, plotting, data wrangling. `julia`.
+* Prototype a numerical model. `julia`
+* Work around speed bottlneck: rewrite (parts) in `julia`
+* Test : `julia`
+* Analyse output data:  `julia`
+* Tie it all together with `julia`.
+]
 
 
 ---
