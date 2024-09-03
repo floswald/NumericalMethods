@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -17,15 +17,6 @@ begin
 	using Statistics
 	using PlutoUI
 end
-
-# ╔═╡ c6800d07-ea75-4a16-8cad-e912fc1b627d
-let 
-	x = 10
-	y = 1
-end
-
-# ╔═╡ 0dcce357-1977-436c-a806-92fa311a8a45
-x
 
 # ╔═╡ df4b5232-1d80-4b01-b9a3-41a3b0b9244a
 PlutoUI.TableOfContents()
@@ -112,6 +103,9 @@ So, we'll look at whether those are *approximately* equal:
 
 # ╔═╡ 0f449a7c-51fe-11eb-2c20-bfb771a8b00c
 c_sum(a) ≈ sum(a) # type \approx and then <TAB> to get the ≈ symbol
+
+# ╔═╡ 92b213cd-502f-4aa7-87b4-c2e4f7741266
+1≈ 1
 
 # ╔═╡ 76d0693e-55dd-11eb-10c5-1b6930bfee9d
 md"
@@ -347,7 +341,7 @@ RCall = "~0.14.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0"
+julia_version = "1.10.4"
 manifest_format = "2.0"
 project_hash = "9312bd2ba0ce070edd6b897fb9f624930143b931"
 
@@ -461,7 +455,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.1+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -937,7 +931,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1638,8 +1632,6 @@ version = "1.4.1+1"
 
 # ╔═╡ Cell order:
 # ╠═fef98014-51fc-11eb-15ad-d17044bcab51
-# ╠═c6800d07-ea75-4a16-8cad-e912fc1b627d
-# ╠═0dcce357-1977-436c-a806-92fa311a8a45
 # ╠═df4b5232-1d80-4b01-b9a3-41a3b0b9244a
 # ╟─d0cb1cea-51fa-11eb-3097-f1b352770dbf
 # ╠═794c7764-51fc-11eb-2325-91421e8833e3
@@ -1655,6 +1647,7 @@ version = "1.4.1+1"
 # ╠═10a3b738-55dd-11eb-154b-0f2b4d155753
 # ╟─18a3f560-55dd-11eb-1fed-4b5dc0b96df6
 # ╠═0f449a7c-51fe-11eb-2c20-bfb771a8b00c
+# ╠═92b213cd-502f-4aa7-87b4-c2e4f7741266
 # ╟─76d0693e-55dd-11eb-10c5-1b6930bfee9d
 # ╠═166fb3de-51fe-11eb-0b84-6b4126f44d0e
 # ╟─a66b3930-55dd-11eb-2e47-a70a33b7fd9a

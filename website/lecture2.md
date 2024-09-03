@@ -17,7 +17,12 @@ Intro do Differential Equations | [click for notebook](https://floswald.github.i
 
 ## Arrays
 
-## VScode and Julia
+## Modern Julia Workflow
+
+What is below used to be my way of getting you started. I think `MoJuWo` does a much better job at this, so I am switching you over to their content instead. [click here](https://modernjuliaworkflows.org/writing/)
+
+
+This is outdate below:
 
 I asked you to install the [julia-vscode](https://www.julia-vscode.org) extention for the vscode editor [initially](../#prerequisites). Today we'll have a first look at this environment. Some things we'll go over are:
 
@@ -27,7 +32,7 @@ I asked you to install the [julia-vscode](https://www.julia-vscode.org) extentio
 1. Package environments
 1. More advanced features (already couple of months back, but still) are explained in this [video by one of the package authors](https://youtu.be/IdhnP00Y1Ks).
 
-## Julia Modules, Packages, `Pkg.jl` and Environments
+### Julia Modules, Packages, `Pkg.jl` and Environments
 
 1. What is a `module`?
     * A separate name space.
@@ -57,7 +62,7 @@ end # module
     * Now what?
 3. What do other open source languages do here?
     * `R`: nothing. You install whichever version you want and hope it all works. Latest versions is a good idea.
-    * `python`: versioning problem comes even before packages! Python 2.7 incompativel with python 3.6. So we have *virtual environments* for different python versions
+    * `python`: versioning problem comes even before packages! Python 2.7 incompatibel with python 3.6. So we have *virtual environments* for different python versions
         * It can get complicated [really easily](https://github.com/econ-ark/KrusellSmith/issues/3).
 4. What is an _environment_
     * It's like a box inside which a certain set of versions can be assumed.

@@ -4,22 +4,24 @@ The first week's homework is to make you familiar with the Pluto environment. Gi
 
 **You can do the homework in teams of max 2 people** (try not to do it alone!)
 
-## You have 2 Tasks
+## You have 3 Tasks
 
-1. Have some fun with Pluto and mathematics! Start Pluto in your julia session by doing
+I want you to go through the first 3 Pluto "featured notebooks": "Getting Startet", "Markdown" and "Basic Mathematics". You can see those upon doing
+
 ```julia
 using Pluto
 Pluto.run()
 ```
-    and then click on `open a sample notebook`. Open the *Basic Mathematics* notebook, and complete it.
-1. Do a slightly more serious task (still fun 💃🏽👯‍♂️🎉) by [right clicking and saving this notebook.](https://github.com/floswald/NumericalMethods/blob/master/homework/homework0/hw0.jl)
 
+and scrolling down a bit. 
+
+Once the notebook is loaded, click top right on "edit" this notebook. Complete all tasks.
 
 ## Homework Submission
 
-You have one week for this, i.e. submit by next week's class. 
+submit by next class. 
 
 **How and What to Submit?**
 
-* What? Two *static html* files of each of your notebooks (click top right on the triangle and circle symbols)
-* How? Upload your `.html` files in format `HW02-name1-name2.html` and `HW03-name1-name2.html` the dropbox file request link which _will be shared with you via slack_.
+* What? three *static html* files of each of your notebooks (click top right on "sharing" symbol) and select "Static HTML". The first cell in your notebook must contain the names of students who worked on it.
+* How? Upload your `.html` files in format `HW01-name1-name2.html`, `HW02-name1-name2.html` and `HW03-name1-name2.html` the dropbox file request link which _will be shared with you via slack_.

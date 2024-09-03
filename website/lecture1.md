@@ -39,7 +39,7 @@ Functions | [click for notebook (done in Intro to Programming)](https://floswald
 Arrays | [click for notebook](https://floswald.github.io/julia-bootcamp/03-arrays.html)
 SIR Model | [click for notebook](https://floswald.github.io/julia-bootcamp/09-introsir.html)
 
-Please run the [01-fast.jl](https://github.com/floswald/NumericalMethods/tree/master/lecture_notebooks/week1/01-fast.jl) notebook on your own computer for the benchmarks! 🏎️
+Please run the [01-fast.jl](https://github.com/floswald/NumericalMethods/tree/master/notebooks/week1/01-fast.jl) notebook on your own computer for the benchmarks! 🏎️
 
 
 

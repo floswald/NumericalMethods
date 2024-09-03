@@ -5,7 +5,11 @@
 
 ## Some Julia Package Stuff
 
+
+
 > Let's create a julia package!
+
+
    
 ```julia
 ]
@@ -27,24 +31,7 @@ Template keywords to customize:
 julia> t("MyNewPackage")
 [ Info: Running prehooks
 [ Info: Running hooks
-  Activating project at `~/.julia/dev/MyNewPackage`
-    Updating registry at `~/.julia/registries/General`
-    Updating git-repo `https://github.com/JuliaRegistries/General.git`
-┌ Warning: The active manifest file at `/Users/74097/.julia/dev/MyNewPackage/Manifest.toml` has an old format that is being maintained.
-│ To update to the new format, which is supported by Julia versions ≥ 1.6.2, run `Pkg.upgrade_manifest()` which will upgrade the format without re-resolving.
-│ To then record the julia version re-resolve with `Pkg.resolve()` and if there are resolve conflicts consider `Pkg.update()`.
-└ @ Pkg.Types /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-macmini-x64-5.0/build/default-macmini-x64-5-0/julialang/julia-release-1-dot-8/usr/share/julia/stdlib/v1.8/Pkg/src/manifest.jl:287
-  No Changes to `~/.julia/dev/MyNewPackage/Project.toml`
-  No Changes to `~/.julia/dev/MyNewPackage/Manifest.toml`
-Precompiling project...
-  1 dependency successfully precompiled in 1 seconds
-[ Info: We haven't cleaned this depot up for a bit, running Pkg.gc()...
-      Active manifest files: 113 found
-      Active artifact files: 303 found
-      Active scratchspaces: 48 found
-     Deleted 40 package installations (186.329 MiB)
-  Activating project at `~/.julia/environments/v1.8`
-[ Info: Running posthooks
+...suppressed output...
 [ Info: New package is at /Users/74097/.julia/dev/MyNewPackage
 ```
 
