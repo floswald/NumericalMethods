@@ -7,6 +7,8 @@ In this lecture we will start talking `julia`! We will go through a series of no
 
 Topic | Notebook
 :-----: | :--------:
+Arrays | [click for notebook](https://floswald.github.io/julia-bootcamp/03-arrays.html)
+SIR Model | [click for notebook](https://floswald.github.io/julia-bootcamp/09-introsir.html)
 Defining Data Types | [click for notebook](https://floswald.github.io/julia-bootcamp/04-defining-types.html)
 Intro do Differential Equations | [click for notebook](https://floswald.github.io/julia-bootcamp/08-popgrowth.html)
 
@@ -22,7 +24,7 @@ Intro do Differential Equations | [click for notebook](https://floswald.github.i
 What is below used to be my way of getting you started. I think `MoJuWo` does a much better job at this, so I am switching you over to their content instead. [click here](https://modernjuliaworkflows.org/writing/)
 
 
-This is outdate below:
+## Outdated
 
 I asked you to install the [julia-vscode](https://www.julia-vscode.org) extention for the vscode editor [initially](../#prerequisites). Today we'll have a first look at this environment. Some things we'll go over are:
 
