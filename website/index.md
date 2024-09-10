@@ -118,6 +118,14 @@ There are some excellent references for computational methods out there. This co
 * [**Statistics with Julia**](https://statisticswithjulia.org) (2021), Yoni Nazarathy and Hayden Klok, Springer.
 * [**Quantitative Economics with Julia**](https://julia.quantecon.org/intro.html) by Perla, Sargent and Stachurski is a wonderful resource and we use it a lot in this course. 
 
+## Code of Conduct
+
+If you decide to participate in this course, I expect you to abide by the following minimal code of conduct.
+
+1. Be polite to the other class participants. 
+2. While in class, do not spend time on messaging apps, chat rooms, computer games, or similar content.
+
+You can expect your instructor to abide by the same code of conduct, so this is a matter of mutual respect. If you are found in breach of the above you will be given a single warning, and I will ask you to no longer join the course after a second time. Your grade will be "fail".
 
 
 ## License
