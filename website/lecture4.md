@@ -10,5 +10,5 @@
 
 Topic | Notebook
 :-----: | :--------:
-Unconstrained Optimization Algorithms | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week4/optimization2.jl)
-Constraints and Linear Programming | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week4/optimization3.jl)
+Unconstrained Optimization Algorithms | [download notebook or insert URL into pluto browser](https://raw.githubusercontent.com/floswald/NumericalMethods/refs/heads/master/notebooks/week4/optimization2.jl)
+Constraints and Linear Programming | [download notebook](https://raw.githubusercontent.com/floswald/NumericalMethods/refs/heads/master/notebooks/week4/optimization3.jl)

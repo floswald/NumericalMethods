@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -31,6 +31,19 @@ end
 
 # ╔═╡ 86440ba5-4b5f-440b-87e4-5446217dd073
 using ForwardDiff    # one particular AD package in julia
+
+# ╔═╡ 7a7fc4fc-be68-40d6-868b-d141a7054319
+html"""
+<style>
+	main {
+		margin: 0 auto;
+		max-width: 2000px;
+    	padding-left: max(160px, 10%);
+    	padding-right: max(160px, 10%);
+		font-size: x-large
+	}
+</style>
+"""
 
 # ╔═╡ 5c316980-d18d-4698-a841-e732f7632cec
 html"<button onclick='present()'>present</button>"
@@ -120,7 +133,9 @@ $$\min_{x\in\mathbb{R}^n} f(x)  \text{ s.t. } x \in \mathcal{X} \equiv \max_{x\i
 """
 
 # ╔═╡ 6163277d-70d3-4a73-89df-65c329c2b818
-
+md"""
+#
+"""
 
 # ╔═╡ 843fef36-611c-4411-b31b-8a11e128881b
 @bind B Slider(0:0.1:10,default = 3.0)
@@ -195,6 +210,21 @@ md"""
 2. (**SOSC** $\nabla^2f(x^*)$ is positive definite (negative definite for local maxima))
 """
 
+# ╔═╡ 9a5cb736-237c-4b3d-9820-b05ec4c961d5
+md"""
+#
+"""
+
+# ╔═╡ 89de388b-4bd1-4814-8378-10bfd0ac3f3d
+md"""
+#
+"""
+
+# ╔═╡ 274f5fd9-904d-4f11-b4e1-93a37e206080
+md"""
+#
+"""
+
 # ╔═╡ 3af8c139-2e6c-4830-9b67-96f78356f521
 md"""
 ## Example Time: Rosenbrock's Banana Function
@@ -242,6 +272,11 @@ $$f(x,y) = (1-x)^2  + 5(y-x^2)^2$$
 * fear not. we can do better here.
 """
 
+# ╔═╡ 1d698018-8b77-490d-ad3a-6c7001aa99ab
+md"""
+#
+"""
+
 # ╔═╡ 3729833f-80d4-4948-8d81-750008c8f16d
 begin
 	# long form taking an x and a y
@@ -270,11 +305,15 @@ rosen₅( [1.0, 1.3] )  # assigns x = 1.0 , y = 1.3 inside the function
 
 # ╔═╡ 8279fd8a-e447-49b6-b729-6e7b8883f5e4
 md"""
+# 
+
 Ok enough of that. Let's get a visual of the Rosenbrock function finally!
 """
 
 # ╔═╡ ed2ee298-ac4f-4ae3-a9e3-300040a706a8
 md"""
+#
+
 ### Keyword Arguments
 
 In fact, the numbers `1` and `5` in 
@@ -288,15 +327,30 @@ are just *parameters*, i.e. the function definition can be changed by varying th
 # ╔═╡ 0bbaa5a8-8082-4697-ae98-92b2ae3769af
 rosenkw(x,y ; a = 1, b = 5) = (a - x)^2 + b*(y - x^2)^2  # notice the ; 
 
+# ╔═╡ 5abc4cf1-7fe1-4d5e-9077-262984d07b4c
+md"""
+#
+"""
+
 # ╔═╡ dd0c1982-38f4-4752-916f-c05da365bade
 md"""
 * alright, not bad. but how can I change the a and b values now?
 * One solution is to pass an *anonymous function* which will *enclose* the values for `a` and `b` (it is hence called a `closure`):
 """
 
+# ╔═╡ f655db71-18c6-40db-83c8-0035e37e6eda
+md"""
+#
+"""
+
 # ╔═╡ 202dc3b6-ddcb-463d-b8f2-a285a2ecb112
 md"""
 This wouldn't be a proper pluto session if we wouldn't hook those values up to a slider, would it? Let's do it!
+"""
+
+# ╔═╡ 29d33b1f-8901-4fee-aa85-11adb6ebad1b
+md"""
+#
 """
 
 # ╔═╡ 91fd09a1-8b3a-4772-b6a5-7b149d91eb4d
@@ -456,9 +510,6 @@ $$\frac{d}{dx}f(g(x)) = \frac{df}{dg}\frac{dg}{dx}$$
 
 """
 
-# ╔═╡ 625ca61c-9b0c-422b-8a66-40b4ede145c7
-
-
 # ╔═╡ 3e480576-ed7d-4f2d-bcd1-d7d1cbbeccf9
 let
 	c = 1.5
@@ -468,7 +519,12 @@ end
 
 # ╔═╡ bc52bf0c-6cd1-488d-a9c1-7a91a582dda9
 md"""
+
+
 * I find this mind blowing 🤯
+
+
+# 
 
 ### AD Example
 
@@ -485,6 +541,8 @@ $$\begin{aligned} \frac{\partial f}{\partial x} &= \frac{1}{xy + \max(x,2)} \fra
 
 # ╔═╡ 73fea39a-3ba6-4a37-9014-261a95acc084
 md"""
+#
+
 * What we just did here, i.e. unpacking the mathematical operation $\frac{\partial f}{\partial x}$ can be achieved by a computer using a *computational graph*. 
 * Automatic Differentiation traverses the computational graph of an *expression* either forwards (in *forward accumulation* mode), or backwards (in *reverse accumulation* mode).
 """
@@ -505,11 +563,20 @@ md"""
 * Here is our operation $f(x,y) = \ln(xy + \max(x,2))$ described as a call graph: (will only show if you start julia in folder `week3` of the course website repo)
 """
 
+# ╔═╡ bd866fc5-2bf7-49dc-971e-7cd16d11d68e
+md"""
+#
+"""
+
 # ╔═╡ 24266569-cd10-4765-95fd-61b06027dd0e
 PlutoUI.LocalResource("./optimization/callgraph.png")
 
 # ╔═╡ f8e89e44-d12c-43c3-b1ec-01c68f33c3b4
 md"""
+
+#
+
+
 ### Accumulating *forwards* along the call graph
 
 * Let's illustrate how AD in forward mode works for $x=3,y=2$ and the example at hand. Remember that
@@ -521,6 +588,11 @@ md"""
 
 
 
+"""
+
+# ╔═╡ 64d23de8-d271-484e-b051-be0b0fb2be3f
+md"""
+#
 """
 
 # ╔═╡ d9d7d94d-e457-4354-a1a3-4a230c9ddc29
@@ -707,8 +779,8 @@ warning(text) = Markdown.MD(Markdown.Admonition("warning", "Warning", [text]));
 warning(md"Keep in mind that there may be other (better!) solutions outside of your interval of attention.")
 
 # ╔═╡ d4c22f7b-31f5-4f41-8731-2f6189d231b4
-function rosendata(f::Function)
-	x = y = range(-2,stop = 2, length = 100)  # x and y axis
+function rosendata(f::Function;npoints = 30)
+	x = y = range(-2,stop = 2, length = npoints)  # x and y axis
 	rosenvals = [f(ix,iy) for ix in x, iy in y]  # f evaluations
 	(x,y,rosenvals)
 end
@@ -717,7 +789,8 @@ end
 function rosenplotter(f::Function)
 	x,y,vals = rosendata(f)  # get the data
 	# plotting
-	surface(x,y,vals, fillcolor = :thermal,colorbar=false, alpha = 0.9,xlab = "x",ylab = "y", zlab = "z")
+	surface(x,y,vals, fillcolor = :thermal,colorbar=false, 
+		alpha = 0.9,xlab = "x",ylab = "y", zlab = "z", zlim= (0,180))
 end
 
 # ╔═╡ 3cf9be4d-fa76-4264-b9b6-ff66bcf5db0e
@@ -727,21 +800,21 @@ rosenplotter(rosen₃)
 rosenplotter(rosenkw)
 
 # ╔═╡ 7fcebc5a-a8c7-47d8-90b0-7ee8cd579585
-rosenplotter( (x,y) -> rosenkw(x,y, a=1.5, b=2 ) ) # notice the `,` when calling
+rosenplotter( (x,y) -> rosenkw(x,y, a=1.2, b=2 ) ) # notice the `,` when calling
 
 # ╔═╡ ba891e20-db23-4b03-9495-19c19df940d3
 rosenplotter( (x,y) -> rosenkw(x,y, a=a, b=b ))
 
 # ╔═╡ 12629919-26d3-4434-9c23-9778364fe71a
 let
-	x,y,z = rosendata(rosenkw)  # default a,b
-	contour(x,y,z, fill = false, color = :deep,levels=[collect(0:0.1:175)...])
+	x,y,z = rosendata(rosenkw,npoints = 100)  # default a,b
+	contour(x,y,z, fill = false, color = :deep,levels=[collect(0:0.2:175)...])
 	scatter!([1.0],[1.0], m=:c, c=:red, label = "(1,1)")
 end
 
 # ╔═╡ b1c207b7-9d70-453c-b554-1c91f59ada0a
 let
-	x,y,z = rosendata(rosenkw)  # default a,b
+	x,y,z = rosendata(rosenkw,npoints = 100)  # default a,b
 	loglevels = exp.(range(log(0.05), stop = log(175.0), length = 100))
 	contour(x,y,z, fill = false, color = :viridis,levels=loglevels)
 	scatter!([1.0],[1.0], m=:c, c=:red, label = "(1,1)")
@@ -767,17 +840,37 @@ bigbreak
 # ╔═╡ 5a5bb3c5-f8da-4f7b-9b44-b54025d7e71c
 midbreak = html"<br><br>"
 
+# ╔═╡ 1e272a4c-cad6-423b-b5f3-f16b404e63a2
+sb = md"""
+#
+"""
+
+# ╔═╡ 1fdccba1-8ea3-41ca-9095-aa0e5eefeafc
+sb
+
 # ╔═╡ 173b83be-dec2-487b-96ce-12cb5fba8be0
-midbreak
+sb
 
 # ╔═╡ c0edc9ae-ff2a-4224-820a-1a8844f41291
-midbreak
+sb
 
 # ╔═╡ 0b77e9c2-f360-498c-8a0a-157693866902
-midbreak
+sb
 
 # ╔═╡ dac4173c-9d3b-4573-b1ba-13c6b7cc5f30
-midbreak
+sb
+
+# ╔═╡ 5e213422-7503-4ea7-ad63-99e271459cf1
+sb
+
+# ╔═╡ eacb00fe-7a99-40bc-8ff3-88822ebe94bb
+sb
+
+# ╔═╡ 8b5c1e3a-282e-4a27-9d41-f3b20a00b82f
+sb
+
+# ╔═╡ 73161163-b5f6-43b2-ab6c-ed81375e01ff
+sb
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -804,7 +897,7 @@ SymEngine = "~0.11.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.1"
+julia_version = "1.10.4"
 manifest_format = "2.0"
 project_hash = "d40a651448e6e1724669bc5df438751d49c5089f"
 
@@ -946,7 +1039,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -2147,12 +2240,13 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
+# ╟─7a7fc4fc-be68-40d6-868b-d141a7054319
 # ╟─5c316980-d18d-4698-a841-e732f7632cec
 # ╟─53ef0bfc-4239-11ec-0b4c-23f451fff4a6
 # ╟─ca7d694b-182a-443d-b47d-1bfe4ed8039f
 # ╟─9b3eee98-e481-4fb6-98c2-6ac408dcfe54
-# ╠═6163277d-70d3-4a73-89df-65c329c2b818
-# ╠═b1a45f30-beec-4089-904c-488b86b56a9e
+# ╟─6163277d-70d3-4a73-89df-65c329c2b818
+# ╟─b1a45f30-beec-4089-904c-488b86b56a9e
 # ╟─fcc24d08-bb9a-482f-987e-e64184c8d6f2
 # ╠═843fef36-611c-4411-b31b-8a11e128881b
 # ╟─3ba9cc34-0dcd-4c2e-b428-242e456bd436
@@ -2161,14 +2255,18 @@ version = "1.4.1+1"
 # ╟─2ac3348d-196a-4507-b2f7-c575e42d7e7b
 # ╟─09582278-6fed-4cac-9aaa-45cf0ac9fb6c
 # ╟─58cb6931-91a5-4325-8be4-6675f7e142ed
+# ╟─9a5cb736-237c-4b3d-9820-b05ec4c961d5
 # ╠═b059cb44-349a-48b5-a96e-62c4835fde10
+# ╟─89de388b-4bd1-4814-8378-10bfd0ac3f3d
 # ╠═5b925811-6255-4e2e-b691-40869d65d6df
+# ╟─274f5fd9-904d-4f11-b4e1-93a37e206080
 # ╠═a88b6949-4b4a-4f5a-a9a2-c6978cd0f758
 # ╟─3af8c139-2e6c-4830-9b67-96f78356f521
 # ╟─dd9bfbb1-aecf-458f-9a05-a93ff78fd741
 # ╠═34b7e91e-d67f-4554-b985-b9100adda733
 # ╠═2dbb5b13-790a-4ab7-95b1-b833c4cb027a
 # ╟─f51233c4-ec66-4517-9109-5309601d1d87
+# ╟─1d698018-8b77-490d-ad3a-6c7001aa99ab
 # ╠═3729833f-80d4-4948-8d81-750008c8f16d
 # ╟─7172d082-e6d2-419b-8bb6-75e30f1b4dfe
 # ╠═e7841458-f641-48cf-8667-1e5b38cbd9f6
@@ -2179,10 +2277,13 @@ version = "1.4.1+1"
 # ╠═76a613f2-482f-4a4d-8236-debee05bef1b
 # ╟─ed2ee298-ac4f-4ae3-a9e3-300040a706a8
 # ╠═0bbaa5a8-8082-4697-ae98-92b2ae3769af
+# ╟─5abc4cf1-7fe1-4d5e-9077-262984d07b4c
 # ╠═dc21cc4b-aedd-42d7-b2a8-f36dfecee6f4
 # ╟─dd0c1982-38f4-4752-916f-c05da365bade
+# ╟─f655db71-18c6-40db-83c8-0035e37e6eda
 # ╠═7fcebc5a-a8c7-47d8-90b0-7ee8cd579585
 # ╟─202dc3b6-ddcb-463d-b8f2-a285a2ecb112
+# ╟─29d33b1f-8901-4fee-aa85-11adb6ebad1b
 # ╟─91fd09a1-8b3a-4772-b6a5-7b149d91eb4d
 # ╟─b49ca3b1-0d1b-4edb-8064-e8cd8d4db727
 # ╠═ba891e20-db23-4b03-9495-19c19df940d3
@@ -2205,15 +2306,17 @@ version = "1.4.1+1"
 # ╟─bf8dfa21-29e4-4d6e-a876-ba1a6ca313b1
 # ╠═068dd98e-8507-4380-a4b2-f6fee80adaaa
 # ╟─4b3f4b1b-1b22-4e2e-be5b-d44d74d8da0e
+# ╟─1fdccba1-8ea3-41ca-9095-aa0e5eefeafc
 # ╠═86440ba5-4b5f-440b-87e4-5446217dd073
-# ╠═625ca61c-9b0c-422b-8a66-40b4ede145c7
 # ╠═3e480576-ed7d-4f2d-bcd1-d7d1cbbeccf9
 # ╟─bc52bf0c-6cd1-488d-a9c1-7a91a582dda9
 # ╟─73fea39a-3ba6-4a37-9014-261a95acc084
 # ╟─a5e5f5bc-cc5e-4f70-91ac-43fb21f2cada
 # ╟─7ee3eb27-c1e1-477e-bdd0-894e4317c559
-# ╠═24266569-cd10-4765-95fd-61b06027dd0e
+# ╟─bd866fc5-2bf7-49dc-971e-7cd16d11d68e
+# ╟─24266569-cd10-4765-95fd-61b06027dd0e
 # ╟─f8e89e44-d12c-43c3-b1ec-01c68f33c3b4
+# ╟─64d23de8-d271-484e-b051-be0b0fb2be3f
 # ╟─d9d7d94d-e457-4354-a1a3-4a230c9ddc29
 # ╟─173b83be-dec2-487b-96ce-12cb5fba8be0
 # ╟─b0a8a72c-3eb1-431d-9b30-17115e60025a
@@ -2223,13 +2326,17 @@ version = "1.4.1+1"
 # ╟─a7a07e38-6900-4fd1-8a87-0e16d92a5256
 # ╟─dac4173c-9d3b-4573-b1ba-13c6b7cc5f30
 # ╟─9315c9b1-87fa-4e91-a78d-c24a3007139b
+# ╟─5e213422-7503-4ea7-ad63-99e271459cf1
 # ╟─c6464aec-bdf5-49b7-a5d2-45c2f6471bc7
 # ╟─347a3819-9300-49f5-97b4-d1847c5ee98c
+# ╟─eacb00fe-7a99-40bc-8ff3-88822ebe94bb
 # ╟─6802424d-6072-4692-add2-d34abb3ce6b7
+# ╟─8b5c1e3a-282e-4a27-9d41-f3b20a00b82f
 # ╟─31b1bad8-5a3d-4d9e-93c8-45e854cf88f8
 # ╠═d9238a26-e792-44fc-be3d-7d8ec7e0117d
 # ╟─eb2d7221-25b4-4836-b818-3ed944570040
 # ╠═66f0d9bb-7d04-4e82-b9dd-55510971691b
+# ╟─73161163-b5f6-43b2-ab6c-ed81375e01ff
 # ╟─4c60c221-545c-4050-bfea-211048a36bce
 # ╠═2d1f128c-bcfa-4017-9690-01f3f75c3efa
 # ╠═b4ade3a3-668e-495b-9b7b-ad45fdf2655b
@@ -2250,5 +2357,6 @@ version = "1.4.1+1"
 # ╠═33e3b11c-b1b4-4c64-b742-734ebd06926e
 # ╟─2e3243dc-f489-4117-82f8-7d05f5188429
 # ╟─5a5bb3c5-f8da-4f7b-9b44-b54025d7e71c
+# ╟─1e272a4c-cad6-423b-b5f3-f16b404e63a2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

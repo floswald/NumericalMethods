@@ -168,4 +168,4 @@ Interactive | [click for notebook](https://floswald.github.io/julia-bootcamp/07-
 
 Topic | Notebook
 :-----: | :--------:
-Review of Optimization Algorithms | [right-click and save notebook](https://github.com/floswald/NumericalMethods/blob/master/notebooks/week3/optimization1.jl)
+Review of Optimization Algorithms | [download notebook](https://raw.githubusercontent.com/floswald/NumericalMethods/refs/heads/master/notebooks/week3/optimization1.jl)

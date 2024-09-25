@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -13,9 +13,6 @@ macro bind(def, element)
         el
     end
 end
-
-# ╔═╡ 9d0a5687-bfb6-4c51-b31c-680a38be9b04
-import Pkg
 
 # ╔═╡ 9c61c9d5-0d3d-47b7-8e7d-f929cfec3311
 begin
@@ -33,6 +30,22 @@ begin
 	using NLopt
 	using PlutoUI
 end
+
+# ╔═╡ aa1f0719-5e1d-4294-815e-349d1cebc004
+html"""
+<style>
+	main {
+		margin: 0 auto;
+		max-width: 2000px;
+    	padding-left: max(160px, 10%);
+    	padding-right: max(160px, 10%);
+		font-size: x-large
+	}
+</style>
+"""
+
+# ╔═╡ aae2e545-198c-42bb-9e97-6d6635bee02a
+html"<button onclick='present()'>present</button>"
 
 # ╔═╡ 4468041e-4472-11ec-16b7-553f4def2b18
 md"""
@@ -78,7 +91,7 @@ $$\mathcal{L}(x,\lambda) = f(x) - \lambda h(x)$$
 
 # ╔═╡ 5bc7c8ce-3a4a-4505-a2fa-2b25f041437a
 md"""
-### Example
+## Example
 
 Suppose we have
 
@@ -759,6 +772,14 @@ end
 # ╔═╡ 9cb9f9cc-fe89-44c3-8115-6a5c48b58ca0
 midbreak
 
+# ╔═╡ 7f033067-2216-4532-baa3-6d099bbfc034
+sb = md"""
+#
+"""
+
+# ╔═╡ c5f6d941-7161-44bb-8ec8-8644636234c0
+sb
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -770,7 +791,6 @@ LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 NLopt = "76087f3c-5699-56af-9a33-bf431cd00edd"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
@@ -792,9 +812,9 @@ PlutoUI = "~0.7.58"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.1"
+julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "c8eeae0adce2de17eb19819126ae3850efa307b7"
+project_hash = "51b33323fe321a83c4c3fb15d9d6074d18c236f4"
 
 [[deps.ASL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -902,7 +922,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -2011,11 +2031,13 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═9d0a5687-bfb6-4c51-b31c-680a38be9b04
+# ╟─aa1f0719-5e1d-4294-815e-349d1cebc004
+# ╟─aae2e545-198c-42bb-9e97-6d6635bee02a
 # ╠═9c61c9d5-0d3d-47b7-8e7d-f929cfec3311
 # ╟─4468041e-4472-11ec-16b7-553f4def2b18
 # ╟─e66005ad-1f51-462a-9329-d77f7695cbfc
 # ╟─5bc7c8ce-3a4a-4505-a2fa-2b25f041437a
+# ╟─c5f6d941-7161-44bb-8ec8-8644636234c0
 # ╠═9a92426e-bc9a-4ead-a93c-ec1c3f23ca57
 # ╠═d7acef71-fe0d-4062-9342-9061afde1293
 # ╟─de879e63-fdc9-486e-9aaa-1a55c32d93d5
@@ -2054,5 +2076,6 @@ version = "1.4.1+0"
 # ╠═b175638b-db07-41c5-a409-f7814d14dc42
 # ╠═9cb9f9cc-fe89-44c3-8115-6a5c48b58ca0
 # ╠═9644fbd5-298c-4041-822b-1b44917b2c41
+# ╟─7f033067-2216-4532-baa3-6d099bbfc034
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

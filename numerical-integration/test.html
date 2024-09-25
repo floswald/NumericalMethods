@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Florian Oswald">
+<meta name="dcterms.date" content="2024-09-19">
+
+<title>Numerical Integration</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="test_files/libs/clipboard/clipboard.min.js"></script>
+<script src="test_files/libs/quarto-html/quarto.js"></script>
+<script src="test_files/libs/quarto-html/popper.min.js"></script>
+<script src="test_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="test_files/libs/quarto-html/anchor.min.js"></script>
+<link href="test_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="test_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="test_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="test_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="test_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#problem-definition" id="toc-problem-definition" class="nav-link active" data-scroll-target="#problem-definition">Problem Definition</a></li>
+  <li><a href="#code-setup" id="toc-code-setup" class="nav-link" data-scroll-target="#code-setup">Code Setup</a></li>
+  <li><a href="#monte-carlo-integration" id="toc-monte-carlo-integration" class="nav-link" data-scroll-target="#monte-carlo-integration">Monte Carlo Integration</a></li>
+  <li><a href="#quasi-monte-carlo" id="toc-quasi-monte-carlo" class="nav-link" data-scroll-target="#quasi-monte-carlo">Quasi-Monte carlo</a></li>
+  <li><a href="#gaussian-quadrature-integration" id="toc-gaussian-quadrature-integration" class="nav-link" data-scroll-target="#gaussian-quadrature-integration">Gaussian Quadrature integration</a>
+  <ul class="collapse">
+  <li><a href="#different-quadrature-rules" id="toc-different-quadrature-rules" class="nav-link" data-scroll-target="#different-quadrature-rules">Different Quadrature Rules</a></li>
+  <li><a href="#gauss-hermite-expectation-of-a-normally-distributed-variable" id="toc-gauss-hermite-expectation-of-a-normally-distributed-variable" class="nav-link" data-scroll-target="#gauss-hermite-expectation-of-a-normally-distributed-variable">Gauss-Hermite: Expectation of a Normally Distributed Variable</a></li>
+  <li><a href="#gauss-quadrature-with-n1" id="toc-gauss-quadrature-with-n1" class="nav-link" data-scroll-target="#gauss-quadrature-with-n1">Gauss-Quadrature with <span class="math inline">\(N&gt;1\)</span>?</a></li>
+  </ul></li>
+  <li><a href="#quadrature-with-julia" id="toc-quadrature-with-julia" class="nav-link" data-scroll-target="#quadrature-with-julia">Quadrature with julia</a>
+  <ul class="collapse">
+  <li><a href="#approximating-an-ar1-process" id="toc-approximating-an-ar1-process" class="nav-link" data-scroll-target="#approximating-an-ar1-process">Approximating an AR1 process</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Numerical Integration</h1>
+<p class="subtitle lead">ScPo Computational Economics 2024</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Florian Oswald </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 19, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="problem-definition" class="level2">
+<h2 class="anchored" data-anchor-id="problem-definition">Problem Definition</h2>
+<p>We want to evaluate the potentially multidimensional definite integral</p>
+<p><span class="math display">\[\begin{equation}
+I = \int_\Omega f(x) dx
+\end{equation}\]</span></p>
+<p>where it’s important to keep track of the <em>volume</em> of the function domain, i.e.&nbsp;we say <span class="math inline">\(\Omega\)</span> is a subset of <span class="math inline">\(\mathbb{R}^m\)</span> with volume</p>
+<p><span class="math display">\[\begin{equation}
+V = \int_\Omega dx
+\end{equation}\]</span></p>
+<p>Here is an example of <span class="math inline">\(f\)</span>:</p>
+<p><span class="math display">\[
+f(x) = \sin(x)^2 + 0.1 x
+\]</span></p>
+<p>Let’s make a plot of this, where <span class="math inline">\(f\)</span> is a black line, and the red shaded area is <span class="math inline">\(I\)</span>.</p>
+</section>
+<section id="code-setup" class="level2">
+<h2 class="anchored" data-anchor-id="code-setup">Code Setup</h2>
+<p>To run the code in this document you need have an environment where the following packages are installed:</p>
+<div id="2" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-stdout">
+<pre><code>  Activating project at `~/git/NumericalMethods/numerical-integration`</code></pre>
+</div>
+</div>
+<div id="4" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you need to have those packages installed.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LaTeXStrings</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">OrderedCollections</span>   <span class="co"># for OrderedDict</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">FastGaussQuadrature</span>  <span class="co"># for intergration rules</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span>           <span class="co"># to display a table</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Sobol</span>                <span class="co"># to get sobol sequences</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set_theme!</span>()  <span class="co"># resetting all quarto default values for fig width etc</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING: method definition for checkbounds at /Users/floswald/.julia/packages/Interpolations/USkTk/src/Interpolations.jl:454 declares type variable N but does not use it.
+WARNING: method definition for checkbounds at /Users/floswald/.julia/packages/Interpolations/USkTk/src/Interpolations.jl:457 declares type variable N but does not use it.
+WARNING: method definition for GriddedInterpolation at /Users/floswald/.julia/packages/Interpolations/USkTk/src/gridded/gridded.jl:37 declares type variable pad but does not use it.
+WARNING: method definition for GriddedInterpolation at /Users/floswald/.julia/packages/Interpolations/USkTk/src/gridded/gridded.jl:60 declares type variable pad but does not use it.
+WARNING: method definition for interpolate! at /Users/floswald/.julia/packages/Interpolations/USkTk/src/deprecations.jl:30 declares type variable TWeights but does not use it.</code></pre>
+</div>
+</div>
+<div id="6" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">5</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> <span class="fu">sin</span>(x)<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">0.1</span>x</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">f</span>.(x)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>,<span class="fl">600</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>,<span class="fl">1</span>], xlabel <span class="op">=</span> L<span class="st">"x"</span>, ylabel <span class="op">=</span> L<span class="st">"\sin(x)^2 + 0.1 x"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, x, y, label <span class="op">=</span> L<span class="st">"f"</span>, color <span class="op">=</span> <span class="op">:</span>black, linewidth <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">band!</span>(ax, x, <span class="fu">fill</span>(<span class="fl">0</span>,<span class="fu">length</span>(x)), y, color <span class="op">=</span> (<span class="op">:</span>red, <span class="fl">0.5</span>), label <span class="op">=</span> <span class="st">"Integral"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(; merge <span class="op">=</span> <span class="cn">true</span>, position <span class="op">=</span> <span class="op">:</span>lt)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/cell-4-output-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As with <a href="https://en.wikipedia.org/wiki/Riemann_integral">Riemann Integrals</a> where we split the continuous domain of <span class="math inline">\(f\)</span> into smaller and smaller chunks, which we then sum up (<span class="math inline">\(\int\)</span>), the numerical counterpart does the same: measure the value of <code>f</code> (the <em>height</em> of the black line) at different points, and sum over them. The main question is:</p>
+<p><strong>At which points?</strong></p>
+</section>
+<section id="monte-carlo-integration" class="level2">
+<h2 class="anchored" data-anchor-id="monte-carlo-integration">Monte Carlo Integration</h2>
+<p>A very intuitive first solution is to draw <code>N</code> <em>random</em> points from the domain of <code>f</code>, evalute the function there, and compute their average. We would approximate <span class="math inline">\(I\)</span> as follows, where <span class="math inline">\(x_i \in \Omega\)</span> is a randomly chosen point from the function’s domain:</p>
+<p><span class="math display">\[\begin{equation}
+I \approx Q_N \equiv V \frac{1}{N} \sum_{i=1}^N f(x_i) = V \bar{f}
+\end{equation}\]</span></p>
+<p>This works because the law of large numbers tells us that</p>
+<p><span class="math display">\[\begin{equation}
+\lim_{N \to \infty} Q_N  = I.
+\end{equation}\]</span></p>
+<p>The uncertainty from this method is easily quantifiable by the resulting variation in our estimate:</p>
+<p><span class="math display">\[\begin{equation}
+Var(f) = \sigma_N^2 = \frac{1}{N-1} \sum_{i=1}^N (f(x_i) -  \bar{f})^2
+\end{equation}\]</span></p>
+<p>from which we get the variance of <span class="math inline">\(Q_N\)</span> as <span class="math inline">\(Var(Q_N) = V^2 \frac{\sigma_N^2}{N}\)</span>. Hence,clearly visible that this decreases as <span class="math inline">\(N\)</span> increases. We usually report the standard error of the estimator, so we report</p>
+<p><span class="math display">\[\begin{equation}
+\sigma_Q \equiv \sqrt{Var(Q_N)} = V \frac{\sigma_N}{\sqrt{N}}
+\end{equation}\]</span></p>
+<p>👍</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Compute <span class="math inline">\(\sigma_Q\)</span>!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write a function that takes <span class="math inline">\(f\)</span> from above, and computes standard error <span class="math inline">\(\sigma_Q\)</span> for <span class="math inline">\(N\)</span> points. Your function should take arguments <code>sample_points</code>, which is a vector of evaluation points, and <code>fun</code>, which is a function to evaluate.</p>
+</div>
+</div>
+<div id="8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">σ</span>(sample_points,fun)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> <span class="fu">length</span>(sample_points)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    ys <span class="op">=</span> <span class="fu">fun</span>.(sample_points)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ybar <span class="op">=</span> <span class="fu">sum</span>(ys) <span class="op">/</span> N  <span class="co"># mean</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    var <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> (N<span class="op">-</span><span class="fl">1</span>) <span class="op">*</span> <span class="fu">sum</span>( (ys <span class="op">.-</span> ybar) <span class="op">.^</span> <span class="fl">2</span> )</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sqrt</span>(var)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>σ (generic function with 1 method)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Compute the monte carlo integral and it’s error!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write a function <code>mc_integrate</code> that takes <span class="math inline">\(f\)</span> from above, and computes both the monte carlo integration <span class="math inline">\(Q_N\)</span> as well as its standard error <span class="math inline">\(\sigma_Q\)</span> for a set of <span class="math inline">\(N\)</span> <strong>randomly chosen</strong> points. Your function should take arguments <code>N</code>, which is a vector of evaluation points, and <code>fun</code>, which is a function to evaluate. Set a random seed to ensure reproducibility. Then, call your function to compute <span class="math inline">\(Q\)</span> for <span class="math inline">\(N \in \{2,4,10,20,50,100,1000,10000\}\)</span> and compare the outputs. Produce an <code>OrderedDict</code> where the keys are those values for <span class="math inline">\(N\)</span>.</p>
+</div>
+</div>
+<div id="10" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">mc_integrate</span>(N,fun)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">0</span>)   <span class="co"># any number works</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> <span class="fl">5</span> <span class="co"># integrate dx from 0 to 5</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    pts <span class="op">=</span> <span class="fu">rand</span>(N) <span class="op">.*</span> V  <span class="co"># N random numbers in [0,5]</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    mc_integral <span class="op">=</span> V <span class="op">/</span> N <span class="op">*</span> <span class="fu">sum</span>( <span class="fu">fun</span>.(pts) )</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    mc_error <span class="op">=</span> V <span class="op">*</span> <span class="fu">σ</span>(pts,fun) <span class="op">/</span> <span class="fu">sqrt</span>(N)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    mc_integral, mc_error</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ns <span class="op">=</span> [<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">50</span>,<span class="fl">100</span>,<span class="fl">1000</span>,<span class="fl">10000</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>mc_results <span class="op">=</span> <span class="fu">OrderedDict</span>(k <span class="op">=&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mc_integrate</span>(k,f) <span class="cf">for</span> k <span class="kw">in</span> ns);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Now make a plot!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Taking the dict from the above question, write a function that makes a line plot with <span class="math inline">\(N\)</span> on the x axis and your estimate of the integral on the axis. Also add the error bars with <code>band!</code> function! Your function should take the output <code>OrderedDict</code> from above as argument. Scale the x-axis as log10.</p>
+</div>
+</div>
+<div id="12" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">plot_mc</span>(od<span class="op">::</span><span class="dt">OrderedDict</span>; errors <span class="op">=</span> <span class="cn">true</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="fu">collect</span>(<span class="fu">keys</span>(od))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> <span class="fu">collect</span>(<span class="fu">values</span>(od))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    Q <span class="op">=</span> [i[<span class="fl">1</span>] for i <span class="kw">in</span> v]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> [i[<span class="fl">2</span>] for i <span class="kw">in</span> v]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>,<span class="fl">600</span>))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>,<span class="fl">1</span>], xlabel <span class="op">=</span> <span class="st">"N"</span>, ylabel <span class="op">=</span> <span class="st">"Qn"</span>, xscale <span class="op">=</span> log10)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(ax, x, Q, label <span class="op">=</span> L<span class="st">"Q_n"</span>, color <span class="op">=</span> <span class="op">:</span>black, linewidth <span class="op">=</span> <span class="fl">1</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, x, Q, label <span class="op">=</span> L<span class="st">"Q_n"</span>, color <span class="op">=</span> <span class="op">:</span>black, markersize <span class="op">=</span> <span class="fl">15</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> errors <span class="fu">errorbars!</span>(ax, x, Q, E; wiskerwidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> (<span class="op">:</span>red)) <span class="cf">end</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">axislegend</span>(; merge <span class="op">=</span> <span class="cn">true</span>, position <span class="op">=</span> <span class="op">:</span>rb, unique <span class="op">=</span> <span class="cn">true</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fig</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_mc</span>(mc_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/cell-7-output-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The last point, for <span class="math inline">\(N=10000\)</span> is what we’ll consider as the true value. You can see, it takes us quite long until the monte carlo method converges to that value. So, that’s the main drawback of this method.</p>
+</section>
+<section id="quasi-monte-carlo" class="level2">
+<h2 class="anchored" data-anchor-id="quasi-monte-carlo">Quasi-Monte carlo</h2>
+<p>That’s a version where we do not choose random numbers as evaluation points, but <em>sub-random sequences</em> or <em>low discrepancy sequences</em> of random numbers, which aim at variance reduction. Everything else is the same.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Modify your <code>mc_integrate</code> for Quasi-MC
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Modify your function from above so that instead of <code>rand</code> it chooses numbers from the Sobol sequences. Then make the plot again.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Using <code>Sobol.jl</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>make a constructor: <code>s = SobolSeq(lb,ub)</code> where <code>ub,lb</code> are <em>vectors</em> of upper and lower bounds</li>
+<li>get n sobol-random numbers into a vector with <code>reduce(vcat, next!(s) for i in 1:n)</code></li>
+</ol>
+</div>
+</div>
+<div id="14" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">qmc_integrate</span>(N,fun)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">0</span>)   <span class="co"># any number works</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> <span class="fl">5</span> <span class="co"># integrate dx from 0 to 5</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> <span class="fu">SobolSeq</span>([<span class="fl">0</span>], [<span class="fl">5</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    pts <span class="op">=</span> <span class="fu">reduce</span>(vcat, <span class="fu">next!</span>(s) <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>N)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    mc_integral <span class="op">=</span> V <span class="op">/</span> N <span class="op">*</span> <span class="fu">sum</span>( <span class="fu">fun</span>.(pts) )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    mc_error <span class="op">=</span> V <span class="op">*</span> <span class="fu">σ</span>(pts,fun) <span class="op">/</span> <span class="fu">sqrt</span>(N)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    mc_integral, mc_error</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>qmc_results <span class="op">=</span> <span class="fu">OrderedDict</span>(k <span class="op">=&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">qmc_integrate</span>(k,f) <span class="cf">for</span> k <span class="kw">in</span> ns);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="16" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+<figure class="figure">
+<p><img src="test_files/figure-html/cell-9-output-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>One of the merits of quasi monte carlo integration is that it’s rate of convergence is faster. You see that here various integrations stabilize at the “true” value (where <span class="math inline">\(N=1000\)</span>) earlier than before. Notice I removed the error bars from the plot because I the previous formula is no longer correct. However it’s good to know that the relationship between QMC and MC errors is</p>
+<p><span class="math display">\[
+O\left(\frac{(\log N)^s}{N} \right) \quad vs \quad O\left( \frac{1}{\sqrt{N}} \right)
+\]</span></p>
+<p>therefore, for QMC to do better than MC, we need <span class="math inline">\(s\)</span> small and <span class="math inline">\(N\)</span> large. In other words, in high-dimensional settings (high <span class="math inline">\(s\)</span>), you might actually do better with straight MC.</p>
+</section>
+<section id="gaussian-quadrature-integration" class="level2">
+<h2 class="anchored" data-anchor-id="gaussian-quadrature-integration">Gaussian Quadrature integration</h2>
+<p>Based on an early contribution of Carl Friedrich Gauss, we have that an <span class="math inline">\(n\)</span>-point quadrature rule will yield an <em>exact</em> integration result to functions that look like polynomials of degree <span class="math inline">\(2n -1\)</span>, or less, by choosing <span class="math inline">\(n\)</span> suitable <strong>nodes</strong> <span class="math inline">\(x_i\)</span> and <strong>weights</strong> <span class="math inline">\(w_i\)</span>. That is quite the result. The <a href="https://en.wikipedia.org/wiki/Gaussian_quadrature">wikipedia entry</a> is very interesting. Basically, we will now concentrate on how to do better than in monte carlo integration, where each point gets the same weight <span class="math inline">\(1/N\)</span>, and where our only hope is to generate a very large set of sample points, which may be costly.</p>
+<p>We continue in the above framework, i.e.&nbsp;in order to compute the expected value of a function <span class="math inline">\(G\)</span>, say, we do the following:</p>
+<p><span class="math display">\[
+E[G(\epsilon)] = \int_{\mathbb{R}^N} G(\epsilon) p(\epsilon) d\epsilon \approx \sum_{j=1}^J w_j G(\epsilon_j)
+\]</span></p>
+<p>We have some explanation to do:</p>
+<ul>
+<li><span class="math inline">\(N\)</span> is the dimensionality of the integration problem.</li>
+<li><span class="math inline">\(G:\mathbb{R}^N \mapsto \mathbb{R}\)</span> is the function we want to integrate wrt <span class="math inline">\(\epsilon \in \mathbb{R}^N\)</span>.</li>
+<li><span class="math inline">\(p\)</span> is a density function s.t. <span class="math inline">\(\int_{\mathbb{R}^n} p(\epsilon) d\epsilon = 1\)</span>.</li>
+<li><span class="math inline">\(w\)</span> are integration weights such that (most of the time) <span class="math inline">\(\sum_{j=1}^J w_j = 1\)</span>.</li>
+<li><span class="math inline">\(\epsilon_j\)</span> are integration <em>nodes</em>, i.e.&nbsp;the points where we choose to evaluate function <span class="math inline">\(G\)</span>. Notice that nodes and weights come in pairs.</li>
+<li>We will look at normal shocks <span class="math inline">\(\epsilon \sim N(0_N,I_N)\)</span></li>
+<li>in that case, the weighting function becomes <span class="math inline">\(w(\epsilon) = (2\pi)^{-N/2} \exp \left(-\frac{1}{2}\epsilon^T \epsilon \right)\)</span></li>
+<li><span class="math inline">\(I_N\)</span> is the n by n identity matrix, i.e.&nbsp;there is no correlation among the shocks for now.</li>
+<li>Other random processes will require different weighting functions, but the principle is identical.</li>
+<li>For now, let’s say that <span class="math inline">\(N=1\)</span></li>
+</ul>
+<section id="different-quadrature-rules" class="level3">
+<h3 class="anchored" data-anchor-id="different-quadrature-rules">Different Quadrature Rules</h3>
+<ul>
+<li>We focus exclusively on those and leave Simpson and Newton Cowtes formulas out.
+<ul>
+<li>This is because Quadrature is the method that in many situations gives highes accuracy with lowest computational cost.</li>
+</ul></li>
+<li>Quadrature provides a rule to compute weights <span class="math inline">\(w_j\)</span> and nodes <span class="math inline">\(\epsilon_j\)</span>.</li>
+<li>There are many different quadrature rules.</li>
+<li>They differ in their domain and weighting function.</li>
+<li><a href="https://en.wikipedia.org/wiki/Gaussian_quadrature#Other_forms">wikipedia</a> again has a useful table for us.</li>
+<li>In general, we can convert our function domain to a rule-specific domain with change of variables.</li>
+</ul>
+</section>
+<section id="gauss-hermite-expectation-of-a-normally-distributed-variable" class="level3">
+<h3 class="anchored" data-anchor-id="gauss-hermite-expectation-of-a-normally-distributed-variable">Gauss-Hermite: Expectation of a Normally Distributed Variable</h3>
+<ul>
+<li>There are many different rules, all specific to a certain random process.</li>
+<li>Gauss-Hermite is designed for an integral of the form <span class="math display">\[ \int_{-\infty}^{+\infty} e^{-x^2} G(x) dx \]</span> and where we would approximate <span class="math display">\[ \int_{-\infty}^{+\infty} e^{-x^2} f(x) dx \approx \sum_{i=1}^n w_i G(x_i) \]</span></li>
+<li>Now, let’s say we want to approximate the expected value of function <span class="math inline">\(f\)</span> when it’s argument is <span class="math inline">\(z\sim N(\mu,\sigma^2)\)</span>: <span class="math display">\[ E[f(z)] = \int_{-\infty}^{+\infty} \frac{1}{\sigma \sqrt{2\pi}} \exp \left( -\frac{(z-\mu)^2}{2\sigma^2} \right) f(z) dz \]</span></li>
+</ul>
+</section>
+<section id="gauss-quadrature-with-n1" class="level3">
+<h3 class="anchored" data-anchor-id="gauss-quadrature-with-n1">Gauss-Quadrature with <span class="math inline">\(N&gt;1\)</span>?</h3>
+<p>Easy: we just take the kronecker product of all univariate rules, i.e.&nbsp;the kronecker product amongst all weights and all nodes. Let’s look at an example.</p>
+<ul>
+<li>This works well as long as <span class="math inline">\(N\)</span> is not too large. The number of required function evaluations grows exponentially. <span class="math display">\[ E[G(\epsilon)] = \int_{\mathbb{R}^N} G(\epsilon) p(\epsilon) d\epsilon \approx \sum_{j_1=1}^{J_1} \cdots \sum_{j_N=1}^{J_N} w_{j_1}^1 \cdots w_{j_N}^N G(\epsilon_{j_1}^1,\dots,\epsilon_{j_N}^N) \]</span> where <span class="math inline">\(\omega_{j_1}^1\)</span> stands for weight index <span class="math inline">\(j_1\)</span> in dimension 1, same for <span class="math inline">\(\epsilon\)</span>.</li>
+<li>Total number of nodes: <span class="math inline">\(J=J_1 J_2 \cdots J_N\)</span>, and <span class="math inline">\(J_i\)</span> can differ from <span class="math inline">\(J_k\)</span>.</li>
+<li>Suppose we have <span class="math inline">\(\epsilon^i \sim N(0,1),i=1,2,3\)</span> as three uncorrelated random variables.</li>
+<li>Let’s take <span class="math inline">\(J=3\)</span> points in all dimensions, so that in total we have <span class="math inline">\(J^N=27\)</span> points.</li>
+</ul>
+</section>
+</section>
+<section id="quadrature-with-julia" class="level2">
+<h2 class="anchored" data-anchor-id="quadrature-with-julia">Quadrature with julia</h2>
+<div id="18" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>np <span class="op">=</span> <span class="fl">3</span>  <span class="co"># number of points</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># functions from FastGaussQuadrature.jl</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>rules <span class="op">=</span> <span class="fu">Dict</span>(<span class="st">"hermite"</span> <span class="op">=&gt;</span> <span class="fu">gausshermite</span>(np),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"chebyshev"</span> <span class="op">=&gt;</span> <span class="fu">gausschebyshev</span>(np),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"legendre"</span> <span class="op">=&gt;</span> <span class="fu">gausslegendre</span>(np),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"lobatto"</span> <span class="op">=&gt;</span> <span class="fu">gausslobatto</span>(np));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here are the respective nodes and weights for each of those four rules:</p>
+<div id="20" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div><div style="float: left;"><span>4×3 DataFrame</span></div><div style="clear: both;"></div></div><div class="data-frame" style="overflow-x: scroll;">
+<table class="data-frame caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="rowNumber" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Row</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Rule</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">nodes</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">weights</th>
+</tr>
+<tr class="odd subheader headerLastRow">
+<th class="rowNumber" data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Symbol">Symbol</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Vector{Float64}">Array…</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th" title="Vector{Float64}">Array…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="rowNumber" style="text-align: right; font-weight: bold;">1</td>
+<td style="text-align: left;">lobatto</td>
+<td style="text-align: left;">[-1.0, 0.0, 1.0]</td>
+<td style="text-align: left;">[0.333333, 1.33333, 0.333333]</td>
+</tr>
+<tr class="even">
+<td class="rowNumber" style="text-align: right; font-weight: bold;">2</td>
+<td style="text-align: left;">hermite</td>
+<td style="text-align: left;">[-1.22474, -1.11022e-15, 1.22474]</td>
+<td style="text-align: left;">[0.295409, 1.18164, 0.295409]</td>
+</tr>
+<tr class="odd">
+<td class="rowNumber" style="text-align: right; font-weight: bold;">3</td>
+<td style="text-align: left;">legendre</td>
+<td style="text-align: left;">[-0.774597, 0.0, 0.774597]</td>
+<td style="text-align: left;">[0.555556, 0.888889, 0.555556]</td>
+</tr>
+<tr class="even">
+<td class="rowNumber" style="text-align: right; font-weight: bold;">4</td>
+<td style="text-align: left;">chebyshev</td>
+<td style="text-align: left;">[-0.866025, 6.12323e-17, 0.866025]</td>
+<td style="text-align: left;">[1.0472, 1.0472, 1.0472]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="approximating-an-ar1-process" class="level3">
+<h3 class="anchored" data-anchor-id="approximating-an-ar1-process">Approximating an AR1 process</h3>
+<p>http://karenkopecky.net/Rouwenhorst_WP.pdf</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

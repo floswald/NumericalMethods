@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -25,12 +25,28 @@ begin
 	using PlutoUI
 end
 
+# ╔═╡ e6358a3b-f1d0-463c-a362-0451f0a20a8f
+html"""
+<style>
+	main {
+		margin: 0 auto;
+		max-width: 2000px;
+    	padding-left: max(160px, 10%);
+    	padding-right: max(160px, 10%);
+		font-size: x-large
+	}
+</style>
+"""
+
 # ╔═╡ 110bde78-7381-4e0d-8ac8-4b878bd4de9b
 md"""
 # Optimization 2: Algorithms and some `Optim.jl` Applications
 
-Florian Oswald, 2021
+Florian Oswald, 2024
 """
+
+# ╔═╡ 200201fd-1c4e-4242-9863-4970137d472a
+html"<button onclick='present()'>present</button>"
 
 # ╔═╡ e40bdc58-43a9-11ec-2c84-492ead8ce7c5
 md"""
@@ -46,7 +62,7 @@ $$f(a) \geq f(b) < f(c) \text{ or } f(a) > f(b) \leq f(c)$$
 """
 
 # ╔═╡ a691d7e0-84d4-4a69-ba41-68147254ff16
-PlutoUI.LocalResource("./unimodal.png")
+PlutoUI.LocalResource("./optimization2/unimodal.png")
 
 # ╔═╡ b7f8381c-3a9b-452e-9fc5-b7c9d4d69323
 md"""
@@ -59,7 +75,7 @@ md"""
 """
 
 # ╔═╡ d2a1181a-1146-478b-bcb2-cc763d6f211f
-PlutoUI.LocalResource("./bracketing.png")
+PlutoUI.LocalResource("./optimization2/bracketing.png")
 
 # ╔═╡ 8db8d806-a6d1-4b98-9153-a92280de174a
 # algo 3.1 from Kochenderfer and Wheeler
@@ -101,7 +117,7 @@ md"""
 """
 
 # ╔═╡ df826745-a4c4-4301-af27-066fe8e634f5
-PlutoUI.LocalResource("fibo1.png")
+PlutoUI.LocalResource("./optimization2/fibo1.png")
 
 # ╔═╡ 4cf52278-d871-4eb2-967d-d6368d01b0c8
 md"""
@@ -111,7 +127,7 @@ If we move the points to the center, we can do better:
 """
 
 # ╔═╡ 62ed62ba-ce10-4d6d-b65f-0eb349465970
-PlutoUI.LocalResource("fibo2.png")
+PlutoUI.LocalResource("./optimization2/fibo2.png")
 
 # ╔═╡ d2ce25bc-0aa8-419d-832e-4582ac83ba86
 md"""
@@ -123,7 +139,7 @@ $$\frac{F_n}{F_{n-1}} = \psi \frac{1-s^{n+1}}{1-s^n}, \quad s=\frac{1-\sqrt{5}}{
 """
 
 # ╔═╡ 39170a86-c216-447a-b6fc-367f0c1c82a8
-PlutoUI.LocalResource("fibo3.png")
+PlutoUI.LocalResource("./optimization2/fibo3.png")
 
 # ╔═╡ 8e7d4e57-578a-4c25-8c37-65a3fcda7b40
 md"""
@@ -132,10 +148,10 @@ md"""
 """
 
 # ╔═╡ dbac8440-659e-4a8d-a4b7-16bfd6d22c15
-PlutoUI.LocalResource("golden1.png")
+PlutoUI.LocalResource("./optimization2/golden1.png")
 
 # ╔═╡ d0b6dacf-8c13-4e31-a4a6-d4b5ee6a2f69
-PlutoUI.LocalResource("golden2.png")
+PlutoUI.LocalResource("./optimization2/golden2.png")
 
 # ╔═╡ adcd9256-650f-4d0e-8fe8-9b842b6b4c34
 md"""
@@ -186,7 +202,7 @@ end
 
 # ╔═╡ 59b26c7c-f6c5-4ba6-a067-9d07f179fc12
 md"""
-ub = $(@bind ub Slider(0:10, show_value = true, default = 3))
+ub = $(@bind ub Slider(0:0.05:10, show_value = true, default = 3))
 """
 
 # ╔═╡ f615768b-f212-4f40-ac9c-9eb96c0d6ea1
@@ -282,7 +298,7 @@ $$\min_{\alpha>0} f(x_k + \alpha \mathbf{d}^{(k)})$$
 """
 
 # ╔═╡ a6f1e909-9b87-42c7-b47a-d7190ba245bf
-PlutoUI.LocalResource("line-search.png")
+PlutoUI.LocalResource("./optimization2/line-search.png")
 
 # ╔═╡ 2f970459-c1b1-418a-bab2-615aeba2e6c4
 begin
@@ -307,7 +323,7 @@ $$\begin{align}
 """
 
 # ╔═╡ c031fe39-0f8c-4f6a-b851-266deb8f5b55
-PlutoUI.LocalResource("trust-region.png")
+PlutoUI.LocalResource("./optimization2/trust-region.png")
 
 # ╔═╡ 3dab6ba2-7dd7-4f41-b1f3-e34d52211afb
 begin
@@ -321,7 +337,7 @@ res0 = Optim.optimize(ro, g!, h!, prob.initial_x, method=NewtonTrustRegion())
 end
 
 # ╔═╡ 794092bf-cd6b-4cb8-aa11-c647157a0037
-PlutoUI.LocalResource("trust-region2.png")
+PlutoUI.LocalResource("./optimization2/trust-region2.png")
 
 # ╔═╡ 712a650d-4ada-4548-81ad-6c10b14d1a89
 md"""
@@ -531,7 +547,7 @@ $$\mathcal{P} = {\mathbf{x} + \alpha \mathbf{d} \text{ for } \mathbf{d}\in\mathc
 """
 
 # ╔═╡ 4738c3b3-5c67-4ec6-8291-6426485a7832
-PlutoUI.LocalResource("spanning-set.png")
+PlutoUI.LocalResource("./optimization2/spanning-set.png")
 
 # ╔═╡ 27e77174-2232-4d67-ba8f-d9d944cce543
 # ©️ Kochenderfer and Wheeler
@@ -583,7 +599,7 @@ md"""
 """
 
 # ╔═╡ 4921b275-6773-4efa-91ce-02869c527dba
-PlutoUI.LocalResource("nelder-mead.png")
+PlutoUI.LocalResource("./optimization2/nelder-mead.png")
 
 # ╔═╡ b9d44daa-8781-4c55-b8ef-f0a8b1c92406
 md"""
@@ -698,6 +714,95 @@ Lagarias et al. (SIOPT, 1999): At present there is no function in any dimension 
 Given all the known inefficiencies and failures of the Nelder-Mead algorithm [...], one might wonder why it is *used at all*, let alone *why it is so extraordinarily popular*.
 """)
 
+# ╔═╡ 8330b5bc-68fc-4d34-a8b3-1180e75f3d97
+sb = md"""
+#
+"""
+
+# ╔═╡ dd1dc5d8-37c6-4263-9478-6112386d1b6e
+sb
+
+# ╔═╡ 28802a3b-2e75-4dee-ade6-c6361161c0e0
+sb
+
+# ╔═╡ 8f45b52e-b7ce-4210-88fd-26ae5e09ae00
+sb
+
+# ╔═╡ 43a0a115-5d53-48fc-af78-66f98e4f40ba
+sb
+
+# ╔═╡ 797442cc-3978-4749-907e-0627e81f93ad
+sb
+
+# ╔═╡ c026b58b-a46a-476f-aea3-74a5cd4aa867
+sb
+
+# ╔═╡ ba6896c9-4e2e-4534-98c8-c7047db6d3fd
+sb
+
+# ╔═╡ a76474ab-056c-49f7-aff7-65d3e57417f6
+sb
+
+# ╔═╡ c30d4d0e-9e00-41fe-8b92-f7b4d178146c
+sb
+
+# ╔═╡ f7fb3b3c-7c74-45eb-b1fb-c26170056d74
+sb
+
+# ╔═╡ 29d84925-76ef-4238-8c17-fcc699daa80a
+sb
+
+# ╔═╡ f05bebbb-1635-46b2-8df2-bbefc71dcdf2
+sb
+
+# ╔═╡ 220ba78a-eab9-4a98-9275-07046a7a267b
+sb
+
+# ╔═╡ 984a0439-fcf5-488b-8e4f-3b2ffac1bb2f
+sb
+
+# ╔═╡ 455f7670-6be7-47ba-9c31-7c3824e1bb68
+sb
+
+# ╔═╡ 552d845e-817c-4e76-b699-37f149c6b5c1
+sb
+
+# ╔═╡ 6f9b7197-cfc4-4f34-9be0-11d5578f56d7
+sb
+
+# ╔═╡ 3b1c0e0a-a9b8-4ae8-9b31-a5d70e077201
+sb
+
+# ╔═╡ 5e9ce511-f89b-437d-be55-5b0d390e3bae
+sb
+
+# ╔═╡ 7280b993-bfdd-48f4-9c1b-602e8dda8667
+sb
+
+# ╔═╡ 2f08c4df-5bf1-4111-bebb-642a36768097
+sb
+
+# ╔═╡ ed9606b8-67d6-4c44-ac39-cfb59b8fa43c
+sb
+
+# ╔═╡ 4a0129f9-7ae8-4cef-b659-97a7fe7befdd
+sb
+
+# ╔═╡ a39eb324-d215-4f0e-b5c1-c1c818e4653e
+sb
+
+# ╔═╡ 14adfaf4-8126-487d-b7f2-f42d5239464a
+sb
+
+# ╔═╡ d9452576-bf3e-49a3-937d-66b176c298cf
+sb
+
+# ╔═╡ a4c9ccc0-60a6-4016-854b-7afd9bd4859b
+sb
+
+# ╔═╡ 09001364-6d74-4ecd-a4c4-a52638995e95
+sb
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -723,7 +828,7 @@ Roots = "~1.3.7"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.1"
+julia_version = "1.10.4"
 manifest_format = "2.0"
 project_hash = "1a3b973f7765d94685dcb3cfe3be023e6d25e773"
 
@@ -821,7 +926,7 @@ version = "3.46.1"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -1869,30 +1974,41 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─e6358a3b-f1d0-463c-a362-0451f0a20a8f
 # ╟─110bde78-7381-4e0d-8ac8-4b878bd4de9b
+# ╟─200201fd-1c4e-4242-9863-4970137d472a
 # ╠═cdfd0cac-4c43-441d-bfb4-21ea5653a3a1
 # ╟─e40bdc58-43a9-11ec-2c84-492ead8ce7c5
 # ╟─a691d7e0-84d4-4a69-ba41-68147254ff16
 # ╟─b7f8381c-3a9b-452e-9fc5-b7c9d4d69323
-# ╠═d2a1181a-1146-478b-bcb2-cc763d6f211f
+# ╟─d2a1181a-1146-478b-bcb2-cc763d6f211f
+# ╟─dd1dc5d8-37c6-4263-9478-6112386d1b6e
 # ╠═8db8d806-a6d1-4b98-9153-a92280de174a
+# ╟─28802a3b-2e75-4dee-ade6-c6361161c0e0
 # ╠═46533fde-5d5c-4a1a-a535-923672956f46
 # ╠═25c0a22e-af50-4455-93fd-d23f26b23d52
 # ╟─08d053d9-c865-4ff3-a551-823b5fb41524
 # ╟─df826745-a4c4-4301-af27-066fe8e634f5
+# ╟─8f45b52e-b7ce-4210-88fd-26ae5e09ae00
 # ╟─4cf52278-d871-4eb2-967d-d6368d01b0c8
 # ╟─62ed62ba-ce10-4d6d-b65f-0eb349465970
+# ╟─43a0a115-5d53-48fc-af78-66f98e4f40ba
 # ╟─d2ce25bc-0aa8-419d-832e-4582ac83ba86
 # ╟─39170a86-c216-447a-b6fc-367f0c1c82a8
+# ╟─797442cc-3978-4749-907e-0627e81f93ad
 # ╟─8e7d4e57-578a-4c25-8c37-65a3fcda7b40
 # ╟─dbac8440-659e-4a8d-a4b7-16bfd6d22c15
+# ╟─c026b58b-a46a-476f-aea3-74a5cd4aa867
 # ╟─d0b6dacf-8c13-4e31-a4a6-d4b5ee6a2f69
 # ╟─adcd9256-650f-4d0e-8fe8-9b842b6b4c34
 # ╟─a32820d0-5d91-4808-b942-202b760aec18
+# ╟─ba6896c9-4e2e-4534-98c8-c7047db6d3fd
 # ╟─fd1fba34-1c4f-48f7-83b4-fd60c796ac17
 # ╠═1a3b8f05-aae9-4975-b8b5-9268145c1e82
+# ╟─a76474ab-056c-49f7-aff7-65d3e57417f6
 # ╟─f127562c-d6c9-42c6-8cca-b1fd33ad4fbe
 # ╟─dc4c2888-8ff1-417d-a3bd-c133fb3bbbff
+# ╟─c30d4d0e-9e00-41fe-8b92-f7b4d178146c
 # ╟─59b26c7c-f6c5-4ba6-a067-9d07f179fc12
 # ╟─f615768b-f212-4f40-ac9c-9eb96c0d6ea1
 # ╟─1df4c4f2-6856-4431-afbb-df16541d22f7
@@ -1900,30 +2016,42 @@ version = "1.4.1+0"
 # ╟─32898baf-25d3-44cf-b92a-92e8ee320935
 # ╠═20664b8a-59d7-4d80-9926-7a982f72b276
 # ╟─625e38ee-04c1-4792-bf3e-8689bdb4df3b
+# ╟─f7fb3b3c-7c74-45eb-b1fb-c26170056d74
 # ╠═4a0dc0c1-ce50-425b-84ca-657c93b10966
 # ╟─7a8a9f51-49bc-4b6d-b68d-20f06dd7e350
 # ╟─a6f1e909-9b87-42c7-b47a-d7190ba245bf
 # ╠═2f970459-c1b1-418a-bab2-615aeba2e6c4
+# ╟─29d84925-76ef-4238-8c17-fcc699daa80a
 # ╟─962e1fef-5ea1-4037-9e59-6b56c3f60909
 # ╟─c031fe39-0f8c-4f6a-b851-266deb8f5b55
+# ╟─f05bebbb-1635-46b2-8df2-bbefc71dcdf2
 # ╠═3dab6ba2-7dd7-4f41-b1f3-e34d52211afb
+# ╟─220ba78a-eab9-4a98-9275-07046a7a267b
 # ╟─794092bf-cd6b-4cb8-aa11-c647157a0037
+# ╟─984a0439-fcf5-488b-8e4f-3b2ffac1bb2f
 # ╟─712a650d-4ada-4548-81ad-6c10b14d1a89
+# ╟─455f7670-6be7-47ba-9c31-7c3824e1bb68
 # ╠═1117da28-0103-4264-95b2-07562c98103b
-# ╠═45468faf-d2c1-4a68-997f-41f9879ede0f
-# ╠═11956a74-3ea2-491c-8eb1-d60db132c5c7
+# ╟─45468faf-d2c1-4a68-997f-41f9879ede0f
+# ╟─11956a74-3ea2-491c-8eb1-d60db132c5c7
+# ╟─552d845e-817c-4e76-b699-37f149c6b5c1
 # ╟─cef266b6-7913-4abd-a665-03bd491049b0
-# ╠═5a508717-8a42-466e-9415-ea6447290d19
-# ╠═1a84b8d7-cfdc-420c-b4ff-d6cf32b82622
+# ╟─5a508717-8a42-466e-9415-ea6447290d19
+# ╟─1a84b8d7-cfdc-420c-b4ff-d6cf32b82622
+# ╟─6f9b7197-cfc4-4f34-9be0-11d5578f56d7
 # ╟─d0d68f47-95dd-4aba-8817-d015090f8c4c
-# ╠═e992331a-a739-45f7-9820-7ba6a6603cf9
+# ╟─e992331a-a739-45f7-9820-7ba6a6603cf9
+# ╟─3b1c0e0a-a9b8-4ae8-9b31-a5d70e077201
 # ╟─2cd50a99-f3d5-442d-9beb-cad56362ae1e
+# ╟─5e9ce511-f89b-437d-be55-5b0d390e3bae
 # ╟─28726ab6-747c-4537-94fd-df4f69ff0df5
 # ╟─ca9fd4bb-f934-48df-8daf-f786013b6d69
 # ╟─7728ef9f-c84d-48b0-a25d-eb534f126d65
 # ╟─08339a83-73b6-4cb4-8b59-e30324fdfc8f
+# ╟─7280b993-bfdd-48f4-9c1b-602e8dda8667
 # ╟─5e8a328f-3624-4401-ad7a-f19bc94dd6cd
 # ╠═86c1c1df-9ee4-47a0-a40a-69fa3c245a94
+# ╟─2f08c4df-5bf1-4111-bebb-642a36768097
 # ╟─37e8339e-cedc-46e4-8bcc-cae6bf2384a8
 # ╠═6e297fb4-cf31-4928-9ec3-38b389fa6b58
 # ╟─9ac7bf69-d1e2-46a4-96e8-4a8cb0ed3781
@@ -1933,24 +2061,32 @@ version = "1.4.1+0"
 # ╠═e09184ba-da9d-43a2-bd6e-1a739e0722f5
 # ╟─6d9670cf-5257-48af-8f62-3de6a88cbc51
 # ╟─92212ec0-b822-4464-b346-dd221ad6f669
-# ╠═4738c3b3-5c67-4ec6-8291-6426485a7832
+# ╟─4738c3b3-5c67-4ec6-8291-6426485a7832
 # ╠═27e77174-2232-4d67-ba8f-d9d944cce543
 # ╠═496a4d17-0a31-4b6c-bae0-1461603b92e9
 # ╟─5e289cc6-5528-42d9-a3cb-a0d9dac6a849
 # ╟─4921b275-6773-4efa-91ce-02869c527dba
 # ╟─b9d44daa-8781-4c55-b8ef-f0a8b1c92406
 # ╠═9e0b8149-482d-4323-9670-a9756236fbeb
+# ╟─ed9606b8-67d6-4c44-ac39-cfb59b8fa43c
 # ╟─4717e637-07ab-4486-ac9a-c56b03ec7361
 # ╟─51fa22fd-9d3b-40f1-a428-f0cdd8bb2374
+# ╟─4a0129f9-7ae8-4cef-b659-97a7fe7befdd
 # ╟─2f6abe0f-43f5-40af-af51-561b76fcb29c
+# ╟─a39eb324-d215-4f0e-b5c1-c1c818e4653e
 # ╠═7ff00636-cb5d-45a5-b3d3-011054902f8e
 # ╠═3cc0c7d6-0bd7-435c-abde-2c70f51d437e
 # ╠═e3ba1d6c-e781-4447-948c-51b4b6bc7813
+# ╟─14adfaf4-8126-487d-b7f2-f42d5239464a
 # ╠═fcbf2bf1-f037-4fb1-8f71-c512699173a9
+# ╟─d9452576-bf3e-49a3-937d-66b176c298cf
 # ╠═fb98ac86-bb03-49a5-a1a9-0eae38889823
+# ╟─a4c9ccc0-60a6-4016-854b-7afd9bd4859b
 # ╟─f13056dc-3f17-438c-8b77-d8e1dc613c98
 # ╠═83299874-e44b-4be3-8778-920df01581f4
+# ╟─09001364-6d74-4ecd-a4c4-a52638995e95
 # ╠═b43f3c20-aa3d-43ba-8a50-24645bd07ef1
 # ╠═ec549333-676d-4409-9256-8b4a8d8bf894
+# ╠═8330b5bc-68fc-4d34-a8b3-1180e75f3d97
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
