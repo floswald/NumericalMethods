@@ -159,7 +159,7 @@ Topic | Notebook
 :-----: | :--------:
 Intro to Macros | [click for notebook](https://floswald.github.io/julia-bootcamp/10-intro-to-macros.html)
 Intro to Differential Equations | [click for notebook](https://floswald.github.io/julia-bootcamp/08-popgrowth.html)
-Plotting | [click for notebook](https://floswald.github.io/julia-bootcamp/06-plotting.html)
+Plotting with Plots.jl | [click for notebook](https://floswald.github.io/julia-bootcamp/06-plotting.html)
 Interactive | [click for notebook](https://floswald.github.io/julia-bootcamp/07-interactive.html)
 
 

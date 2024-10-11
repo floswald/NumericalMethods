@@ -253,13 +253,16 @@ md"""
   * But it's robust (will find global optimizer for large enough $N$)
 """
 
+# ╔═╡ adb4ee25-44cb-4294-b410-f357e26336e1
+collect(range(0, 3, length= 100))
+
 # ╔═╡ 4a0dc0c1-ce50-425b-84ca-657c93b10966
 begin
 	prob = UnconstrainedProblems.examples["Rosenbrock"]
 	ro = prob.f
 	g! = prob.g!
 	h! = prob.h!
-	grid = collect(-1.0:0.11:3);  # grid spacing is important!
+	grid = collect(-1.0:0.01:3);  # grid spacing is important!
 	grid2D = [[i;j] for i in grid,j in grid];
 	val2D = map(ro,grid2D);
 	r = findmin(val2D);
@@ -2017,6 +2020,7 @@ version = "1.4.1+0"
 # ╠═20664b8a-59d7-4d80-9926-7a982f72b276
 # ╟─625e38ee-04c1-4792-bf3e-8689bdb4df3b
 # ╟─f7fb3b3c-7c74-45eb-b1fb-c26170056d74
+# ╠═adb4ee25-44cb-4294-b410-f357e26336e1
 # ╠═4a0dc0c1-ce50-425b-84ca-657c93b10966
 # ╟─7a8a9f51-49bc-4b6d-b68d-20f06dd7e350
 # ╟─a6f1e909-9b87-42c7-b47a-d7190ba245bf

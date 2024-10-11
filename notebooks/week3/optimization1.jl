@@ -244,13 +244,9 @@ md"""
 """
 
 # ╔═╡ 34b7e91e-d67f-4554-b985-b9100adda733
-begin
-	# long form taking a vector x
-	function rosen₁(x)
-		(1-x[1])^2 + 5*(x[2] - x[1]^2)^2
-	end
-	# short form taking a vector x
-	rosen₂(x) = (1-x[1])^2 + 5*(x[2] - x[1]^2)^2
+# long form taking a vector x
+function rosen₁(x)
+	(1-x[1])^2 + 5*(x[2] - x[1]^2)^2
 end
 
 # ╔═╡ 4d2a5726-2704-4b63-b334-df5175278b18
@@ -258,6 +254,10 @@ begin
 	using Optim
 	result = optimize(rosen₁, zeros(2), NelderMead())
 end
+
+# ╔═╡ 3270f9e3-e232-4752-949f-12f984581b19
+# short form taking a vector x
+rosen₂(x) = (1-x[1])^2 + 5*(x[2] - x[1]^2)^2
 
 # ╔═╡ 2dbb5b13-790a-4ab7-95b1-b833c4cb027a
 rosen₁([1.1,0.4]) == rosen₂([1.1,0.4])
@@ -286,6 +286,9 @@ begin
 	# short form taking a vector x
 	rosen₄(x,y) = (1-x[1])^2 + 5*(x[2] - x[1]^2)^2
 end
+
+# ╔═╡ 2eae1d35-df83-415f-87a5-1a5e0d1d649e
+rosen₄([1,1])
 
 # ╔═╡ 7172d082-e6d2-419b-8bb6-75e30f1b4dfe
 md"""
@@ -415,7 +418,7 @@ let
 	c = 2.2
 	∂u∂c = (u(c + h) - u(c)) / h  # definition from above!
 
-	Dict(:finite_diff => ∂u∂c, :truth_wiktor => c^-2)
+	Dict(:finite_diff => ∂u∂c, :truth_Paolo => c^-2)
 end
 
 # ╔═╡ 645ef857-aff9-4dee-bfd6-72fe9d542375
@@ -2264,10 +2267,12 @@ version = "1.4.1+1"
 # ╟─3af8c139-2e6c-4830-9b67-96f78356f521
 # ╟─dd9bfbb1-aecf-458f-9a05-a93ff78fd741
 # ╠═34b7e91e-d67f-4554-b985-b9100adda733
+# ╠═3270f9e3-e232-4752-949f-12f984581b19
 # ╠═2dbb5b13-790a-4ab7-95b1-b833c4cb027a
 # ╟─f51233c4-ec66-4517-9109-5309601d1d87
 # ╟─1d698018-8b77-490d-ad3a-6c7001aa99ab
 # ╠═3729833f-80d4-4948-8d81-750008c8f16d
+# ╠═2eae1d35-df83-415f-87a5-1a5e0d1d649e
 # ╟─7172d082-e6d2-419b-8bb6-75e30f1b4dfe
 # ╠═e7841458-f641-48cf-8667-1e5b38cbd9f6
 # ╠═abbc5a52-a02c-4f5b-bd1e-af5596455762
