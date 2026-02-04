@@ -1,4 +1,5 @@
 
+*This course is superseded by https://github.com/floswald/CompEcon*
 
 
 # Computational Economics for PhDs
